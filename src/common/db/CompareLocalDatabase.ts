@@ -1,0 +1,60 @@
+import {
+  ANDROID_DATABASE_PATH,
+  DB,
+  IOS_LIBRARY_PATH,
+  open,
+} from '@op-engineering/op-sqlite';
+import { Platform } from 'react-native';
+import { RawCompareRow } from './types';
+
+export class CompareLocalDatabase {
+  private db: DB;
+
+  constructor() {
+    this.db = open({
+      name: 'battledex.db',
+      location:
+        Platform.OS === 'ios' ? IOS_LIBRARY_PATH : ANDROID_DATABASE_PATH,
+    });
+    this.db.execute(
+      `CREATE TABLE IF NOT EXISTS compare_results (
+        id TEXT PRIMARY KEY,
+        winner_json TEXT NOT NULL,
+        loser_json TEXT NOT NULL,
+        comparison_date INTEGER NOT NULL 
+      );`,
+    );
+  }
+
+  async saveMatchResult(
+    winnerJson: string,
+    loserJson: string,
+    comparisonDate: Date = new Date(),
+  ): Promise<void> {
+    const id = `${comparisonDate.getTime()}-${Math.random()
+      .toString(36)
+      .slice(2)}`;
+
+    const winner_json = winnerJson;
+    const loser_json = loserJson;
+    const comparison_date = comparisonDate.getTime();
+
+    await this.db.executeSync(
+      `INSERT OR REPLACE INTO compare_results (id, winner_json, loser_json, comparison_date)
+       VALUES (?, ?, ?, ?);`,
+      [id, winner_json, loser_json, comparison_date],
+    );
+  }
+
+  async getCompareCards(): Promise<RawCompareRow[]> {
+    const result = await this.db.executeSync(
+      'SELECT id, winner_json, loser_json, comparison_date FROM compare_results ORDER BY comparison_date DESC;',
+    );
+    return (result.rows ?? []).map(row => ({
+      id: String(row.id),
+      winner_json: String(row.winner_json),
+      loser_json: String(row.loser_json),
+      comparison_date: Number(row.comparison_date),
+    }));
+  }
+}

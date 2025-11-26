@@ -1,0 +1,159 @@
+import { useMemo } from 'react';
+import { StyleSheet } from 'react-native';
+import { useTheme } from '../../../../../styles';
+
+export const useStyles = () => {
+  const { theme } = useTheme();
+  return useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radius.lg,
+          marginVertical: theme.spacing.sm,
+          marginHorizontal: theme.spacing.lg,
+          overflow: 'hidden',
+          ...theme.shadow.card,
+        },
+        timeBadge: {
+          position: 'absolute',
+          top: theme.spacing.md,
+          right: theme.spacing.md,
+          zIndex: 10,
+          backgroundColor: theme.colors.textDark,
+          paddingHorizontal: theme.spacing.md,
+          paddingVertical: theme.spacing.xs,
+          borderRadius: theme.radius.pill,
+          shadowColor: theme.colors.textDark,
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 3,
+        },
+        timeText: {
+          color: theme.colors.surface,
+          fontSize: theme.typography.size.xs,
+          fontWeight: '700',
+          letterSpacing: 0.5,
+        },
+        row: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: theme.spacing.xl,
+          paddingTop: theme.spacing.xxl,
+        },
+        cardBox: {
+          width: '40%',
+          alignItems: 'center',
+        },
+        imageWrapper: {
+          position: 'relative',
+          width: '100%',
+          aspectRatio: 3 / 4,
+          borderRadius: theme.radius.md,
+          overflow: 'hidden',
+          backgroundColor: theme.colors.card,
+          shadowColor: theme.colors.textDark,
+          shadowOpacity: 0.15,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 3 },
+          elevation: 4,
+        },
+        cardImage: {
+          width: '100%',
+          height: '100%',
+          resizeMode: 'cover',
+        },
+        loseOverlay: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: theme.colors.danger,
+          paddingVertical: theme.spacing.xs,
+          alignItems: 'center',
+        },
+        loseText: {
+          color: theme.colors.surface,
+          fontSize: theme.typography.size.xs,
+          fontWeight: '800',
+          letterSpacing: 1,
+        },
+        winOverlay: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: theme.colors.success,
+          paddingVertical: theme.spacing.xs,
+          alignItems: 'center',
+        },
+        winText: {
+          color: theme.colors.surface,
+          fontSize: theme.typography.size.xs,
+          fontWeight: '800',
+          letterSpacing: 1,
+        },
+        cardName: {
+          marginTop: theme.spacing.md,
+          fontSize: theme.typography.size.sm,
+          fontWeight: '600',
+          color: theme.colors.text,
+          textAlign: 'center',
+          lineHeight: 18,
+        },
+        vsContainer: {
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
+          width: 60,
+        },
+        vsCircle: {
+          width: 56,
+          height: 56,
+          borderRadius: theme.radius.xl,
+          backgroundColor: theme.colors.card,
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderWidth: 3,
+          borderColor: theme.colors.border,
+          shadowColor: theme.colors.textDark,
+          shadowOpacity: 0.1,
+          shadowRadius: 4,
+          shadowOffset: { width: 0, height: 2 },
+          elevation: 3,
+        },
+        vsText: {
+          fontWeight: '900',
+          fontSize: 18,
+          color: theme.colors.textDark,
+          letterSpacing: 1,
+        },
+        vsLine: {
+          position: 'absolute',
+          width: 2,
+          height: '100%',
+          backgroundColor: theme.colors.border,
+          zIndex: -1,
+        },
+        /*footer: {
+          backgroundColor: theme.colors.background,
+          paddingVertical: theme.spacing.sm,
+          alignItems: 'center',
+          borderTopWidth: 1,
+          borderTopColor: theme.colors.border,
+        },
+        tapHint: {
+          paddingHorizontal: theme.spacing.md,
+          paddingVertical: theme.spacing.xs,
+        },
+        tapHintText: {
+          fontSize: theme.typography.size.xs,
+          color: theme.colors.textMuted,
+          fontWeight: '500',
+        },*/
+      }),
+    [theme],
+  );
+};

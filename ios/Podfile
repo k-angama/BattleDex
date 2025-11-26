@@ -32,3 +32,11 @@ target 'BattleDex' do
     )
   end
 end
+
+pre_install do |installer|
+	installer.pod_targets.each do |pod|
+		if pod.name.eql?('expo-updates')
+			# Modify the configuration of the pod so it doesn't depend on the sqlite pod
+		end
+	end
+end

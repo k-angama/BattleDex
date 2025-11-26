@@ -1,97 +1,315 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# BattleDex
 
-# Getting Started
+A mobile app that compares Pokémon cards and determines which one is stronger based on real battle statistics.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Overview
 
-## Step 1: Start Metro
+BattleDex lets you select any two Pokémon cards and instantly see which one wins in a matchup. The app calculates a Power Score using HP, damage output, energy costs, type effectiveness, and weaknesses/resistances. Results are displayed side-by-side with a clear winner announcement.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Tech Stack
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **Framework**: React Native 0.82
+- **Language**: TypeScript
+- **Navigation**: React Navigation (Native Stack)
+- **Architecture**: MVVM with feature-specific hooks
+- **Database**: @op-engineering/op-sqlite
+- **Theming**: Custom theme provider with light/dark modes
+- **API**: PCPowerScoreAPI with mapper layer
+- **Testing**: Jest + @testing-library/react-native
 
-```sh
-# Using npm
-npm start
+---
 
-# OR using Yarn
-yarn start
+## Getting Started
+
+### Prerequisites
+
+Complete the [React Native environment setup](https://reactnative.dev/docs/set-up-your-environment) before proceeding.
+
+### Installation
+
+1. Clone the repository
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. **iOS only**: Install CocoaPods dependencies
+
+   ```bash
+   # First time setup
+   bundle install
+
+   # Install pods (run after every native dependency update)
+   bundle exec pod install
+   ```
+
+### Running the App
+
+#### Android
+
+```bash
+npm run android        # Production environment
+npm run dev:android    # Development environment
+npm run mock:android   # Mock data environment
 ```
 
-## Step 2: Build and run your app
+#### iOS
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
+```bash
+npm run ios           # Production environment
+npm run dev:ios       # Development environment
+npm run mock:ios      # Mock data environment
 ```
 
-### iOS
+The Metro bundler starts automatically with these commands.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+---
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Available Scripts
 
-```sh
-bundle install
+### Development
+
+| Command              | Description                   |
+| -------------------- | ----------------------------- |
+| `npm start`          | Start Metro bundler           |
+| `npm run dev:start`  | Start with `.env.dev` config  |
+| `npm run mock:start` | Start with `.env.mock` config |
+
+### Building & Running
+
+| Command                   | Description                        |
+| ------------------------- | ---------------------------------- |
+| `npm run android`         | Launch Android app                 |
+| `npm run ios`             | Launch iOS app                     |
+| `npm run release:android` | Android debug build (release mode) |
+| `npm run build:android`   | Android production bundle          |
+| `npm run build:ios`       | iOS production build               |
+
+### Android Emulator
+
+| Command             | Description                   |
+| ------------------- | ----------------------------- |
+| `npm run emu:list`  | List available emulators      |
+| `npm run emu:start` | Start Pixel_2_API_29 emulator |
+
+### Code Quality
+
+| Command            | Description               |
+| ------------------ | ------------------------- |
+| `npm run lint`     | Run ESLint checks         |
+| `npm run lint:fix` | Auto-fix ESLint issues    |
+| `npm run format`   | Format code with Prettier |
+| `npm test`         | Run Jest test suite       |
+
+---
+
+## Project Structure
+
+```
+src/
+├── common/
+│   ├── components/        # Reusable UI components
+│   ├── db/               # CompareLocalDatabase (op-sqlite)
+│   ├── utils/            # Time formatting, async helpers
+│   └── styles/           # Theme provider, colors, spacing, typography
+│
+├── features/
+│   ├── card/
+│   │   ├── data/         # Repositories, mappers
+│   │   ├── domain/       # Entities, mocks
+│   │   └── presentation/ # Screens, components, viewModels, DI
+│   │
+│   ├── compare/
+│   │   ├── data/         # API and DB repositories
+│   │   ├── domain/       # Entities, mocks
+│   │   └── presentation/ # Screens, components, viewModels, DI
+│   │
+│   └── home/
+│       ├── data/         # API/DB repositories, mappers
+│       ├── domain/       # Entities, mocks, use cases
+│       └── presentation/ # Screens, components, viewModels, DI
+│
+└── App.tsx               # Root component with providers
 ```
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+## Architecture
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### Design Pattern: MVVM
 
-```sh
-# Using npm
-npm run ios
+Each feature follows the Model-View-ViewModel pattern with clear separation of concerns:
 
-# OR using Yarn
-yarn ios
-```
+- **View**: React components in `presentation/` folders
+- **ViewModel**: Custom hooks (`useHomeScreenViewModel`, `useCardScreenViewModel`, etc.)
+- **Model**: Entities and repositories in `domain/` and `data/` folders
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### Key Architectural Concepts
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+#### ViewModels
 
-## Step 3: Modify your app
+Feature-specific hooks manage:
 
-Now that you have successfully run the app, let's make changes!
+- Data fetching and state management
+- Loading and error states
+- UI-ready data transformation
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Examples: `useHomeScreenViewModel`, `useCardScreenViewModel`, `useCompareScreenViewModel`
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+#### Dependency Injection
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+Each feature route imports repositories through DI helpers (`homeScreenDI`, `cardScreenDI`, `compareScreenDI`). These helpers select API or mock implementations based on `DATA_SOURCE` environment variables.
 
-## Congratulations! :tada:
+#### Use Cases
 
-You've successfully run and modified your React Native App. :partying_face:
+Business logic lives in dedicated use case classes (e.g., `SearchCardNamesUseCase`) to keep logic consistent and reusable across features.
 
-### Now what?
+#### Repositories
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+**API Repositories:**
 
-# Troubleshooting
+- Call `PCPowerScoreAPI` endpoints (`GET /v1/cards/:name`, `POST /v1/compare`)
+- Transform DTOs using mapper classes (`SearchCardMapper`, `MatchResultMapper`)
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+**Database Repositories:**
 
-# Learn More
+- Use `CompareLocalDatabase` (op-sqlite) for local persistence
+- Convert database rows via mappers (`StoredCardMapper`, `ComparePreviewMapper`)
 
-To learn more about React Native, take a look at the following resources:
+#### Common Utilities
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+- `safeCall` / `safeCallWithFallback`: Standardized async error handling
+- `formatTimeAgo`: Human-readable timestamps
+- `ErrorMessage`: Consistent error display component
+
+---
+
+## Theming & Styling
+
+### Theme System
+
+- Light and dark themes defined in `src/common/styles/`
+- `ThemeProvider` automatically selects theme based on system preferences
+- Access theme via `useTheme()` hook
+
+### Style Hooks
+
+Components use feature-specific style hooks for theme-aware styling:
+
+- `useSearchBarStyles`
+- `useDuelCardStyles`
+- Navigation headers adapt to theme automatically
+
+### Design Tokens
+
+- Colors: Primary, secondary, background, text variants
+- Spacing: Consistent margins and padding scales
+- Typography: Standardized font sizes and weights
+
+---
+
+## Configuration & Environment
+
+### Environment Files
+
+- `.env` - Production configuration
+- `.env.dev` - Development configuration
+- `.env.mock` - Mock data configuration
+
+### Environment Variables
+
+- `API_BASE_URL`: Backend API endpoint
+- `DATA_SOURCE`: Selects real API vs. mock repositories
+
+### API Integration
+
+- `PCPowerScoreAPI` wraps HTTP communication
+- Mapper classes transform API responses to domain entities
+- Error handling via `safeCall` wrappers provides user-friendly messages
+
+---
+
+## Navigation
+
+Three main routes powered by React Navigation Native Stack:
+
+1. **Home** - Card search and comparison history
+2. **Card** - Detailed card information
+3. **Compare** - Side-by-side comparison results
+
+### Navigation Features
+
+- Large title behavior on Home screen
+- Safe area handling for iOS notches
+- Theme-aware header styling
+- Smooth transitions between screens
+
+---
+
+## Database
+
+### CompareLocalDatabase
+
+Uses `@op-engineering/op-sqlite` for local persistence:
+
+- Stores comparison history
+- Serializes card entities as JSON
+- Provides fast retrieval for recent matches
+
+### Database Operations
+
+- `DBSaveCardRepositoryImpl`: Serializes and saves card comparisons
+- `ComparePreviewMapper`: Converts database rows to preview entities
+- Efficient querying for history lists
+
+---
+
+## Testing
+
+### Test Stack
+
+- **Jest**: Test runner
+- **@testing-library/react-native**: Component testing utilities
+
+### Mocking
+
+Native modules are mocked in `__mocks__/`:
+
+- `react-native-config`
+- `@op-engineering/op-sqlite`
+
+### Test Coverage
+
+Current tests cover:
+
+- `useHomeScreenViewModel` logic
+- Repository mock interactions via `safeCall`
+
+**Extend testing** by adding suites for:
+
+- Compare and card viewModels
+- Mapper classes
+- API error scenarios
+
+---
+
+## Resources
+
+### React Native
+
+- [React Native Documentation](https://reactnative.dev/docs/getting-started)
+- [React Navigation](https://reactnavigation.org/docs/getting-started)
+- [Troubleshooting Guide](https://reactnative.dev/docs/troubleshooting)
+
+### Libraries
+
+- [op-sqlite Documentation](https://github.com/OP-Engineering/op-sqlite)
+- [React Native Config](https://github.com/luggit/react-native-config)
+
+---
+
+## 🧑‍💻 Author
+
+**k.angama**  
+[GitHub](https://github.com/k-angama) • [LinkedIn](https://www.linkedin.com/in/karim-angama)
