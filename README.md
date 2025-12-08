@@ -19,6 +19,16 @@ BattleDex lets you select any two Pokémon cards and instantly see which one win
 
 ---
 
+## Screenshots
+
+<p align="center">
+  <img src="./resources/screenshot-android-1.png" alt="BattleDex search screen" width="30%" />
+  <img src="./resources/screenshot-android-2.png" alt="BattleDex comparison results" width="30%" />
+  <img src="./resources/screenshot-android-3.png" alt="BattleDex card detail view" width="30%" />
+</p>
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -221,12 +231,15 @@ Components use feature-specific style hooks for theme-aware styling:
 
 - `API_BASE_URL`: Backend API endpoint
 - `DATA_SOURCE`: Selects real API vs. mock repositories
+- `API_KEY`: Public identifier sent via `X-Api-Key`
+- `API_SECRET`: Shared secret for HMAC signing
 
 ### API Integration
 
 - `PCPowerScoreAPI` wraps HTTP communication
 - Mapper classes transform API responses to domain entities
 - Error handling via `safeCall` wrappers provides user-friendly messages
+- Remote API calls attach `X-Api-Key`, `X-Date`, `X-Nonce`, and `X-Signature` headers signed with HMAC-SHA256
 
 ---
 
