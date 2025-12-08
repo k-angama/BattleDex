@@ -1,5 +1,6 @@
 import Config from 'react-native-config';
 import { CardEntity } from '../../features/home/domaine/entities/CardEntity';
+import { hmacValid } from '../utils/hmacValid';
 import { RawCard, RawMatchResult, RawSearchCard } from './types';
 
 type HttpMethod = 'GET' | 'POST';
@@ -15,12 +16,24 @@ export class PCPowerScoreAPI {
     method: HttpMethod,
     body?: unknown,
   ): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: body ? JSON.stringify(body) : undefined,
-    });
+    const requestUrl = this.buildUrl(path);
+    const serializedBody =
+      body === undefined ? undefined : JSON.stringify(body);
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
 
+    Object.assign(
+      headers,
+      this.buildSignatureHeaders(method, path, serializedBody),
+    );
+
+    const response = await fetch(requestUrl, {
+      method,
+      headers,
+      body: serializedBody,
+    });
+    console.log('response', response);
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status}`);
     }
@@ -47,5 +60,22 @@ export class PCPowerScoreAPI {
       card1,
       card2,
     });
+  }
+
+  private buildUrl(path: string) {
+    const normalizedBase = this.baseUrl.replace(/\/+$/, '');
+    const normalizedPath = path.startsWith('/') ? path : `/${path}`;
+    return `${normalizedBase}${normalizedPath}`;
+  }
+
+  private buildSignatureHeaders(
+    method: HttpMethod,
+    url: string,
+    body?: string,
+  ) {
+    const secret = Config.API_SECRET as string;
+    const apiKey = Config.API_KEY as string;
+
+    return hmacValid(secret, apiKey, method, url, body);
   }
 }
