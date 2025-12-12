@@ -1,15 +1,13 @@
 import Config from 'react-native-config';
 import { CardEntity } from '../../features/home/domaine/entities/CardEntity';
 import { hmacValid } from '../utils/hmacValid';
+import { getAcceptLanguage } from '../utils/locale';
 import { RawCard, RawMatchResult, RawSearchCard } from './types';
 
 type HttpMethod = 'GET' | 'POST';
 
 export class PCPowerScoreAPI {
-  constructor(
-    private readonly baseUrl: string = Config.API_BASE_URL ??
-      'https://api.example.com',
-  ) {}
+  constructor(private readonly baseUrl: string = Config.API_BASE_URL ?? '') {}
 
   private async request<T>(
     path: string,
@@ -21,6 +19,7 @@ export class PCPowerScoreAPI {
       body === undefined ? undefined : JSON.stringify(body);
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
+      'Accept-Language': getAcceptLanguage(),
     };
 
     Object.assign(
@@ -33,7 +32,7 @@ export class PCPowerScoreAPI {
       headers,
       body: serializedBody,
     });
-    console.log('response', response);
+
     if (!response.ok) {
       throw new Error(`Request failed with status ${response.status}`);
     }
