@@ -3,6 +3,9 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
+import java.util.Properties
+import java.io.FileInputStream
+
 /**
  * This is the configuration block to customize your React Native Android app.
  * By default you don't need to apply any configuration, just uncomment the lines you need.
@@ -73,6 +76,10 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -93,6 +100,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            create("config") {
+                storeFile file(keystoreProperties["MYAPP_UPLOAD_STORE_FILE"] as String)
+                storePassword keystoreProperties["MYAPP_UPLOAD_STORE_PASSWORD"] as String
+                keyAlias keystoreProperties["MYAPP_UPLOAD_KEY_ALIAS"] as String
+                keyPassword keystoreProperties["MYAPP_UPLOAD_KEY_PASSWORD"] as String
+            }
+        }
     }
     buildTypes {
         debug {
@@ -101,9 +116,9 @@ android {
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig = signingConfigs.getByName("config")
         }
     }
 }
