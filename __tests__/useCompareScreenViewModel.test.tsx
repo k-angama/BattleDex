@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
+import { act } from 'react';
 import { CompareCardRepository } from '../src/features/compare/domaine/CompareCardRepository';
 import { DBSaveCardRepository } from '../src/features/compare/domaine/DBSaveCardRepository';
 import { MatchResultEntity } from '../src/features/compare/domaine/entities/MatchResultEntity';
@@ -52,7 +53,7 @@ describe('useCompareScreenViewModel', () => {
       }),
     );
 
-    await result.current.compareCards(cardA, cardB);
+    await act(() => result.current.compareCards(cardA, cardB));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(repo.compareCards).toHaveBeenCalledWith(cardA, cardB);
@@ -71,7 +72,7 @@ describe('useCompareScreenViewModel', () => {
       }),
     );
 
-    await result.current.compareCards(cardA, cardB);
+    await act(() => result.current.compareCards(cardA, cardB));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(result.current.result).toBeNull();

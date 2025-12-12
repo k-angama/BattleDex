@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
+import { act } from 'react';
 import { GetDetailCardRepository } from '../src/features/card/domain/GetDetailCardRepository';
 import { useCardScreenViewModel } from '../src/features/card/presentation/useCardScreenViewModel';
 import { CardEntity } from '../src/features/home/domaine/entities/CardEntity';
@@ -37,7 +38,7 @@ describe('useCardScreenViewModel', () => {
       useCardScreenViewModel({ repository: repo, useCase }),
     );
 
-    await result.current.getDetailFirstCard('1');
+    await act(() => result.current.getDetailFirstCard('1'));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(repo.getCardById).toHaveBeenCalledWith('1');
@@ -49,7 +50,7 @@ describe('useCardScreenViewModel', () => {
       useCardScreenViewModel({ repository: repo, useCase }),
     );
 
-    await result.current.getDetailSecondCard('2');
+    await act(() => result.current.getDetailSecondCard('2'));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(repo.getCardById).toHaveBeenCalledWith('2');
@@ -62,7 +63,7 @@ describe('useCardScreenViewModel', () => {
       useCardScreenViewModel({ repository: repo, useCase }),
     );
 
-    await result.current.getDetailFirstCard('1');
+    await act(() => result.current.getDetailFirstCard('1'));
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     await waitFor(() => expect(result.current.errorMessage).toBeTruthy());
@@ -73,7 +74,7 @@ describe('useCardScreenViewModel', () => {
       useCardScreenViewModel({ repository: repo, useCase }),
     );
 
-    await result.current.searchCardNames('pika');
+    await act(() => result.current.searchCardNames('pika'));
     await waitFor(() => expect(result.current.isLoadingSearch).toBe(false));
 
     expect(useCase.execute).toHaveBeenCalledWith('pika');
@@ -85,8 +86,7 @@ describe('useCardScreenViewModel', () => {
       useCardScreenViewModel({ repository: repo, useCase }),
     );
 
-    await result.current.searchCardNames('pi');
-
+    await act(() => result.current.searchCardNames('pi'));
     expect(useCase.execute).not.toHaveBeenCalled();
     expect(result.current.cardNames).toEqual([]);
     expect(result.current.isLoadingSearch).toBe(false);
