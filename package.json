@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "release:android": "ENVFILE=.env.dev react-native run-android -- --mode=\"release\"",
+    "release:android": "ENVFILE=.env.dev react-native run-android --mode=release",
     "build:android": "ENVFILE=.env.prod react-native build-android --mode=release",
     "mock:android": "ENVFILE=.env.mock npx react-native run-android",
     "dev:android": "ENVFILE=.env.dev npx react-native run-android",
@@ -21,6 +21,7 @@
     "test": "jest",
     "lint:fix": "eslint . --fix ",
     "format": "prettier --write .",
+    "clean": "watchman watch-del-all && cd android && ./gradlew clean && cd ..",
     "postinstall": "patch-package"
   },
   "dependencies": {

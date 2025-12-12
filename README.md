@@ -103,6 +103,22 @@ The Metro bundler starts automatically with these commands.
 | `npm run emu:list`  | List available emulators      |
 | `npm run emu:start` | Start Pixel_2_API_29 emulator |
 
+### Android Signing Setup
+
+Release builds read signing credentials from `android/keystore.properties`, which in turn is loaded by `android/app/build.gradle`. Before generating a release APK/AAB:
+
+1. Place your keystore file (for example `release.keystore`) inside `android/app/` or provide an absolute path.
+2. Create `android/keystore.properties` with the following keys matching your keystore:
+
+   ```properties
+   MYAPP_UPLOAD_STORE_FILE=release.keystore
+   MYAPP_UPLOAD_KEY_ALIAS=your_key_alias
+   MYAPP_UPLOAD_STORE_PASSWORD=your_store_password
+   MYAPP_UPLOAD_KEY_PASSWORD=your_key_password
+   ```
+
+3. Keep `keystore.properties` and the keystore file out of version control—they contain sensitive credentials.
+
 ### Code Quality
 
 | Command            | Description               |
