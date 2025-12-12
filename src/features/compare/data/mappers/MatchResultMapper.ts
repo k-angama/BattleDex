@@ -8,7 +8,6 @@ import { MatchResultEntity } from '../../domaine/entities/MatchResultEntity';
 
 export class MatchResultMapper {
   static toEntity(dto: RawMatchResult): MatchResultEntity {
-    console.log('mapRawCardResult', this.mapRawCardResult(dto.winnerCard));
     return {
       winnerCard: this.mapRawCardResult(dto.winnerCard),
       loserCard: this.mapRawCardResult(dto.loserCard),

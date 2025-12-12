@@ -42,9 +42,6 @@ export function HomeScreen() {
 
   React.useEffect(() => {
     if (route.params) {
-      // Post updated, do something with `route.params.post`
-      // For example, send the post to the server
-      console.log('New post: ' + route.params.isReloadData);
       if (route.params.isReloadData) {
         getCompareCards();
         navigation.setParams({ isReloadData: false });

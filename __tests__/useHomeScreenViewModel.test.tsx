@@ -1,4 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
+import { act } from 'react';
 import { DataBaseCardsRepository } from '../src/features/home/domaine/DataBaseCardsRepository';
 import { CompareCardsPreviewEntity } from '../src/features/home/domaine/entities/CompareCardsPreviewEntity';
 import { SearchCardSuggestionEntity } from '../src/features/home/domaine/entities/SearchCardSuggestionEntity';
@@ -73,7 +74,7 @@ describe('useHomeScreenViewModel', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    await result.current.searchCardNames('pika');
+    await act(() => result.current.searchCardNames('pika'));
 
     await waitFor(() => expect(result.current.isLoadingSearch).toBe(false));
     await waitFor(() =>
@@ -89,7 +90,7 @@ describe('useHomeScreenViewModel', () => {
       useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
     );
 
-    await result.current.searchCardNames('pi');
+    await act(() => result.current.searchCardNames('pi'));
 
     expect(mockUseCase.execute).not.toHaveBeenCalled();
     expect(result.current.cardNames).toEqual([]);
