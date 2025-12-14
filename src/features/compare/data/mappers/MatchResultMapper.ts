@@ -14,33 +14,15 @@ export class MatchResultMapper {
     };
   }
 
-  static fromEntity(entity: MatchResultEntity): RawMatchResult {
-    return {
-      winnerCard: this.mapEntityResult(entity.winnerCard),
-      loserCard: this.mapEntityResult(entity.loserCard),
-      winnerCardId: entity.winnerCard.detail.id,
-    };
-  }
-
   private static mapRawCardResult(
     raw: RawCardResult,
   ): MatchResultEntity['winnerCard'] {
     return {
-      score: raw.score,
-      offensivePower: raw.offensivePower,
-      defensivePower: raw.defensivePower,
+      powerScore: raw.score.toFixed(1),
+      staticPowerScore: '0',
+      finalHp: '0',
+      damageDealtp: '0',
       detail: this.mapRawCard(raw.detail),
-    };
-  }
-
-  private static mapEntityResult(
-    result: MatchResultEntity['winnerCard'],
-  ): RawCardResult {
-    return {
-      score: result.score,
-      offensivePower: result.offensivePower,
-      defensivePower: result.defensivePower,
-      detail: this.mapCardEntity(result.detail),
     };
   }
 
@@ -54,19 +36,6 @@ export class MatchResultMapper {
       attacks: raw.attacks ?? [],
       weaknesses: raw.weaknesses ?? [],
       resistances: raw.resistances ?? [],
-    };
-  }
-
-  private static mapCardEntity(card: CardEntity): RawCard {
-    return {
-      id: card.id,
-      name: card.name,
-      type: card.type,
-      hp: card.hp,
-      imageUrl: card.imageUrl,
-      attacks: card.attacks,
-      weaknesses: card.weaknesses,
-      resistances: card.resistances,
     };
   }
 }

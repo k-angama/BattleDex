@@ -14,15 +14,22 @@ export interface CardEntity {
 export interface CardAttackEntity {
   name: string;
   damage: number;
-  energyCost: number;
+  cost: CardCostEntity[];
+}
+
+export interface CardCostEntity {
+  type: string;
+  name: string;
 }
 
 export interface CardResistancesEntity {
   type: string;
+  name: string;
   value: string;
 }
 
 export interface CardWeaknessesEntity {
   type: string;
+  name: string;
   value: string;
 }

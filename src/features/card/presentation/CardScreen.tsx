@@ -1,9 +1,10 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../../../App';
+import { Button } from '../../../common/components/BDButton';
 import { Skeleton } from '../../../common/components/Skeleton';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { CardSelectorBottomSheet } from './components/CardSelectorBottomSheet';
@@ -186,16 +187,11 @@ export function CardScreen() {
         <Skeleton isLoading={isLoading}>
           <View style={styles.actionContainer}>
             {!selectedCard && (
-              <TouchableOpacity
+              <Button
+                title="⚔️ Compare with Another Card"
                 onPress={handleCompare}
-                style={styles.compareButton}
-                activeOpacity={0.8}
                 disabled={errorMessage !== null}
-              >
-                <Text style={styles.compareButtonText}>
-                  ⚔️ Compare with Another Card
-                </Text>
-              </TouchableOpacity>
+              />
             )}
 
             <Text style={styles.hintText}>
@@ -205,22 +201,20 @@ export function CardScreen() {
             </Text>
 
             {selectedCard && (
-              <TouchableOpacity
-                style={styles.changeOpponentButton}
+              <Button
+                title="Change opponent"
+                variant="text"
+                size="sm"
                 onPress={handleCompare}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.changeOpponentText}>Change opponent</Text>
-              </TouchableOpacity>
+                style={styles.changeOpponentButton}
+              />
             )}
             {selectedCard && (
-              <TouchableOpacity
-                style={styles.compareNowButton}
+              <Button
+                title="Compare Now"
+                variant="secondary"
                 onPress={handleCompareNow}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.compareNowText}>Compare Now</Text>
-              </TouchableOpacity>
+              />
             )}
           </View>
         </Skeleton>

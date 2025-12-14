@@ -6,8 +6,9 @@ export interface MatchResultEntity {
 }
 
 interface CardResultEntity {
-  score: number;
-  offensivePower: number;
-  defensivePower: number;
+  powerScore: string;
+  staticPowerScore: string;
+  finalHp: string;
+  damageDealtp: string;
   detail: CardEntity;
 }

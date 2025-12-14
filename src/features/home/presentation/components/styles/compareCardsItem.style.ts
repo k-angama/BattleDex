@@ -8,12 +8,8 @@ export const useStyles = () => {
     () =>
       StyleSheet.create({
         container: {
-          backgroundColor: theme.colors.surface,
-          borderRadius: theme.radius.lg,
           marginVertical: theme.spacing.sm,
           marginHorizontal: theme.spacing.lg,
-          overflow: 'hidden',
-          ...theme.shadow.card,
         },
         timeBadge: {
           position: 'absolute',
@@ -40,8 +36,6 @@ export const useStyles = () => {
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: theme.spacing.xl,
-          paddingTop: theme.spacing.xxl,
         },
         cardBox: {
           width: '40%',
@@ -110,25 +104,12 @@ export const useStyles = () => {
           width: 60,
         },
         vsCircle: {
-          width: 56,
-          height: 56,
-          borderRadius: theme.radius.xl,
           backgroundColor: theme.colors.card,
-          alignItems: 'center',
-          justifyContent: 'center',
-          borderWidth: 3,
-          borderColor: theme.colors.border,
           shadowColor: theme.colors.textDark,
           shadowOpacity: 0.1,
           shadowRadius: 4,
           shadowOffset: { width: 0, height: 2 },
           elevation: 3,
-        },
-        vsText: {
-          fontWeight: '900',
-          fontSize: 18,
-          color: theme.colors.textDark,
-          letterSpacing: 1,
         },
         vsLine: {
           position: 'absolute',
@@ -137,22 +118,6 @@ export const useStyles = () => {
           backgroundColor: theme.colors.border,
           zIndex: -1,
         },
-        /*footer: {
-          backgroundColor: theme.colors.background,
-          paddingVertical: theme.spacing.sm,
-          alignItems: 'center',
-          borderTopWidth: 1,
-          borderTopColor: theme.colors.border,
-        },
-        tapHint: {
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.xs,
-        },
-        tapHintText: {
-          fontSize: theme.typography.size.xs,
-          color: theme.colors.textMuted,
-          fontWeight: '500',
-        },*/
       }),
     [theme],
   );
