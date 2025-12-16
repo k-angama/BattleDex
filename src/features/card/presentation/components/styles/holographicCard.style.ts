@@ -12,7 +12,8 @@ export const useHolographicCardStyles = () => {
           justifyContent: 'center',
         },
         canvas: {
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radius.sm,
+          overflow: 'hidden',
         },
       }),
     [theme],

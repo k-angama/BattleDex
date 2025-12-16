@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Platform } from 'react-native';
 import {
   SafeAreaView,
@@ -40,7 +40,7 @@ export function HomeScreen() {
     getCompareCards,
   } = viewModel;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (route.params) {
       if (route.params.isReloadData) {
         getCompareCards();

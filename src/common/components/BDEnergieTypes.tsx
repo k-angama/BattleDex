@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import {
   CardResistancesEntity,
   CardWeaknessesEntity,
 } from '../../features/home/domaine/entities/CardEntity';
 import { useTheme } from '../../styles';
 import * as Constants from '../utils/constants';
+import { BDTypography } from './BDTypography';
 
 type BDEnergieTypeProps = {
   type?: (CardResistancesEntity | CardWeaknessesEntity)[];
@@ -18,7 +19,9 @@ export function BDEnergieType({ type }: BDEnergieTypeProps) {
   if (!type || type.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>N/A</Text>
+        <BDTypography variant="label" numberOfLines={1}>
+          N/A
+        </BDTypography>
       </View>
     );
   }
@@ -34,10 +37,12 @@ export function BDEnergieType({ type }: BDEnergieTypeProps) {
     <View style={[styles.container, styles.multiline]}>
       {type.map((entry, index) => (
         <View key={`${entry.type}-${index}`} style={styles.row}>
-          <Text style={styles.emoji}>{getEmoji(entry.type)}</Text>
-          <Text numberOfLines={1} style={styles.label}>
+          <BDTypography style={styles.emoji}>
+            {getEmoji(entry.type)}
+          </BDTypography>
+          <BDTypography variant="label" numberOfLines={1}>
             {entry.name} {entry.value}
-          </Text>
+          </BDTypography>
         </View>
       ))}
     </View>
@@ -61,11 +66,5 @@ const createStyles = (theme: ReturnType<typeof useTheme>['theme']) =>
     emoji: {
       marginRight: theme.spacing.xs,
       height: 24,
-    },
-    label: {
-      fontSize: theme.typography.size.sm,
-      color: theme.colors.text,
-
-      fontFamily: theme.typography.family.medium,
     },
   });

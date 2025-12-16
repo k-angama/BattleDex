@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { Text } from 'react-native-gesture-handler';
 import { useTheme } from '../../styles';
+import { BDTypography } from './BDTypography';
 
 type BDCardProps = {
   title?: string;
@@ -14,7 +14,15 @@ export function BDCard({ children, title, style, styleTitle }: BDCardProps) {
   const styles = useStyles();
   return (
     <View style={[styles.container, style]}>
-      {title && <Text style={[styles.text, styleTitle]}>{title}</Text>}
+      {title && (
+        <BDTypography
+          style={[styles.text, styleTitle]}
+          variant="subtitle"
+          weight="bold"
+        >
+          {title}
+        </BDTypography>
+      )}
       {children}
     </View>
   );
@@ -35,9 +43,6 @@ export const useStyles = () => {
         text: {
           marginBottom: theme.spacing.sm,
           marginTop: -theme.spacing.sm,
-          fontFamily: theme.typography.family.semibold,
-          fontSize: theme.typography.size.md,
-          color: theme.colors.text,
         },
       }),
     [theme],

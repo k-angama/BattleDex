@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import { Theme, useTheme } from '../../styles';
+import { BDTypography } from './BDTypography';
 
 type CircularBadgeVariant = 'normal' | 'neutral';
 
@@ -35,9 +36,9 @@ export function BDCircularBadge({
         style,
       ]}
     >
-      <Text style={[baseStyles.label, resolvedVariant.text, textStyle]}>
+      <BDTypography style={[baseStyles.label, resolvedVariant.text, textStyle]}>
         {label}
-      </Text>
+      </BDTypography>
     </View>
   );
 }
@@ -52,7 +53,7 @@ const createBaseStyles = (theme: Theme) =>
       elevation: 8,
     },
     label: {
-      fontSize: theme.typography.size.md,
+      fontSize: theme.typography.size.xl,
       fontWeight: '900',
       fontFamily: theme.typography.family.bold,
       textTransform: 'uppercase',

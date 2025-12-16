@@ -20,23 +20,20 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { Skeleton } from '../../../../common/components/Skeleton';
 import { useHolographicCardStyles } from './styles/holographicCard.style';
 
 interface HolographicCardProps {
   imageUrl: string;
   width: number;
-  isLoading?: boolean;
 }
 
 export const HolographicCard: React.FC<HolographicCardProps> = ({
   imageUrl,
   width,
-  isLoading = false,
 }) => {
   const styles = useHolographicCardStyles();
 
-  const height = width * (4 / 3); // Card aspect ratio
+  const height = width * (4 / 2.9); // Card aspect ratio
 
   const glareX = useSharedValue(width / 2);
   const glareY = useSharedValue(height / 2);
@@ -140,49 +137,49 @@ export const HolographicCard: React.FC<HolographicCardProps> = ({
   return (
     <GestureHandlerRootView style={styles.gestureContainer}>
       <GestureDetector gesture={panGesture}>
-        <Animated.View style={[{ width, height }, animatedStyle]}>
-          <Skeleton isLoading={isLoading}>
-            <Canvas style={[{ width, height }, styles.canvas]}>
-              {/* Base card image */}
-              {image && (
-                <Image
-                  image={image}
-                  x={0}
-                  y={0}
-                  width={width}
-                  height={height}
-                  fit="cover"
-                />
-              )}
+        <Animated.View
+          style={[[{ width, height }, styles.canvas], animatedStyle]}
+        >
+          <Canvas style={[{ width, height }]}>
+            {/* Base card image */}
+            {image && (
+              <Image
+                image={image}
+                x={0}
+                y={0}
+                width={width}
+                height={height}
+                fit="cover"
+              />
+            )}
 
-              {/* Shine effect - Dynamic gradient based on tilt */}
-              <Rect x={0} y={0} width={width} height={height}>
-                <LinearGradient
-                  start={gradientPoints.start}
-                  end={gradientPoints.end}
-                  colors={[
-                    'rgba(255, 255, 255, 0.2)',
-                    'rgba(200, 200, 255, 0.15)',
-                    'rgba(255, 200, 200, 0.15)',
-                    'rgba(0, 0, 0, 0.1)',
-                  ]}
-                />
-              </Rect>
+            {/* Shine effect - Dynamic gradient based on tilt */}
+            <Rect x={0} y={0} width={width} height={height}>
+              <LinearGradient
+                start={gradientPoints.start}
+                end={gradientPoints.end}
+                colors={[
+                  'rgba(255, 255, 255, 0.2)',
+                  'rgba(200, 200, 255, 0.15)',
+                  'rgba(255, 200, 200, 0.15)',
+                  'rgba(0, 0, 0, 0.1)',
+                ]}
+              />
+            </Rect>
 
-              {/* Glare effect - follows finger position */}
-              <Rect x={0} y={0} width={width} height={height}>
-                <LinearGradient
-                  start={glarePoints.start}
-                  end={glarePoints.end}
-                  colors={[
-                    'rgba(255, 255, 255, 0.6)',
-                    'rgba(255, 255, 255, 0.0)',
-                  ]}
-                />
-                <Blur blur={20} />
-              </Rect>
-            </Canvas>
-          </Skeleton>
+            {/* Glare effect - follows finger position */}
+            <Rect x={0} y={0} width={width} height={height}>
+              <LinearGradient
+                start={glarePoints.start}
+                end={glarePoints.end}
+                colors={[
+                  'rgba(255, 255, 255, 0.6)',
+                  'rgba(255, 255, 255, 0.0)',
+                ]}
+              />
+              <Blur blur={20} />
+            </Rect>
+          </Canvas>
         </Animated.View>
       </GestureDetector>
     </GestureHandlerRootView>

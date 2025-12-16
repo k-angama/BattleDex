@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
+import { BDTypography } from '../../../../common/components/BDTypography';
 import { useTheme } from '../../../../styles';
 
 export type StatsRowProps = {
@@ -22,19 +23,37 @@ export function StatsRow({
         {React.isValidElement(labelStart) ? (
           labelStart
         ) : (
-          <Text style={[styles.statValue]}>{labelStart}</Text>
+          <BDTypography
+            variant="label"
+            style={styles.statValue}
+            numberOfLines={1}
+          >
+            {labelStart}
+          </BDTypography>
         )}
       </View>
 
       <View style={styles.statLabel}>
-        <Text style={styles.statLabelText}>{labelMiddle}</Text>
+        <BDTypography
+          variant="caption"
+          style={styles.statLabelText}
+          numberOfLines={1}
+        >
+          {labelMiddle}
+        </BDTypography>
       </View>
 
       <View style={[styles.statCell]}>
         {React.isValidElement(labelEnd) ? (
           labelEnd
         ) : (
-          <Text style={[styles.statValue]}>{labelEnd}</Text>
+          <BDTypography
+            variant="label"
+            style={[styles.statValue]}
+            numberOfLines={1}
+          >
+            {labelEnd}
+          </BDTypography>
         )}
       </View>
     </View>
@@ -65,12 +84,9 @@ const useStyles = () => {
         },
         statLabelText: {
           fontSize: theme.typography.size.xs,
-          fontWeight: '600',
           color: theme.colors.textSecondary,
         },
         statValue: {
-          fontSize: theme.typography.size.md,
-          fontWeight: '600',
           color: theme.colors.text,
         },
       }),

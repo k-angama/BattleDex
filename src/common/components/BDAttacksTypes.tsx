@@ -1,17 +1,24 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import { CardAttackEntity } from '../../features/home/domaine/entities/CardEntity';
-import { useTheme } from '../../styles';
+import { Theme, useTheme } from '../../styles';
 import * as Constants from '../utils/constants';
 import { BDDivider } from './BDDivider';
+import { BDTypography } from './BDTypography';
+
+type DisplayAttacks = 'column' | 'row';
 
 type BDAttacksTypesProps = {
   attacks?: CardAttackEntity[];
+  diplay?: DisplayAttacks;
 };
 
-export function BDAttacksTypes({ attacks }: BDAttacksTypesProps) {
+export function BDAttacksTypes({ attacks, diplay }: BDAttacksTypesProps) {
   const { theme } = useTheme();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const displayStyles = useMemo(() => createDisplayStyles(theme), [theme]);
+
+  const resolvedDisplay = displayStyles[diplay ?? 'column'];
 
   if (!attacks || attacks.length === 0) {
     return (
@@ -31,34 +38,40 @@ export function BDAttacksTypes({ attacks }: BDAttacksTypesProps) {
   return (
     <View style={[styles.container, styles.multiline]}>
       {attacks.map((attack, attackIndex) => (
-        <>
+        <React.Fragment key={`${attack.name}-${attackIndex}`}>
           <View
-            style={[styles.containerRow]}
+            style={[styles.containerRow, resolvedDisplay.container]}
             key={`${attack.name}-${attackIndex}`}
           >
             <View key={`${attack.name}-${attackIndex}`} style={[styles.row]}>
               {attack.cost.map((entry, costIndex) => (
-                <Text
+                <BDTypography
+                  variant="label"
                   key={`${entry.type}-${attackIndex}-${costIndex}`}
                   style={styles.emoji}
                 >
                   {getEmoji(entry.type)}
-                </Text>
+                </BDTypography>
               ))}
             </View>
-            <Text style={styles.label} numberOfLines={1}>
+            <BDTypography variant="label" numberOfLines={1}>
               {attack.name}
-            </Text>
-            <Text style={styles.label}>{attack.damage}</Text>
+            </BDTypography>
+            <BDTypography
+              variant="label"
+              style={[styles.label, resolvedDisplay.label]}
+            >
+              {attack.damage}
+            </BDTypography>
           </View>
           {attackIndex < attacks.length - 1 && <BDDivider />}
-        </>
+        </React.Fragment>
       ))}
     </View>
   );
 }
 
-const createStyles = (theme: ReturnType<typeof useTheme>['theme']) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flexDirection: 'column',
@@ -69,13 +82,11 @@ const createStyles = (theme: ReturnType<typeof useTheme>['theme']) =>
       gap: theme.spacing.sm,
     },
     containerRow: {
-      flexDirection: 'column',
       alignItems: 'center',
     },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
-      width: '100%',
       justifyContent: 'center',
     },
     lastRow: {
@@ -84,9 +95,23 @@ const createStyles = (theme: ReturnType<typeof useTheme>['theme']) =>
     emoji: {
       height: 24,
     },
-    label: {
-      fontSize: theme.typography.size.sm,
-      color: theme.colors.text,
-      fontFamily: theme.typography.family.medium,
-    },
+    label: {},
   });
+
+const createDisplayStyles = (theme: Theme) => ({
+  column: {
+    container: {
+      flexDirection: 'column',
+    } as ViewStyle,
+    label: {} as ViewStyle,
+  },
+  row: {
+    container: {
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
+    } as ViewStyle,
+    label: {
+      marginLeft: 'auto',
+    } as ViewStyle,
+  },
+});

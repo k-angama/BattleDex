@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, TextStyle, View, ViewStyle } from 'react-native';
+import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
 import { Theme, useTheme } from '../../styles';
+import { BDTypography } from './BDTypography';
 
 type BadgeVariant = 'winner' | 'loser' | 'info' | 'neutral';
 type BadgeSize = 'sm' | 'md';
@@ -37,16 +38,18 @@ export function BDBadge({
         style,
       ]}
     >
-      <Text
+      <BDTypography
+        numberOfLines={1}
         style={[
           baseStyles.label,
           resolvedVariant.text,
           resolvedSize.text,
           textStyle,
         ]}
+        variant="label"
       >
         {label}
-      </Text>
+      </BDTypography>
     </View>
   );
 }
@@ -60,6 +63,7 @@ const createBaseStyles = (theme: Theme) =>
     label: {
       fontFamily: theme.typography.family.bold,
       letterSpacing: 0.8,
+      textAlign: 'center',
     },
   });
 

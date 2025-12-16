@@ -15,53 +15,34 @@ export const useStyles = () => {
           flex: 1,
           justifyContent: 'space-between',
         },
+        scrollContent: {
+          marginHorizontal: theme.spacing.lg,
+          paddingBottom: theme.spacing.lg,
+          gap: theme.spacing.lg,
+        },
         cardContainer: {
           flex: 1,
-          alignItems: 'center',
-          marginHorizontal: theme.spacing.lg,
         },
-        cardSubtitle: {
-          fontSize: theme.typography.size.sm,
-          color: theme.colors.textSecondary,
-          marginBottom: theme.spacing.lg,
-        },
-        infoContainer: {
-          marginTop: theme.spacing.xl,
-          marginBottom: theme.spacing.lg,
-          width: '100%',
-        },
-        infoRow: {
+        containerLastInfo: {
           flexDirection: 'row',
-          justifyContent: 'center',
-          gap: theme.spacing.md,
-        },
-        infoBadge: {
-          flex: 1,
-          backgroundColor: theme.colors.card,
-          borderRadius: theme.radius.md,
-          paddingVertical: theme.spacing.md,
-          paddingHorizontal: theme.spacing.lg,
-          minWidth: 100,
+          justifyContent: 'space-between',
           alignItems: 'center',
-          borderWidth: 2,
-          borderColor: theme.colors.border,
         },
-        infoBadgeLabel: {
-          fontSize: theme.typography.size.xs,
-          color: theme.colors.textSecondary,
-          fontWeight: '600',
-          textTransform: 'uppercase',
-          letterSpacing: 0.5,
-        },
-        infoBadgeValue: {
-          fontSize: theme.typography.size.sm,
-          fontWeight: '700',
-          color: theme.colors.text,
-          marginTop: theme.spacing.xs,
+        containerInfo: {
+          gap: theme.spacing.sm,
         },
         actionContainer: {
           paddingHorizontal: theme.spacing.xl,
-          paddingBottom: theme.spacing.xl,
+          paddingVertical: theme.spacing.xl,
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: theme.colors.background,
+          shadowOpacity: 0.15,
+          shadowRadius: 8,
+          shadowOffset: { width: 0, height: 3 },
+          elevation: 8,
         },
         hintText: {
           fontSize: theme.typography.size.xs,
@@ -104,6 +85,14 @@ export const useStyles = () => {
         changeOpponentButton: {
           marginBottom: theme.spacing.xl,
         },
+        containerNameTag: {
+          flexDirection: 'row',
+          flexShrink: 1,
+          paddingHorizontal: theme.spacing.lg,
+          gap: theme.spacing.md,
+          marginBottom: theme.spacing.lg,
+        },
+        nameTag: { flex: 1 },
       }),
     [theme],
   );

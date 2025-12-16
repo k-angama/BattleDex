@@ -3,13 +3,13 @@ import {
   ActivityIndicator,
   GestureResponderEvent,
   StyleSheet,
-  Text,
   TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
 import { Theme, useTheme } from '../../styles';
+import { BDTypography } from './BDTypography';
 
 type ButtonVariant = 'primary' | 'secondary' | 'text';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -82,7 +82,8 @@ export function Button({
               {leftIcon}
             </View>
           )}
-          <Text
+          <BDTypography
+            variant="label"
             style={[
               baseStyles.title,
               currentVariant.text,
@@ -92,7 +93,7 @@ export function Button({
             ]}
           >
             {title}
-          </Text>
+          </BDTypography>
           {rightIcon && (
             <View style={[baseStyles.icon, baseStyles.rightIcon]}>
               {rightIcon}

@@ -1,6 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
 import React, { useEffect } from 'react';
 import { Animated, Image, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,8 +10,7 @@ import { BDCard } from '../../../common/components/BDCard';
 import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
 import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
-import { Skeleton } from '../../../common/components/Skeleton';
-import { StatsHeader } from './components/StatsHeader';
+import { CompareScreenSkeleton } from './components/CompareScreenSkeleton';
 import { StatsRow } from './components/StatsRow';
 import { StatsTable } from './components/StatsTable';
 import { useStyles } from './styles/compareScreen.style';
@@ -75,18 +73,8 @@ export function CompareScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {isLoading && (
-          <>
-            <Text style={styles.statusText}>Calculating comparison...</Text>
-            <LottieView
-              source={require('../../../../assets/animations/red-lightning.json')}
-              style={styles.loaderAnimation}
-              autoPlay
-              loop
-            />
-          </>
-        )}
-        {errorMessage ? (
+        {isLoading && <CompareScreenSkeleton />}
+        {!isLoading && errorMessage ? (
           <>
             <Text style={styles.errorText}>{errorMessage}</Text>
             <ErrorMessage
@@ -96,168 +84,135 @@ export function CompareScreen() {
               }}
             />
           </>
-        ) : (
+        ) : !isLoading ? (
           <>
             {/* ========== ARENA (Cards + VS) ========== */}
-            {!isLoading && (
-              <View style={styles.battleArena}>
-                {/* Loser Card */}
-                <Animated.View
-                  style={[
-                    styles.cardWrapper,
-                    styles.cardLeft,
-                    {
-                      transform: [
-                        { rotate: '-15deg' },
-                        { scale: leftCardScale },
-                      ],
-                    },
-                  ]}
-                >
-                  <View style={styles.card}>
-                    <Image
-                      source={{ uri: loserDisplay.imageUrl ?? '' }}
-                      style={styles.cardImage}
-                    />
-                  </View>
-                </Animated.View>
+            <View style={styles.battleArena}>
+              {/* Loser Card */}
+              <Animated.View
+                style={[
+                  styles.cardWrapper,
+                  styles.cardLeft,
+                  {
+                    transform: [{ rotate: '-15deg' }, { scale: leftCardScale }],
+                  },
+                ]}
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: loserDisplay.imageUrl ?? '' }}
+                    style={styles.cardImage}
+                  />
+                </View>
+              </Animated.View>
 
-                {/* Winner Card */}
-                <Animated.View
-                  style={[
-                    styles.cardWrapper,
-                    styles.cardRight,
-                    {
-                      transform: [
-                        { rotate: '15deg' },
-                        { scale: rightCardScale },
-                      ],
-                    },
-                  ]}
-                >
-                  <View style={styles.card}>
-                    <Image
-                      source={{ uri: winnerDisplay.imageUrl ?? '' }}
-                      style={styles.cardImage}
-                    />
-                  </View>
-                </Animated.View>
+              {/* Winner Card */}
+              <Animated.View
+                style={[
+                  styles.cardWrapper,
+                  styles.cardRight,
+                  {
+                    transform: [{ rotate: '15deg' }, { scale: rightCardScale }],
+                  },
+                ]}
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: winnerDisplay.imageUrl ?? '' }}
+                    style={styles.cardImage}
+                  />
+                </View>
+              </Animated.View>
 
-                {/* WINNERBadge */}
+              {/* WINNERBadge */}
 
-                <BDBadge
-                  style={styles.winTag}
-                  label="WINNER"
-                  variant="winner"
-                />
+              <BDBadge style={styles.winTag} label="WINNER" variant="winner" />
 
-                {/* LOSE Badge */}
-                <BDBadge style={styles.loseTag} label="LOSE" variant="loser" />
+              {/* LOSE Badge */}
+              <BDBadge style={styles.loseTag} label="LOSE" variant="loser" />
 
-                {/* VS Circular Badge */}
-                <BDCircularBadge style={styles.vsCircle} label="VS" />
-              </View>
-            )}
+              {/* VS Circular Badge */}
+              <BDCircularBadge style={styles.vsCircle} label="VS" />
+            </View>
             {/* ========== POWER ANALYSIS SECTION ========== */}
-            <Skeleton isLoading={isLoading}>
-              <View style={styles.containerNameTag}>
-                <BDBadge
-                  style={styles.winNameTag}
-                  label={loserDisplay.name}
-                  variant="winner"
+            <View style={styles.containerNameTag}>
+              <BDBadge
+                style={styles.winNameTag}
+                label={loserDisplay.name}
+                variant="winner"
+              />
+              <BDBadge
+                style={styles.loseNameTag}
+                label={winnerDisplay.name}
+                variant="loser"
+              />
+            </View>
+            <BDCard
+              style={styles.section}
+              styleTitle={styles.sectionTitle}
+              title="Power Analysis"
+            >
+              <StatsTable>
+                <StatsRow
+                  labelStart={loserStats?.powerScore ?? 0}
+                  labelMiddle="Power Score"
+                  labelEnd={winnerStats?.powerScore ?? 0}
                 />
-                <BDBadge
-                  style={styles.loseNameTag}
-                  label={winnerDisplay.name}
-                  variant="loser"
+                <StatsRow
+                  labelStart={loserStats?.staticPowerScore ?? 0}
+                  labelMiddle="Static Score"
+                  labelEnd={winnerStats?.staticPowerScore ?? 0}
                 />
-              </View>
-              <BDCard
-                style={styles.section}
-                styleTitle={styles.sectionTitle}
-                title="Power Analysis"
-              >
-                <StatsTable>
-                  {/* Header */}
-                  <StatsHeader
-                    labelStart={loserDisplay.name}
-                    labelMiddle="Stat"
-                    labelEnd={winnerDisplay.name}
-                  />
-
-                  {/* Rows */}
-                  <StatsRow
-                    labelStart={loserStats?.powerScore ?? 0}
-                    labelMiddle="Power Score"
-                    labelEnd={winnerStats?.powerScore ?? 0}
-                  />
-                  <StatsRow
-                    labelStart={loserStats?.staticPowerScore ?? 0}
-                    labelMiddle="Static Score"
-                    labelEnd={winnerStats?.staticPowerScore ?? 0}
-                  />
-                  <StatsRow
-                    labelStart={loserStats?.finalHp ?? 0}
-                    labelMiddle="Final HP"
-                    labelEnd={winnerStats?.finalHp ?? 0}
-                  />
-                  <StatsRow
-                    labelStart={loserStats?.damageDealtp ?? 0}
-                    labelMiddle="Damage dealt"
-                    labelEnd={winnerStats?.damageDealtp ?? 0}
-                  />
-                </StatsTable>
-              </BDCard>
-            </Skeleton>
+                <StatsRow
+                  labelStart={loserStats?.finalHp ?? 0}
+                  labelMiddle="Final HP"
+                  labelEnd={winnerStats?.finalHp ?? 0}
+                />
+                <StatsRow
+                  labelStart={loserStats?.damageDealtp ?? 0}
+                  labelMiddle="Damage dealt"
+                  labelEnd={winnerStats?.damageDealtp ?? 0}
+                />
+              </StatsTable>
+            </BDCard>
             {/* ========== STATS TABLE ========== */}
-            <Skeleton isLoading={isLoading}>
-              <BDCard
-                style={styles.section}
-                styleTitle={styles.sectionTitle}
-                title="Detailed Stats"
-              >
-                <StatsTable>
-                  {/* Header */}
-                  <StatsHeader
-                    labelStart={loserDisplay.name}
-                    labelMiddle="Stat"
-                    labelEnd={winnerDisplay.name}
-                  />
-                  {/* Rows */}
-                  <StatsRow
-                    labelStart={
-                      <BDAttacksTypes attacks={loserDetail.attacks ?? []} />
-                    }
-                    labelMiddle="Energy cost"
-                    labelEnd={
-                      <BDAttacksTypes attacks={winnerDisplay.attacks ?? []} />
-                    }
-                  />
-                  <StatsRow
-                    labelStart={
-                      <BDEnergieType type={loserDisplay.resistances ?? []} />
-                    }
-                    labelMiddle="resistances"
-                    labelEnd={
-                      <BDEnergieType type={winnerDisplay.resistances ?? []} />
-                    }
-                  />
-                  {/* Weakness (non numeric row) */}
-
-                  <StatsRow
-                    labelStart={
-                      <BDEnergieType type={loserDisplay.weaknesses ?? []} />
-                    }
-                    labelMiddle="Weakness"
-                    labelEnd={
-                      <BDEnergieType type={winnerDisplay.weaknesses ?? []} />
-                    }
-                  />
-                </StatsTable>
-              </BDCard>
-            </Skeleton>
+            <BDCard
+              style={styles.section}
+              styleTitle={styles.sectionTitle}
+              title="Detailed Stats"
+            >
+              <StatsTable>
+                <StatsRow
+                  labelStart={
+                    <BDAttacksTypes attacks={loserDetail.attacks ?? []} />
+                  }
+                  labelMiddle="Energy cost"
+                  labelEnd={
+                    <BDAttacksTypes attacks={winnerDisplay.attacks ?? []} />
+                  }
+                />
+                <StatsRow
+                  labelStart={
+                    <BDEnergieType type={loserDisplay.resistances ?? []} />
+                  }
+                  labelMiddle="resistances"
+                  labelEnd={
+                    <BDEnergieType type={winnerDisplay.resistances ?? []} />
+                  }
+                />
+                <StatsRow
+                  labelStart={
+                    <BDEnergieType type={loserDisplay.weaknesses ?? []} />
+                  }
+                  labelMiddle="Weakness"
+                  labelEnd={
+                    <BDEnergieType type={winnerDisplay.weaknesses ?? []} />
+                  }
+                />
+              </StatsTable>
+            </BDCard>
           </>
-        )}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

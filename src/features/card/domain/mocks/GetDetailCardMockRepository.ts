@@ -15,23 +15,36 @@ export class GetDetailCardMockRepository implements GetDetailCardRepository {
       attacks: [
         {
           name: 'Thunder Shock',
-          energyCost: 10,
           damage: 30,
+          cost: [
+            { type: 'electric', name: 'Lightning' },
+            { type: 'colorless', name: 'Colorless' },
+          ],
+        },
+        {
+          name: 'Electro Ball',
+          damage: 50,
+          cost: [
+            { type: 'electric', name: 'Lightning' },
+            { type: 'electric', name: 'Lightning' },
+          ],
         },
       ],
       weaknesses: [
         {
-          type: 'Ground',
+          type: 'ground',
+          name: 'Ground',
           value: '×2',
         },
       ],
       resistances: [
         {
-          type: 'Steel',
+          type: 'steel',
+          name: 'Steel',
           value: '-20',
         },
       ],
-      rarity: 'Rarity',
+      rarity: 'Common',
     };
 
     return mockCard;
