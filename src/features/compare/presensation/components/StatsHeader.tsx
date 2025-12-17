@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { BDTypography } from '../../../../common/components/BDTypography';
-import { useTheme } from '../../../../styles';
+import { useTheme } from '../../../../common/styles';
 
 type StatsHeaderProps = {
   labelStart: string;

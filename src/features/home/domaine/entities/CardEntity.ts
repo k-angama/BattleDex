@@ -9,6 +9,7 @@ export interface CardEntity {
   resistances: CardResistancesEntity[];
   metaUsageRate?: number;
   rarity?: string;
+  setName: string;
 }
 
 export interface CardAttackEntity {

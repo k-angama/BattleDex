@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import { useTheme } from '../../../styles';
+import { useTheme } from '../../styles';
 
 export const useSearchEmptyStyles = () => {
   const { theme } = useTheme();

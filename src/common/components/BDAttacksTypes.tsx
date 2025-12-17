@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { CardAttackEntity } from '../../features/home/domaine/entities/CardEntity';
-import { Theme, useTheme } from '../../styles';
+import { Theme, useTheme } from '../styles';
 import * as Constants from '../utils/constants';
 import { BDDivider } from './BDDivider';
 import { BDTypography } from './BDTypography';

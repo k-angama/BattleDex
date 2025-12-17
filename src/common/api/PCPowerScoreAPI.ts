@@ -2,7 +2,9 @@ import Config from 'react-native-config';
 import { CardEntity } from '../../features/home/domaine/entities/CardEntity';
 import { hmacValid } from '../utils/hmacValid';
 import { getAcceptLanguage } from '../utils/locale';
-import { RawCard, RawMatchResult, RawSearchCard } from './types';
+import { CardRaw } from './dto/CardRaw';
+import { MatchResultRaw } from './dto/MatchResultRaw';
+import { SearchCardRaw } from './dto/SearchCardRaw';
 
 type HttpMethod = 'GET' | 'POST';
 
@@ -40,22 +42,22 @@ export class PCPowerScoreAPI {
     return (await response.json()) as T;
   }
 
-  async searchCardsByName(name: string): Promise<RawSearchCard[]> {
-    return this.request<RawSearchCard[]>(
+  async searchCardsByName(name: string): Promise<SearchCardRaw[]> {
+    return this.request<SearchCardRaw[]>(
       `/v1/cards/${encodeURIComponent(name)}`,
       'GET',
     );
   }
 
-  async searchCardById(id: string): Promise<RawCard> {
-    return this.request<RawCard>(`/v1/card/${encodeURIComponent(id)}`, 'GET');
+  async searchCardById(id: string): Promise<CardRaw> {
+    return this.request<CardRaw>(`/v1/card/${encodeURIComponent(id)}`, 'GET');
   }
 
   async compareCards(
     card1: CardEntity,
     card2: CardEntity,
-  ): Promise<RawMatchResult> {
-    return this.request<RawMatchResult>(`/v1/compare`, 'POST', {
+  ): Promise<MatchResultRaw> {
+    return this.request<MatchResultRaw>(`/v1/compare`, 'POST', {
       card1,
       card2,
     });
@@ -78,3 +80,5 @@ export class PCPowerScoreAPI {
     return hmacValid(secret, apiKey, method, url, body);
   }
 }
+
+export const pcPowerScoreAPI = new PCPowerScoreAPI();

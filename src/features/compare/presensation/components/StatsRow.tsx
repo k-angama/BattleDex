@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import { BDTypography } from '../../../../common/components/BDTypography';
-import { useTheme } from '../../../../styles';
+import { useTheme } from '../../../../common/styles';
 
 export type StatsRowProps = {
   labelStart: string | number | React.ReactNode;

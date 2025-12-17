@@ -250,7 +250,7 @@ export function CardScreen() {
 
                     <BDCard style={styles.containerInfo} title="Information">
                       <BDTypography variant="label">
-                        Basic EX Pokemon
+                        {firstCard?.setName ?? '-'}
                       </BDTypography>
                       <BDTypography variant="label">
                         {firstCard?.hp.toString() ?? '-'} HP

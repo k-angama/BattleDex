@@ -5,7 +5,7 @@ import {
   open,
 } from '@op-engineering/op-sqlite';
 import { Platform } from 'react-native';
-import { RawCompareRow } from './types';
+import { CompareRowRaw } from './dto/CompareRowRaw';
 
 export class CompareLocalDatabase {
   private db: DB;
@@ -46,7 +46,7 @@ export class CompareLocalDatabase {
     );
   }
 
-  async getCompareCards(): Promise<RawCompareRow[]> {
+  async getCompareCards(): Promise<CompareRowRaw[]> {
     const result = await this.db.executeSync(
       'SELECT id, winner_json, loser_json, comparison_date FROM compare_results ORDER BY comparison_date DESC;',
     );
@@ -58,3 +58,5 @@ export class CompareLocalDatabase {
     }));
   }
 }
+
+export const compareLocalDatabase = new CompareLocalDatabase();

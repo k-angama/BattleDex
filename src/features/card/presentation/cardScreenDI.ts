@@ -1,4 +1,4 @@
-import { pcPowerScoreAPI } from '../../../common/api/apiDI';
+import { pcPowerScoreAPI } from '../../../common/api/PCPowerScoreAPI';
 import { isMockDataSource } from '../../../common/utils/environment';
 import { GetDetailCardRepositoryImpl } from '../data/GetDetailCardRepositoryImpl';
 import { GetDetailCardMockRepository } from '../domain/mocks/GetDetailCardMockRepository';

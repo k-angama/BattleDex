@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { useTheme } from '../../styles';
+import { useTheme } from '../styles';
 
 export type BDDividerProps = {
   /** Thickness of the divider in dp. */

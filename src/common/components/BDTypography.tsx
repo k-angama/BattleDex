@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleProp, Text, TextProps, TextStyle } from 'react-native';
-import { Theme, useTheme } from '../../styles';
+import { Theme, useTheme } from '../styles';
 
 export type TypographyVariant =
   | 'title'

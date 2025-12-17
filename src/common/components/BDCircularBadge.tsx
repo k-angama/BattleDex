@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, TextStyle, View, ViewStyle } from 'react-native';
-import { Theme, useTheme } from '../../styles';
+import { Theme, useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
 type CircularBadgeVariant = 'normal' | 'neutral';

@@ -4,7 +4,7 @@ import {
   CardResistancesEntity,
   CardWeaknessesEntity,
 } from '../../features/home/domaine/entities/CardEntity';
-import { useTheme } from '../../styles';
+import { useTheme } from '../styles';
 import * as Constants from '../utils/constants';
 import { BDTypography } from './BDTypography';
 

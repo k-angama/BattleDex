@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { useTheme } from '../../../../../styles';
+import { useTheme } from '../../../../../common/styles';
 
 export const useStyles = () => {
   const { theme } = useTheme();

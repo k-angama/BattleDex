@@ -1,5 +1,5 @@
+import { CardRaw } from '../../../common/api/dto/CardRaw';
 import { PCPowerScoreAPI } from '../../../common/api/PCPowerScoreAPI';
-import { RawCard } from '../../../common/api/types';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
 import { GetDetailCardRepository } from '../domain/GetDetailCardRepository';
 
@@ -8,19 +8,34 @@ export class GetDetailCardRepositoryImpl implements GetDetailCardRepository {
   getCardById(cardId: string): Promise<CardEntity | null> {
     return this.apiService
       .searchCardById(cardId)
-      .then(raw => this.mapRawCard(raw));
+      .then(raw => this.mapCardRaw(raw));
   }
 
-  private mapRawCard(raw: RawCard): CardEntity {
+  private mapCardRaw(raw: CardRaw): CardEntity {
     return {
       id: raw.id,
       name: raw.name,
       type: raw.type as CardEntity['type'],
       hp: raw.hp,
       imageUrl: raw.imageUrl,
-      attacks: raw.attacks ?? [],
-      weaknesses: raw.weaknesses ?? [],
-      resistances: raw.resistances ?? [],
+      attacks:
+        raw.attacks?.map(attack => ({
+          name: attack.name,
+          damage: attack.damage,
+          cost: attack.energyCost,
+        })) ?? [],
+      weaknesses:
+        raw.weaknesses?.map(weakness => ({
+          type: weakness.type,
+          name: weakness.type,
+          value: weakness.value,
+        })) ?? [],
+      resistances:
+        raw.resistances?.map(resistance => ({
+          type: resistance.type,
+          name: resistance.type,
+          value: resistance.value,
+        })) ?? [],
       rarity: raw.rarity ?? '',
     };
   }

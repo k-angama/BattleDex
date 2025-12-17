@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import { useTheme } from '../../styles';
+import { useTheme } from '../styles';
 import { useSearchCardSkeletonStyles } from './styles/searchCardSkeletons.style';
 
 interface SearchCardSkeletonsProps {

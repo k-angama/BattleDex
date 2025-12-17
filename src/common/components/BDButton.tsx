@@ -8,7 +8,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import { Theme, useTheme } from '../../styles';
+import { Theme, useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
 type ButtonVariant = 'primary' | 'secondary' | 'text';

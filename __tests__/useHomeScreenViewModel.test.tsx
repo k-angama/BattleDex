@@ -1,5 +1,7 @@
 import { renderHook, waitFor } from '@testing-library/react-native';
 import { act } from 'react';
+import { compareCardsPreviewMock } from '../src/common/mocks/compareCards.mock';
+import { searchCardSuggestionsMock } from '../src/common/mocks/searchCardSuggestions.mock';
 import { DataBaseCardsRepository } from '../src/features/home/domaine/DataBaseCardsRepository';
 import { CompareCardsPreviewEntity } from '../src/features/home/domaine/entities/CompareCardsPreviewEntity';
 import { SearchCardSuggestionEntity } from '../src/features/home/domaine/entities/SearchCardSuggestionEntity';
@@ -13,23 +15,9 @@ describe('useHomeScreenViewModel', () => {
   let mockSearchResults: SearchCardSuggestionEntity[];
 
   beforeEach(() => {
-    mockCompareCards = [
-      {
-        id: '1',
-        loseCard: { id: 'lose1', name: 'Lose Card 1' } as any,
-        windCard: { id: 'win1', name: 'Win Card 1' } as any,
-        comparisonDate: new Date('2024-01-01'),
-      },
-    ];
+    mockCompareCards = compareCardsPreviewMock;
 
-    mockSearchResults = [
-      {
-        id: '1',
-        title: 'Pikachu',
-        subtitle: 'Electric',
-        imageUrl: 'https://example.com/pika.png',
-      },
-    ];
+    mockSearchResults = searchCardSuggestionsMock.slice(0, 3);
 
     mockDataBase = {
       getCompareCards: jest.fn().mockResolvedValue(mockCompareCards),
@@ -49,6 +37,8 @@ describe('useHomeScreenViewModel', () => {
 
     expect(mockDataBase.getCompareCards).toHaveBeenCalledTimes(1);
     expect(result.current.compareCards).toEqual(mockCompareCards);
+    expect(result.current.compareCards).toEqual(mockCompareCards);
+    expect(result.current.cardNames).toEqual(mockSearchResults);
     expect(result.current.errorMessage).toBeNull();
   });
 

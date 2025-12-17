@@ -1,4 +1,5 @@
-import { pcPowerScoreAPI } from '../../../common/api/apiDI';
+import { pcPowerScoreAPI } from '../../../common/api/PCPowerScoreAPI';
+import { compareLocalDatabase } from '../../../common/db/CompareLocalDatabase';
 import { isMockDataSource } from '../../../common/utils/environment';
 import { APICardsRepositoryImpl } from '../data/APICardsRepositoryImpl';
 import { DataBaseCardsRepositoryImpl } from '../data/DataBaseCardsRepositoryImpl';
@@ -11,7 +12,7 @@ const useMocks = isMockDataSource();
 const createDataBaseRepository = () =>
   useMocks
     ? new DataBaseCardsMockRepository()
-    : new DataBaseCardsRepositoryImpl();
+    : new DataBaseCardsRepositoryImpl(compareLocalDatabase);
 
 const createApiRepository = () =>
   useMocks

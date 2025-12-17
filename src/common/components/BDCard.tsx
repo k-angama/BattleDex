@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import { useTheme } from '../../styles';
+import { useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
 type BDCardProps = {

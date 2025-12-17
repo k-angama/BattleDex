@@ -7,8 +7,8 @@ export class APICardsRepositoryImpl implements APICardsRepository {
   constructor(private apiService: PCPowerScoreAPI) {}
 
   getCardNames(name: string): Promise<SearchCardSuggestionEntity[]> {
-    return this.apiService.searchCardsByName(name).then(raw =>
-      raw.map(SearchCardMapper.toEntity),
-    );
+    return this.apiService
+      .searchCardsByName(name)
+      .then(raw => raw.map(SearchCardMapper.toEntity));
   }
 }
