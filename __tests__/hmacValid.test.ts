@@ -1,3 +1,4 @@
+import forge from 'node-forge';
 import { hmacValid } from '../src/common/utils/hmacValid';
 
 jest.mock('node-forge', () => ({
@@ -46,12 +47,13 @@ describe('hmacValid', () => {
       '{"name":"Pikachu"}',
     ].join('\n');
 
-    const createHmacMock = QuickCrypto.createHmac as jest.Mock;
+    const createHmacMock = forge.hmac.create as unknown as jest.Mock;
     const hmacInstance = createHmacMock.mock.results[0].value;
 
-    expect(createHmacMock).toHaveBeenCalledWith('sha256', 'test-secret');
+    expect(createHmacMock).toHaveBeenCalledTimes(1);
+    expect(hmacInstance.start).toHaveBeenCalledWith('sha256', 'test-secret');
     expect(hmacInstance.update).toHaveBeenCalledWith(canonical);
-    expect(hmacInstance.digest).toHaveBeenCalledWith('hex');
+    expect(hmacInstance.digest).toHaveBeenCalled();
 
     expect(headers).toEqual({
       'X-Api-Key': 'test-key',

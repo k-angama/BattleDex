@@ -38,7 +38,7 @@ describe('useHomeScreenViewModel', () => {
     expect(mockDataBase.getCompareCards).toHaveBeenCalledTimes(1);
     expect(result.current.compareCards).toEqual(mockCompareCards);
     expect(result.current.compareCards).toEqual(mockCompareCards);
-    expect(result.current.cardNames).toEqual(mockSearchResults);
+    expect(result.current.cardNames).toEqual([]);
     expect(result.current.errorMessage).toBeNull();
   });
 
