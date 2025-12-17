@@ -1,6 +1,7 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { BDCard } from '../../../../common/components/BDCard';
 import { BDCircularBadge } from '../../../../common/components/BDCircularBadge';
+import { BDTypography } from '../../../../common/components/BDTypography';
 import { CompareCardsPreviewEntity } from '../../domaine/entities/CompareCardsPreviewEntity';
 import { useStyles } from './styles/compareCardsItem.style';
 
@@ -20,7 +21,7 @@ export function CompareCardsItem({
     <BDCard style={styles.container}>
       {/* Time Badge */}
       <View style={styles.timeBadge}>
-        <Text style={styles.timeText}>{timeAgo}</Text>
+        <BDTypography style={styles.timeText}>{timeAgo}</BDTypography>
       </View>
       <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
         {/* Cards Row */}
@@ -33,12 +34,23 @@ export function CompareCardsItem({
                 style={styles.cardImage}
               />
               <View style={styles.loseOverlay}>
-                <Text style={styles.loseText}>LOSE</Text>
+                <BDTypography
+                  variant="label"
+                  weight="bold"
+                  style={styles.loseText}
+                >
+                  LOSE
+                </BDTypography>
               </View>
             </View>
-            <Text style={styles.cardName} numberOfLines={1}>
+            <BDTypography
+              variant="label"
+              weight="semibold"
+              style={styles.cardName}
+              numberOfLines={1}
+            >
               {compareCards.loseCard.name}
-            </Text>
+            </BDTypography>
           </View>
 
           {/* VS Circle */}
@@ -55,12 +67,23 @@ export function CompareCardsItem({
                 style={styles.cardImage}
               />
               <View style={styles.winOverlay}>
-                <Text style={styles.winText}>WIN</Text>
+                <BDTypography
+                  variant="label"
+                  weight="bold"
+                  style={styles.winText}
+                >
+                  WIN
+                </BDTypography>
               </View>
             </View>
-            <Text style={styles.cardName} numberOfLines={1}>
+            <BDTypography
+              variant="label"
+              weight="semibold"
+              style={styles.cardName}
+              numberOfLines={1}
+            >
               {compareCards.windCard.name}
-            </Text>
+            </BDTypography>
           </View>
         </View>
       </TouchableOpacity>

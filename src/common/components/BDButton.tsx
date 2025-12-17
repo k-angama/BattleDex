@@ -29,7 +29,7 @@ export interface ButtonProps {
   testID?: string;
 }
 
-export function Button({
+export function BDButton({
   title,
   onPress,
   variant = 'primary',

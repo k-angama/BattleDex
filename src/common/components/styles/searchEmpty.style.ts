@@ -16,14 +16,11 @@ export const useSearchEmptyStyles = () => {
           borderColor: theme.colors.border,
         },
         emptyStateTitle: {
-          fontSize: theme.typography.size.md,
           fontWeight: '700',
-          color: theme.colors.text,
           marginBottom: theme.spacing.xs,
           textAlign: 'center',
         },
         emptyStateSubtitle: {
-          fontSize: theme.typography.size.sm,
           color: theme.colors.textSecondary,
           textAlign: 'center',
         },

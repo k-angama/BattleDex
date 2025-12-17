@@ -1,4 +1,4 @@
-import QuickCrypto from 'react-native-quick-crypto';
+import forge from 'node-forge';
 
 export const hmacValid = (
   apiSecret: string,
@@ -12,9 +12,10 @@ export const hmacValid = (
   const canonical = [method.toUpperCase(), url, timestamp, nonce, body].join(
     '\n',
   );
-  const signature = QuickCrypto.createHmac('sha256', apiSecret)
-    .update(canonical)
-    .digest('hex');
+  let hmac = forge.hmac.create();
+  hmac.start('sha256', apiSecret);
+  hmac.update(canonical);
+  const signature = hmac.digest().toHex();
   return {
     'X-Api-Key': apiKey,
     'X-Date': timestamp,

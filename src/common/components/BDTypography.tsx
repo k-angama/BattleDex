@@ -62,7 +62,7 @@ export function BDTypography({
 const createBaseStyles = (theme: Theme) => ({
   base: {
     color: theme.colors.text,
-    fontSize: 10,
+    fontSize: theme.typography.size.md,
   } as TextStyle,
 });
 

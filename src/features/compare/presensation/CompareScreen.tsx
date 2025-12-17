@@ -1,7 +1,7 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
-import { Animated, Image, ScrollView, Text, View } from 'react-native';
+import { Animated, Image, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../../../App';
 import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
@@ -9,6 +9,7 @@ import { BDBadge } from '../../../common/components/BDBadge';
 import { BDCard } from '../../../common/components/BDCard';
 import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
 import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
+import { BDTypography } from '../../../common/components/BDTypography';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
 import { CompareScreenSkeleton } from './components/CompareScreenSkeleton';
 import { StatsRow } from './components/StatsRow';
@@ -76,7 +77,9 @@ export function CompareScreen() {
         {isLoading && <CompareScreenSkeleton />}
         {!isLoading && errorMessage ? (
           <>
-            <Text style={styles.errorText}>{errorMessage}</Text>
+            <BDTypography variant="label" style={styles.errorText}>
+              {errorMessage}
+            </BDTypography>
             <ErrorMessage
               message={errorMessage}
               onRetry={() => {

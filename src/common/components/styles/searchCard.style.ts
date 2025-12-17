@@ -26,12 +26,9 @@ export const useSearchCardStyles = () => {
           backgroundColor: theme.colors.skeleton,
         },
         cardName: {
-          fontSize: theme.typography.size.sm,
-          fontWeight: '700',
           color: theme.colors.text,
         },
         cardMeta: {
-          fontSize: theme.typography.size.xs,
           color: theme.colors.textSecondary,
           marginTop: theme.spacing.xs,
         },

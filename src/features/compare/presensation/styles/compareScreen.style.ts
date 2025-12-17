@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useTheme } from '../../../../styles';
 
 export const useStyles = () => {
@@ -10,6 +10,7 @@ export const useStyles = () => {
         container: {
           flex: 1,
           backgroundColor: theme.colors.background,
+          paddingTop: Platform.OS === 'ios' ? theme.spacing.lg : 0,
         },
         scrollContent: {
           paddingBottom: theme.spacing.xxl,

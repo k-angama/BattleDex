@@ -1,19 +1,16 @@
-import QuickCrypto from 'react-native-quick-crypto';
 import { hmacValid } from '../src/common/utils/hmacValid';
 
-jest.mock('react-native-quick-crypto', () => {
-  const createHmac = jest.fn(() => {
-    const update = jest.fn().mockReturnThis();
-    const digest = jest.fn().mockReturnValue('mocked-signature');
-    return { update, digest };
-  });
-
-  return {
-    __esModule: true,
-    default: { createHmac },
-    createHmac,
-  };
-});
+jest.mock('node-forge', () => ({
+  hmac: {
+    create: jest.fn(() => ({
+      start: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      digest: jest.fn(() => ({
+        toHex: jest.fn().mockReturnValue('mocked-signature'),
+      })),
+    })),
+  },
+}));
 
 describe('hmacValid', () => {
   const fixedDate = new Date('2024-01-01T00:00:00.000Z');

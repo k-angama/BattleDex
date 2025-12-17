@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Platform } from 'react-native';
 import {
   SafeAreaView,
@@ -130,7 +130,10 @@ export function HomeScreen() {
       : 0;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView
+      style={styles.container}
+      edges={Platform.OS === 'ios' ? ['top'] : []}
+    >
       {/* Search Bar with Animated Shadow */}
       <Animated.View
         style={[

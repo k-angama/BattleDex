@@ -36,7 +36,10 @@ export function BDCircularBadge({
         style,
       ]}
     >
-      <BDTypography style={[baseStyles.label, resolvedVariant.text, textStyle]}>
+      <BDTypography
+        variant="title"
+        style={[baseStyles.label, resolvedVariant.text, textStyle]}
+      >
         {label}
       </BDTypography>
     </View>
@@ -53,10 +56,11 @@ const createBaseStyles = (theme: Theme) =>
       elevation: 8,
     },
     label: {
-      fontSize: theme.typography.size.xl,
+      marginTop: 2,
       fontWeight: '900',
       fontFamily: theme.typography.family.bold,
       textTransform: 'uppercase',
+      textAlignVertical: 'center',
     },
   });
 

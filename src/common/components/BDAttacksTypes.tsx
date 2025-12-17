@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { CardAttackEntity } from '../../features/home/domaine/entities/CardEntity';
 import { Theme, useTheme } from '../../styles';
 import * as Constants from '../utils/constants';
@@ -23,7 +23,9 @@ export function BDAttacksTypes({ attacks, diplay }: BDAttacksTypesProps) {
   if (!attacks || attacks.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>N/A</Text>
+        <BDTypography variant="label" style={styles.label}>
+          N/A
+        </BDTypography>
       </View>
     );
   }

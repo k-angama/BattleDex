@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Platform,
   Text,
   TextInput,
   TouchableOpacity,
@@ -71,7 +72,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   }, [autoFocusOnMount]);
 
   return (
-    <SafeAreaView edges={['top']}>
+    <SafeAreaView edges={Platform.OS === 'ios' ? ['top'] : []}>
       <View style={styles.container} onLayout={onPageLayout}>
         <View style={styles.searchIcon}>
           {isLoading ? (

@@ -1,7 +1,8 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
+import { BDTypography } from '../../../../common/components/BDTypography';
 import { useTheme } from '../../../../styles';
 
 type StatsHeaderProps = {
@@ -18,15 +19,19 @@ export function StatsHeader({
   const styles = useStyles();
   return (
     <View style={styles.statsHeader}>
-      <Text style={styles.headerCell} numberOfLines={1}>
+      <BDTypography variant="label" style={styles.headerCell} numberOfLines={1}>
         {labelStart}
-      </Text>
-      <Text style={styles.headerCellCenter} numberOfLines={1}>
+      </BDTypography>
+      <BDTypography
+        variant="label"
+        style={styles.headerCellCenter}
+        numberOfLines={1}
+      >
         {labelMiddle}
-      </Text>
-      <Text style={styles.headerCell} numberOfLines={1}>
+      </BDTypography>
+      <BDTypography variant="label" style={styles.headerCell} numberOfLines={1}>
         {labelEnd}
-      </Text>
+      </BDTypography>
     </View>
   );
 }

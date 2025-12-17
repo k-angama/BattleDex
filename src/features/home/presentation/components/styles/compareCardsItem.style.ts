@@ -70,8 +70,6 @@ export const useStyles = () => {
         },
         loseText: {
           color: theme.colors.surface,
-          fontSize: theme.typography.size.xs,
-          fontWeight: '800',
           letterSpacing: 1,
         },
         winOverlay: {
@@ -85,8 +83,6 @@ export const useStyles = () => {
         },
         winText: {
           color: theme.colors.surface,
-          fontSize: theme.typography.size.xs,
-          fontWeight: '800',
           letterSpacing: 1,
         },
         cardName: {
