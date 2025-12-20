@@ -13,16 +13,16 @@ export class GetDetailCardRepositoryImpl implements GetDetailCardRepository {
 
   private mapCardRaw(raw: CardRaw): CardEntity {
     return {
-      id: raw.id,
-      name: raw.name,
+      id: raw.id ?? '',
+      name: raw.name ?? '-',
       type: raw.type as CardEntity['type'],
-      hp: raw.hp,
+      hp: (raw.hp ?? 0) > 0 ? raw.hp?.toString() ?? '-' : '-',
       imageUrl: raw.imageUrl,
       attacks:
         raw.attacks?.map(attack => ({
           name: attack.name,
           damage: attack.damage,
-          cost: attack.energyCost,
+          cost: attack.cost,
         })) ?? [],
       weaknesses:
         raw.weaknesses?.map(weakness => ({
@@ -37,6 +37,7 @@ export class GetDetailCardRepositoryImpl implements GetDetailCardRepository {
           value: resistance.value,
         })) ?? [],
       rarity: raw.rarity ?? '',
+      setName: raw.setName ?? '',
     };
   }
 }

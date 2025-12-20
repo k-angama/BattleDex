@@ -7,7 +7,7 @@ export class StoredCardMapper {
       id: raw.id,
       name: raw.name,
       type: raw.type,
-      hp: raw.hp,
+      hp: (raw.hp ?? 0) > 0 ? raw.hp?.toString() ?? '-' : '-',
       setName: raw.setName,
       imageUrl: raw.imageUrl,
       attacks: raw.attacks ?? [],
@@ -21,7 +21,7 @@ export class StoredCardMapper {
       id: entity.id,
       name: entity.name,
       type: entity.type,
-      hp: entity.hp,
+      hp: entity.hp === '-' ? 0 : parseInt(entity.hp, 10),
       setName: entity.setName,
       imageUrl: entity.imageUrl,
       attacks: entity.attacks.map(attack => ({

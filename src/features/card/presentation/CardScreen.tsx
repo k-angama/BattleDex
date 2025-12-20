@@ -127,7 +127,10 @@ export function CardScreen() {
       const y = e.contentOffset.y;
       const h = e.layoutMeasurement.height;
       const contentH = e.contentSize.height;
-
+      if (contentH <= h + 20) {
+        actionTranslateY.value = 0;
+        return;
+      }
       const isNearBottom = y + h >= contentH - 50;
 
       // Show at bottom (0), hide at top (100)

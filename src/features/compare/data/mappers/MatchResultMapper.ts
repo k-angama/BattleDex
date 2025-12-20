@@ -8,23 +8,35 @@ import { MatchResultEntity } from '../../domaine/entities/MatchResultEntity';
 
 export class MatchResultMapper {
   static toEntity(dto: MatchResultRaw): MatchResultEntity {
-    const winnerCard = dto.winner === 'card1' ? dto.card1 : dto.card2;
-    const loserCard =
-      winnerCard.card.id === dto.card1.card.id ? dto.card2 : dto.card1;
+    const [winnerCard, loserCard] = this.resolveWinnerLoser(dto);
     return {
       winnerCard: this.mapCardRawResult(winnerCard),
       loserCard: this.mapCardRawResult(loserCard),
     };
   }
 
+  private static resolveWinnerLoser(dto: MatchResultRaw) {
+    if (dto.winner === 'card1') {
+      return [dto.card1, dto.card2];
+    }
+    if (dto.winner === 'card2') {
+      return [dto.card2, dto.card1];
+    }
+
+    return [dto.card1, dto.card2];
+  }
+
   private static mapCardRawResult(
     raw: PowerScoreCardResultRaw,
   ): MatchResultEntity['winnerCard'] {
+    console.log('Mapping card result: ', raw);
     return {
-      powerScore: raw.powerScore.toFixed(1),
-      staticPowerScore: raw.staticPowerScore.toFixed(1),
-      finalHp: raw.finalHp.toString(),
-      damageDealtp: raw.damageDealt.toString(),
+      powerScore: raw.powerScore ? raw.powerScore.toFixed(1) : '-',
+      staticPowerScore: raw.staticPowerScore
+        ? raw.staticPowerScore.toFixed(1)
+        : '-',
+      finalHp: raw.finalHp ? raw.finalHp.toString() : '-',
+      damageDealtp: raw.damageDealt ? raw.damageDealt.toString() : '-',
       detail: this.mapCardRaw(raw.card),
     };
   }
@@ -34,13 +46,13 @@ export class MatchResultMapper {
       id: raw.id ?? '-',
       name: raw.name ?? '-',
       type: raw.type ?? '-',
-      hp: raw.hp ?? 0,
+      hp: (raw.hp ?? 0) > 0 ? raw.hp?.toString() ?? '-' : '-',
       setName: raw.setName ?? '-',
       imageUrl: raw.imageUrl,
       attacks: (raw.attacks ?? []).map(attack => ({
         name: attack.name,
         damage: attack.damage,
-        cost: attack.energyCost,
+        cost: attack.cost,
       })),
       weaknesses: (raw.weaknesses ?? []).map(weakness => ({
         type: weakness.type,

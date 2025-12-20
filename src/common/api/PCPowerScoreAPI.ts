@@ -17,8 +17,7 @@ export class PCPowerScoreAPI {
     body?: unknown,
   ): Promise<T> {
     const requestUrl = this.buildUrl(path);
-    const serializedBody =
-      body === undefined ? undefined : JSON.stringify(body);
+    const serializedBody = body === undefined ? null : JSON.stringify(body);
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Accept-Language': getAcceptLanguage(),
@@ -28,7 +27,6 @@ export class PCPowerScoreAPI {
       headers,
       this.buildSignatureHeaders(method, path, serializedBody),
     );
-
     const response = await fetch(requestUrl, {
       method,
       headers,
@@ -72,7 +70,7 @@ export class PCPowerScoreAPI {
   private buildSignatureHeaders(
     method: HttpMethod,
     url: string,
-    body?: string,
+    body?: string | null,
   ) {
     const secret = Config.API_SECRET as string;
     const apiKey = Config.API_KEY as string;

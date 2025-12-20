@@ -12,18 +12,18 @@ export interface MatchResultRaw {
 
 export interface PowerScoreCardResultRaw {
   card: CardRaw;
-  powerScore: number;
-  finalHp: number;
-  damageDealt: number;
-  turnsPlayed: number;
+  powerScore?: number;
+  finalHp?: number;
+  damageDealt?: number;
+  turnsPlayed?: number;
   koTurn?: number | undefined;
-  staticPowerScore: number;
+  staticPowerScore?: number;
 }
 
 export interface TurnLogEntryRaw {
-  turn: number;
-  attacker: AttackerCard;
-  attackName: string | null;
-  damage: number;
-  defenderRemainingHp: number;
+  turn?: number;
+  attacker?: AttackerCard;
+  attackName?: string | null;
+  damage?: number;
+  defenderRemainingHp?: number;
 }

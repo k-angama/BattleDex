@@ -2,6 +2,9 @@ import forge from 'node-forge';
 import { hmacValid } from '../src/common/utils/hmacValid';
 
 jest.mock('node-forge', () => ({
+  util: {
+    encodeUtf8: jest.fn((value: string) => value),
+  },
   hmac: {
     create: jest.fn(() => ({
       start: jest.fn().mockReturnThis(),
@@ -52,6 +55,7 @@ describe('hmacValid', () => {
 
     expect(createHmacMock).toHaveBeenCalledTimes(1);
     expect(hmacInstance.start).toHaveBeenCalledWith('sha256', 'test-secret');
+    expect(forge.util.encodeUtf8).toHaveBeenCalledWith(canonical);
     expect(hmacInstance.update).toHaveBeenCalledWith(canonical);
     expect(hmacInstance.digest).toHaveBeenCalled();
 

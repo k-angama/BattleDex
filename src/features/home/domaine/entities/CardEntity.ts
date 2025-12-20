@@ -2,7 +2,7 @@ export interface CardEntity {
   id: string;
   name: string;
   type: string;
-  hp: number;
+  hp: string;
   imageUrl?: string | undefined;
   attacks: CardAttackEntity[];
   weaknesses: CardWeaknessesEntity[];

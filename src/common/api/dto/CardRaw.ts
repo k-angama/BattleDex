@@ -8,7 +8,7 @@ export interface CardRaw {
   attacks?: {
     name: string;
     damage: number;
-    energyCost: { type: string; name: string }[];
+    cost: { type: string; name: string }[];
   }[];
   weaknesses?: { type: string; value: string }[];
   resistances?: { type: string; value: string }[];
