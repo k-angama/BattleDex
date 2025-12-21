@@ -26,7 +26,7 @@ export function CompareScreenSkeleton() {
             borderRadius={12}
             style={styles.leftCard}
           />
-          <SkeletonPlaceholder.Item width={72} height={72} borderRadius={36} />
+          {/*<SkeletonPlaceholder.Item width={72} height={72} borderRadius={36} />*/}
           <SkeletonPlaceholder.Item
             width={150}
             height={210}

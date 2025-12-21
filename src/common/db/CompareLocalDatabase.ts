@@ -25,18 +25,6 @@ export class CompareLocalDatabase {
         comparison_date INTEGER NOT NULL 
       );`,
     );
-    this.ensureWinnerColumn();
-  }
-
-  private ensureWinnerColumn() {
-    const result = this.db.executeSync('PRAGMA table_info(compare_results);');
-    const columns = result.rows ?? [];
-    const hasWinner = columns.some(row => String(row.name) === 'winner');
-    if (!hasWinner) {
-      this.db.executeSync(
-        "ALTER TABLE compare_results ADD COLUMN winner TEXT NOT NULL DEFAULT 'none';",
-      );
-    }
   }
 
   async saveMatchResult(

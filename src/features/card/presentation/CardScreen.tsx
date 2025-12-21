@@ -1,14 +1,17 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, View } from 'react-native';
+import { Alert, Dimensions, Platform, View } from 'react-native';
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../../../App';
 import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
 import { BDBadge } from '../../../common/components/BDBadge';
@@ -17,6 +20,7 @@ import { BDCard } from '../../../common/components/BDCard';
 import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
 import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
 import { BDTypography } from '../../../common/components/BDTypography';
+import { useTheme } from '../../../common/styles';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
 import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
@@ -34,11 +38,15 @@ type CardScreenRouteProp = RouteProp<RootStackParamList, 'Card'>;
 
 export function CardScreen() {
   const styles = useStyles();
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+  const bottomInset = Platform.OS === 'ios' ? insets.bottom : 0;
   const actionTranslateY = useSharedValue<number>(0);
   const viewModel = useCardScreenViewModel();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CardScreenRouteProp>();
   const [isSelectorVisible, setIsSelectorVisible] = useState(false);
+  const [actionBarHeight, setActionBarHeight] = useState(0);
 
   const {
     firstCard,
@@ -152,12 +160,17 @@ export function CardScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={[]}>
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.content}>
         {/* Card Display Area */}
         <View style={styles.cardContainer}>
           <Animated.ScrollView
-            contentContainerStyle={styles.scrollContent}
+            contentContainerStyle={[
+              styles.scrollContent,
+              {
+                paddingBottom: theme.spacing.lg + actionBarHeight + bottomInset,
+              },
+            ]}
             scrollEventThrottle={16}
             onScroll={onScroll}
             showsVerticalScrollIndicator
@@ -195,11 +208,7 @@ export function CardScreen() {
                         variant="info"
                       />
                     </View>
-                    <StatsTable
-                      style={{
-                        marginBottom: Dimensions.get('window').height * 0.2,
-                      }}
-                    >
+                    <StatsTable>
                       {/* Rows */}
                       <StatsRow
                         labelStart={`HP ${firstCard.hp}`}
@@ -298,7 +307,13 @@ export function CardScreen() {
           <ActionButtonsSkeleton />
         ) : (
           <Animated.View style={[styles.actionContainer, actionsAnimatedStyle]}>
-            <SafeAreaView style={styles.container} edges={['bottom']}>
+            <SafeAreaView
+              style={styles.container}
+              edges={Platform.OS === 'ios' ? ['bottom'] : []}
+              onLayout={event => {
+                setActionBarHeight(event.nativeEvent.layout.height);
+              }}
+            >
               {!selectedCard && (
                 <BDButton
                   title="⚔️ Compare with Another Card"
