@@ -62,14 +62,10 @@ export function CompareScreen() {
   }, [isDataLocal, navigation]);
 
   const winnerDetail = result?.winnerCard.detail ?? firstCard;
-  const loserDetail =
-    result?.loserCard.detail ??
-    (winnerDetail.id === firstCard.id ? secondCard : firstCard);
+  const loserDetail = result?.loserCard.detail ?? secondCard;
   const winnerStats = result?.winnerCard;
   const loserStats = result?.loserCard;
-
-  const winnerDisplay = winnerDetail;
-  const loserDisplay = loserDetail;
+  const isDraw = result?.winner === 'draw';
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -97,13 +93,16 @@ export function CompareScreen() {
                   styles.cardWrapper,
                   styles.cardLeft,
                   {
-                    transform: [{ rotate: '-15deg' }, { scale: leftCardScale }],
+                    transform: [
+                      { rotate: !isDraw ? '-15deg' : '-5deg' },
+                      { scale: leftCardScale },
+                    ],
                   },
                 ]}
               >
                 <View style={styles.card}>
                   <Image
-                    source={{ uri: loserDisplay.imageUrl ?? '' }}
+                    source={{ uri: loserDetail.imageUrl ?? '' }}
                     style={styles.cardImage}
                   />
                 </View>
@@ -115,24 +114,42 @@ export function CompareScreen() {
                   styles.cardWrapper,
                   styles.cardRight,
                   {
-                    transform: [{ rotate: '15deg' }, { scale: rightCardScale }],
+                    transform: [
+                      { rotate: !isDraw ? '15deg' : '5deg' },
+                      { scale: rightCardScale },
+                    ],
                   },
                 ]}
               >
                 <View style={styles.card}>
                   <Image
-                    source={{ uri: winnerDisplay.imageUrl ?? '' }}
+                    source={{ uri: winnerDetail.imageUrl ?? '' }}
                     style={styles.cardImage}
                   />
                 </View>
               </Animated.View>
 
-              {/* WINNERBadge */}
-
-              <BDBadge style={styles.winTag} label="WINNER" variant="winner" />
-
-              {/* LOSE Badge */}
-              <BDBadge style={styles.loseTag} label="LOSE" variant="loser" />
+              {/* Result Badge */}
+              {isDraw ? (
+                <BDBadge
+                  style={styles.drawTag}
+                  label="NO WINNER"
+                  variant="info"
+                />
+              ) : (
+                <>
+                  <BDBadge
+                    style={styles.winTag}
+                    label="WINNER"
+                    variant="winner"
+                  />
+                  <BDBadge
+                    style={styles.loseTag}
+                    label="LOSE"
+                    variant="loser"
+                  />
+                </>
+              )}
 
               {/* VS Circular Badge */}
               <BDCircularBadge style={styles.vsCircle} label="VS" />
@@ -141,13 +158,13 @@ export function CompareScreen() {
             <View style={styles.containerNameTag}>
               <BDBadge
                 style={styles.winNameTag}
-                label={loserDisplay.name}
-                variant="winner"
+                label={loserDetail.name}
+                variant={!isDraw ? 'winner' : 'info'}
               />
               <BDBadge
                 style={styles.loseNameTag}
-                label={winnerDisplay.name}
-                variant="loser"
+                label={winnerDetail.name}
+                variant={!isDraw ? 'loser' : 'info'}
               />
             </View>
             <BDCard
@@ -191,25 +208,25 @@ export function CompareScreen() {
                   }
                   labelMiddle="Energy cost"
                   labelEnd={
-                    <BDAttacksTypes attacks={winnerDisplay.attacks ?? []} />
+                    <BDAttacksTypes attacks={winnerDetail.attacks ?? []} />
                   }
                 />
                 <StatsRow
                   labelStart={
-                    <BDEnergieType type={loserDisplay.resistances ?? []} />
+                    <BDEnergieType type={loserDetail.resistances ?? []} />
                   }
                   labelMiddle="resistances"
                   labelEnd={
-                    <BDEnergieType type={winnerDisplay.resistances ?? []} />
+                    <BDEnergieType type={winnerDetail.resistances ?? []} />
                   }
                 />
                 <StatsRow
                   labelStart={
-                    <BDEnergieType type={loserDisplay.weaknesses ?? []} />
+                    <BDEnergieType type={loserDetail.weaknesses ?? []} />
                   }
                   labelMiddle="Weakness"
                   labelEnd={
-                    <BDEnergieType type={winnerDisplay.weaknesses ?? []} />
+                    <BDEnergieType type={winnerDetail.weaknesses ?? []} />
                   }
                 />
               </StatsTable>

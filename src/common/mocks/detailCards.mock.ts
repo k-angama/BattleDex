@@ -95,7 +95,7 @@ export const suggestionToCard = (id: string): CardEntity | null => {
     return null;
   }
   const hpMatch = suggestion.subtitle.match(/(\d+)/);
-  const hp = hpMatch ? parseInt(hpMatch[1], 10) : 60;
+  const hpValue = hpMatch ? parseInt(hpMatch[1], 10) : 60;
   const key = suggestion.title.toLowerCase();
   const template = cardTemplates[key] ?? {
     type: 'Colorless',
@@ -106,10 +106,10 @@ export const suggestionToCard = (id: string): CardEntity | null => {
     id: suggestion.id,
     name: suggestion.title,
     type: template.type,
-    hp,
+    hp: hpValue.toString(),
     setName: 'Mock Set',
     imageUrl: suggestion.imageUrl,
-    attacks: buildAttacks(suggestion.title, hp),
+    attacks: buildAttacks(suggestion.title, hpValue),
     weaknesses: template.weaknesses,
     resistances: template.resistances,
     rarity: 'Common',

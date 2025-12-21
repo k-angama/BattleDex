@@ -85,6 +85,19 @@ export const useStyles = () => {
           color: theme.colors.surface,
           letterSpacing: 1,
         },
+        drawOverlay: {
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          backgroundColor: theme.colors.info,
+          paddingVertical: theme.spacing.xs,
+          alignItems: 'center',
+        },
+        drawText: {
+          color: theme.colors.surface,
+          letterSpacing: 1,
+        },
         cardName: {
           marginTop: theme.spacing.md,
           fontSize: theme.typography.size.sm,

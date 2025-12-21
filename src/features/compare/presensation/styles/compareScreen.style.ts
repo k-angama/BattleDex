@@ -68,6 +68,13 @@ export const useStyles = () => {
           left: 28,
           zIndex: 10,
         },
+        drawTag: {
+          position: 'relative',
+          top: -120,
+          margin: 'auto',
+          width: '50%',
+          zIndex: 10,
+        },
         loseNameTag: {
           marginRight: 'auto',
         },

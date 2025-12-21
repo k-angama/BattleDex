@@ -5,7 +5,7 @@ const aquaGuardian: CardEntity = {
   id: '1',
   name: 'Aqua Guardian',
   type: 'Water',
-  hp: 180,
+  hp: '180',
   imageUrl: 'https://images.pokemontcg.io/base1/4_hires.png',
   attacks: [
     {
@@ -36,7 +36,7 @@ const pyroblazeDragon: CardEntity = {
   id: '2',
   name: 'Pyroblaze Dragon',
   type: 'Fire',
-  hp: 200,
+  hp: '200',
   imageUrl: 'https://images.pokemontcg.io/base1/2_hires.png',
   attacks: [
     {
@@ -64,7 +64,7 @@ const stormcallerFalcon: CardEntity = {
   id: '3',
   name: 'Stormcaller Falcon',
   type: 'Lightning',
-  hp: 160,
+  hp: '160',
   imageUrl:
     'https://www.tcgdex.net/_next/image?url=https%3A%2F%2Fassets.tcgdex.net%2Fen%2Fbw%2Fbw8%2F2%2Fhigh.webp&w=384&q=100',
   attacks: [
@@ -96,7 +96,7 @@ const obsidianGolem: CardEntity = {
   id: '4',
   name: 'Obsidian Golem',
   type: 'Rock',
-  hp: 210,
+  hp: '210',
   imageUrl:
     'https://www.tcgdex.net/_next/image?url=https%3A%2F%2Fassets.tcgdex.net%2Fen%2Fbw%2Fbw8%2F8%2Fhigh.webp&w=384&q=100',
   attacks: [
@@ -130,7 +130,7 @@ const auroraSerpent: CardEntity = {
   id: '5',
   name: 'Aurora Serpent',
   type: 'Dragon',
-  hp: 190,
+  hp: '190',
   imageUrl: 'https://images.pokemontcg.io/base2/4_hires.png',
   attacks: [
     {
@@ -153,24 +153,28 @@ const auroraSerpent: CardEntity = {
 export const compareCardsPreviewMock: CompareCardsPreviewEntity[] = [
   {
     id: '1',
+    winner: 'card2',
     loseCard: aquaGuardian,
     windCard: pyroblazeDragon,
     comparisonDate: new Date(Date.now() - 1000 * 60 * 60 * 5),
   },
   {
     id: '2',
+    winner: 'card2',
     loseCard: stormcallerFalcon,
     windCard: obsidianGolem,
     comparisonDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3),
   },
   {
     id: '3',
+    winner: 'draw',
     loseCard: aquaGuardian,
     windCard: obsidianGolem,
     comparisonDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 12),
   },
   {
     id: '4',
+    winner: 'card2',
     loseCard: obsidianGolem,
     windCard: auroraSerpent,
     comparisonDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 20),

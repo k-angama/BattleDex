@@ -10,7 +10,7 @@ export interface CardRaw {
     damage: number;
     cost: { type: string; name: string }[];
   }[];
-  weaknesses?: { type: string; value: string }[];
-  resistances?: { type: string; value: string }[];
+  weaknesses?: { type?: string; value?: string; name?: string }[];
+  resistances?: { type?: string; value?: string; name?: string }[];
   rarity?: string;
 }

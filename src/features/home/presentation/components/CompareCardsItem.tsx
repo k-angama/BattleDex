@@ -17,6 +17,7 @@ export function CompareCardsItem({
   onPress,
 }: CompareCardsItemProps) {
   const styles = useStyles();
+  const isDraw = compareCards.winner === 'draw';
   return (
     <BDCard style={styles.container}>
       {/* Time Badge */}
@@ -33,15 +34,27 @@ export function CompareCardsItem({
                 source={{ uri: compareCards.loseCard.imageUrl }}
                 style={styles.cardImage}
               />
-              <View style={styles.loseOverlay}>
-                <BDTypography
-                  variant="label"
-                  weight="bold"
-                  style={styles.loseText}
-                >
-                  LOSE
-                </BDTypography>
-              </View>
+              {isDraw ? (
+                <View style={styles.drawOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.drawText}
+                  >
+                    DRAW
+                  </BDTypography>
+                </View>
+              ) : (
+                <View style={styles.loseOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.loseText}
+                  >
+                    LOSE
+                  </BDTypography>
+                </View>
+              )}
             </View>
             <BDTypography
               variant="label"
@@ -66,15 +79,27 @@ export function CompareCardsItem({
                 source={{ uri: compareCards.windCard.imageUrl }}
                 style={styles.cardImage}
               />
-              <View style={styles.winOverlay}>
-                <BDTypography
-                  variant="label"
-                  weight="bold"
-                  style={styles.winText}
-                >
-                  WIN
-                </BDTypography>
-              </View>
+              {isDraw ? (
+                <View style={styles.drawOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.drawText}
+                  >
+                    DRAW
+                  </BDTypography>
+                </View>
+              ) : (
+                <View style={styles.winOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.winText}
+                  >
+                    WIN
+                  </BDTypography>
+                </View>
+              )}
             </View>
             <BDTypography
               variant="label"

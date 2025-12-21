@@ -10,6 +10,7 @@ export class CompareCardsMockRepository implements CompareCardRepository {
   ): Promise<MatchResultEntity> {
     await delay(1000); // Simulate network delay
     return {
+      winner: 'card1',
       winnerCard: {
         powerScore: '88',
         finalHp: '92',

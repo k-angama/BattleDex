@@ -205,7 +205,7 @@ Business logic lives in dedicated use case classes (e.g., `SearchCardNamesUseCas
 **Database Repositories:**
 
 - Use `CompareLocalDatabase` (op-sqlite) for local persistence
-- Convert database rows via mappers (`StoredCardMapper`, `ComparePreviewMapper`)
+- Convert database rows via mappers (`CardMapper`, `ComparePreviewMapper`)
 
 #### Common Utilities
 
