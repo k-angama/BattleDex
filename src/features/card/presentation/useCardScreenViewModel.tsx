@@ -84,12 +84,20 @@ export function useCardScreenViewModel({
     [useCase],
   );
 
+  const setSelectedCardWithLoading = useCallback(
+    (card: SearchCardSuggestionEntity | null) => {
+      setIsLoading(true);
+      setSelectedCard(card);
+    },
+    [],
+  );
+
   return {
     // Actions
     getDetailFirstCard,
     getDetailSecondCard,
     searchCardNames,
-    setSelectedCard,
+    setSelectedCard: setSelectedCardWithLoading,
 
     // Data
     firstCard,

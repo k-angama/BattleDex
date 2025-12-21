@@ -142,7 +142,7 @@ export function CardScreen() {
       const isNearBottom = y + h >= contentH - 50;
 
       // Show at bottom (0), hide at top (100)
-      const to = isNearBottom ? 200 : 0;
+      const to = isNearBottom ? 220 : 0;
       actionTranslateY.value = withTiming(to, { duration: 220 });
     },
   });
@@ -160,7 +160,7 @@ export function CardScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
+    <View style={styles.container}>
       <View style={styles.content}>
         {/* Card Display Area */}
         <View style={styles.cardContainer}>
@@ -309,7 +309,7 @@ export function CardScreen() {
           <Animated.View style={[styles.actionContainer, actionsAnimatedStyle]}>
             <SafeAreaView
               style={styles.container}
-              edges={Platform.OS === 'ios' ? ['bottom'] : []}
+              edges={['bottom']}
               onLayout={event => {
                 setActionBarHeight(event.nativeEvent.layout.height);
               }}
@@ -357,6 +357,6 @@ export function CardScreen() {
         isLoading={isLoadingSearch}
         errorMessage={errorSearchMessage}
       />
-    </SafeAreaView>
+    </View>
   );
 }
