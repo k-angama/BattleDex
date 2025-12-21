@@ -1,15 +1,16 @@
 export const typography = {
   family: {
-    regular: 'System',
-    medium: 'System',
-    bold: 'System',
+    regular: 'Poppins-Regular',
+    medium: 'Poppins-Medium',
+    semibold: 'Poppins-SemiBold',
+    bold: 'Poppins-Bold',
   },
   size: {
     xs: 12,
     sm: 14,
     md: 16,
-    lg: 20,
-    xl: 24,
+    lg: 18,
+    xl: 22,
     xxl: 32,
   },
   lineHeight: {

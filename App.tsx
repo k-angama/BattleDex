@@ -14,11 +14,11 @@ import {
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ThemeProvider, useTheme } from './src/common/styles';
 import { cardScreenRoute } from './src/features/card/presentation/cardScreenRoute';
 import { compareScreenRoute } from './src/features/compare/presensation/compareScreenRoute';
 import { CardEntity } from './src/features/home/domaine/entities/CardEntity';
 import { homeScreenRoute } from './src/features/home/presentation/homeScreenRoute';
-import { ThemeProvider, useTheme } from './src/styles';
 
 export type RootStackParamList = {
   Home: { isReloadData?: boolean };

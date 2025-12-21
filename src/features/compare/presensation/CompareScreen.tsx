@@ -1,12 +1,19 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import LottieView from 'lottie-react-native';
 import React, { useEffect } from 'react';
-import { Animated, Image, ScrollView, Text, View } from 'react-native';
+import { Animated, Image, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../../../App';
+import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
+import { BDBadge } from '../../../common/components/BDBadge';
+import { BDCard } from '../../../common/components/BDCard';
+import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
+import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
+import { BDTypography } from '../../../common/components/BDTypography';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
-import { Skeleton } from '../../../common/components/Skeleton';
+import { CompareScreenSkeleton } from './components/CompareScreenSkeleton';
+import { StatsRow } from './components/StatsRow';
+import { StatsTable } from './components/StatsTable';
 import { useStyles } from './styles/compareScreen.style';
 import { useCompareScreenViewModel } from './useCompareScreenViewModel';
 
@@ -55,68 +62,20 @@ export function CompareScreen() {
   }, [isDataLocal, navigation]);
 
   const winnerDetail = result?.winnerCard.detail ?? firstCard;
-  const loserDetail =
-    result?.loserCard.detail ??
-    (winnerDetail.id === firstCard.id ? secondCard : firstCard);
+  const loserDetail = result?.loserCard.detail ?? secondCard;
   const winnerStats = result?.winnerCard;
   const loserStats = result?.loserCard;
-
-  const winnerDisplay = winnerDetail;
-  const loserDisplay = loserDetail;
-
-  const statRows = [
-    { label: 'HP', v1: loserDetail.hp, v2: winnerDetail.hp },
-    {
-      label: 'Damage',
-      v1: loserDetail.attacks?.[0]?.damage ?? 0,
-      v2: winnerDetail.attacks?.[0]?.damage ?? 0,
-    },
-    {
-      label: 'Energy',
-      v1: loserDetail.attacks?.[0]?.energyCost ?? 0,
-      v2: winnerDetail.attacks?.[0]?.energyCost ?? 0,
-    },
-  ];
-
-  // --- Shared row renderer ---
-  const renderStatRow = (label: string, v1: number, v2: number) => {
-    const c1 = v1 > v2;
-    const c2 = v2 > v1;
-
-    return (
-      <View style={styles.statRow} key={label}>
-        <View style={[styles.statCell, c1 && styles.winnerCell]}>
-          <Text style={[styles.statValue, c1 && styles.winnerText]}>{v1}</Text>
-        </View>
-
-        <View style={styles.statLabel}>
-          <Text style={styles.statLabelText}>{label}</Text>
-        </View>
-
-        <View style={[styles.statCell, c2 && styles.winnerCell]}>
-          <Text style={[styles.statValue, c2 && styles.winnerText]}>{v2}</Text>
-        </View>
-      </View>
-    );
-  };
+  const isDraw = result?.winner === 'draw';
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {isLoading && (
+        {isLoading && <CompareScreenSkeleton />}
+        {!isLoading && errorMessage ? (
           <>
-            <Text style={styles.statusText}>Calculating comparison...</Text>
-            <LottieView
-              source={require('../../../../assets/animations/red-lightning.json')}
-              style={styles.loaderAnimation}
-              autoPlay
-              loop
-            />
-          </>
-        )}
-        {errorMessage ? (
-          <>
-            <Text style={styles.errorText}>{errorMessage}</Text>
+            <BDTypography variant="label" style={styles.errorText}>
+              {errorMessage}
+            </BDTypography>
             <ErrorMessage
               message={errorMessage}
               onRetry={() => {
@@ -124,191 +83,156 @@ export function CompareScreen() {
               }}
             />
           </>
-        ) : (
+        ) : !isLoading ? (
           <>
             {/* ========== ARENA (Cards + VS) ========== */}
-            {!isLoading && (
-              <View style={styles.battleArena}>
-                {/* Loser Card */}
-                <Animated.View
-                  style={[
-                    styles.cardWrapper,
-                    styles.cardLeft,
-                    {
-                      transform: [
-                        { rotate: '-15deg' },
-                        { scale: leftCardScale },
-                      ],
-                    },
-                  ]}
-                >
-                  <View style={styles.card}>
-                    <Image
-                      source={{ uri: loserDisplay.imageUrl ?? '' }}
-                      style={styles.cardImage}
-                    />
-                  </View>
-
-                  <Text style={styles.cardName}>{loserDisplay.name}</Text>
-
-                  <View style={styles.scoreBox}>
-                    <Text style={styles.scoreLabel}>Power Score</Text>
-                    <Text style={styles.scoreValue}>
-                      {(loserStats?.score ?? 0).toFixed(1)}
-                    </Text>
-                  </View>
-                </Animated.View>
-
-                {/* Winner Card */}
-                <Animated.View
-                  style={[
-                    styles.cardWrapper,
-                    styles.cardRight,
-                    {
-                      transform: [
-                        { rotate: '15deg' },
-                        { scale: rightCardScale },
-                      ],
-                    },
-                  ]}
-                >
-                  <View style={styles.card}>
-                    <Image
-                      source={{ uri: winnerDisplay.imageUrl ?? '' }}
-                      style={styles.cardImage}
-                    />
-                  </View>
-                  <Text style={styles.cardNameWinner}>
-                    {winnerDisplay.name}
-                  </Text>
-
-                  <View style={styles.scoreBoxWinner}>
-                    <Text style={styles.scoreLabelWinner}>Power Score</Text>
-                    <Text style={styles.scoreValueWinner}>
-                      {(winnerStats?.score ?? 0).toFixed(1)}
-                    </Text>
-                  </View>
-                </Animated.View>
-
-                {/* WINNERBadge */}
-                <View style={styles.winTag}>
-                  <Text style={styles.winTagText}>WINNER</Text>
+            <View style={styles.battleArena}>
+              {/* Loser Card */}
+              <Animated.View
+                style={[
+                  styles.cardWrapper,
+                  styles.cardLeft,
+                  {
+                    transform: [
+                      { rotate: !isDraw ? '-15deg' : '-5deg' },
+                      { scale: leftCardScale },
+                    ],
+                  },
+                ]}
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: loserDetail.imageUrl ?? '' }}
+                    style={styles.cardImage}
+                  />
                 </View>
+              </Animated.View>
 
-                {/* LOSE Badge */}
-                <View style={styles.loseTag}>
-                  <Text style={styles.loseTagText}>LOSE</Text>
+              {/* Winner Card */}
+              <Animated.View
+                style={[
+                  styles.cardWrapper,
+                  styles.cardRight,
+                  {
+                    transform: [
+                      { rotate: !isDraw ? '15deg' : '5deg' },
+                      { scale: rightCardScale },
+                    ],
+                  },
+                ]}
+              >
+                <View style={styles.card}>
+                  <Image
+                    source={{ uri: winnerDetail.imageUrl ?? '' }}
+                    style={styles.cardImage}
+                  />
                 </View>
+              </Animated.View>
 
-                {/* VS Circular Badge */}
-                <View style={styles.vsCircle}>
-                  <Text style={styles.vsText}>VS</Text>
-                </View>
-              </View>
-            )}
+              {/* Result Badge */}
+              {isDraw ? (
+                <BDBadge
+                  style={styles.drawTag}
+                  label="NO WINNER"
+                  variant="info"
+                />
+              ) : (
+                <>
+                  <BDBadge
+                    style={styles.winTag}
+                    label="WINNER"
+                    variant="winner"
+                  />
+                  <BDBadge
+                    style={styles.loseTag}
+                    label="LOSE"
+                    variant="loser"
+                  />
+                </>
+              )}
+
+              {/* VS Circular Badge */}
+              <BDCircularBadge style={styles.vsCircle} label="VS" />
+            </View>
             {/* ========== POWER ANALYSIS SECTION ========== */}
-            <Skeleton isLoading={isLoading}>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Power Analysis</Text>
-
-                <View style={styles.powerGrid}>
-                  {/* Loser */}
-                  <View style={styles.playerCol}>
-                    <Text style={styles.playerName} numberOfLines={1}>
-                      {loserDisplay.name}
-                    </Text>
-
-                    <View style={styles.powerCard}>
-                      <Text style={styles.powerLabel}>Offensive Power</Text>
-                      <Text style={styles.powerValue}>
-                        {(loserStats?.offensivePower ?? 0).toFixed(1)}
-                      </Text>
-                    </View>
-
-                    <View style={styles.powerCard}>
-                      <Text style={styles.powerLabel}>Defensive Power</Text>
-                      <Text style={styles.powerValue}>
-                        {(loserStats?.defensivePower ?? 0).toFixed(1)}
-                      </Text>
-                    </View>
-                  </View>
-
-                  {/* Winner */}
-                  <View style={styles.playerCol}>
-                    <Text
-                      style={[styles.playerName, styles.playerWinner]}
-                      numberOfLines={1}
-                    >
-                      {winnerDisplay.name}
-                    </Text>
-
-                    <View style={[styles.powerCard, styles.powerCardWinner]}>
-                      <Text style={styles.powerLabelWinner}>
-                        Offensive Power
-                      </Text>
-                      <Text style={styles.powerValueWinner}>
-                        {(winnerStats?.offensivePower ?? 0).toFixed(1)}
-                      </Text>
-                    </View>
-
-                    <View style={[styles.powerCard, styles.powerCardWinner]}>
-                      <Text style={styles.powerLabelWinner}>
-                        Defensive Power
-                      </Text>
-                      <Text style={styles.powerValueWinner}>
-                        {(winnerStats?.defensivePower ?? 0).toFixed(1)}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </Skeleton>
+            <View style={styles.containerNameTag}>
+              <BDBadge
+                style={styles.winNameTag}
+                label={loserDetail.name}
+                variant={!isDraw ? 'winner' : 'info'}
+              />
+              <BDBadge
+                style={styles.loseNameTag}
+                label={winnerDetail.name}
+                variant={!isDraw ? 'loser' : 'info'}
+              />
+            </View>
+            <BDCard
+              style={styles.section}
+              styleTitle={styles.sectionTitle}
+              title="Power Analysis"
+            >
+              <StatsTable>
+                <StatsRow
+                  labelStart={loserStats?.powerScore ?? 0}
+                  labelMiddle="Power Score"
+                  labelEnd={winnerStats?.powerScore ?? 0}
+                />
+                <StatsRow
+                  labelStart={loserStats?.staticPowerScore ?? 0}
+                  labelMiddle="Static Score"
+                  labelEnd={winnerStats?.staticPowerScore ?? 0}
+                />
+                <StatsRow
+                  labelStart={loserStats?.finalHp ?? 0}
+                  labelMiddle="Final HP"
+                  labelEnd={winnerStats?.finalHp ?? 0}
+                />
+                <StatsRow
+                  labelStart={loserStats?.damageDealtp ?? 0}
+                  labelMiddle="Damage dealt"
+                  labelEnd={winnerStats?.damageDealtp ?? 0}
+                />
+              </StatsTable>
+            </BDCard>
             {/* ========== STATS TABLE ========== */}
-            <Skeleton isLoading={isLoading}>
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Detailed Stats</Text>
-
-                <View style={styles.statsTable}>
-                  {/* Header */}
-                  <View style={styles.statsHeader}>
-                    <Text style={styles.headerCell}>{loserDisplay.name}</Text>
-                    <Text style={styles.headerCellCenter}>Stat</Text>
-                    <Text style={styles.headerCell}>{winnerDisplay.name}</Text>
-                  </View>
-
-                  {/* Rows */}
-                  {!isLoading &&
-                    statRows.map(row =>
-                      renderStatRow(row.label, row.v1, row.v2),
-                    )}
-
-                  {/* Weakness (non numeric row) */}
-                  <View style={styles.statRow}>
-                    <View style={styles.statCell}>
-                      <Text style={styles.statValue}>
-                        {loserDisplay.weaknesses?.[0]
-                          ? `${loserDisplay.weaknesses[0].type} ${loserDisplay.weaknesses[0].value}`
-                          : 'N/A'}
-                      </Text>
-                    </View>
-
-                    <View style={styles.statLabel}>
-                      <Text style={styles.statLabelText}>Weakness</Text>
-                    </View>
-
-                    <View style={styles.statCell}>
-                      <Text style={styles.statValue}>
-                        {winnerDisplay.weaknesses?.[0]
-                          ? `${winnerDisplay.weaknesses[0].type} ${winnerDisplay.weaknesses[0].value}`
-                          : 'N/A'}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-            </Skeleton>
+            <BDCard
+              style={styles.section}
+              styleTitle={styles.sectionTitle}
+              title="Detailed Stats"
+            >
+              <StatsTable>
+                <StatsRow
+                  labelStart={
+                    <BDAttacksTypes attacks={loserDetail.attacks ?? []} />
+                  }
+                  labelMiddle="Energy cost"
+                  labelEnd={
+                    <BDAttacksTypes attacks={winnerDetail.attacks ?? []} />
+                  }
+                />
+                <StatsRow
+                  labelStart={
+                    <BDEnergieType type={loserDetail.resistances ?? []} />
+                  }
+                  labelMiddle="resistances"
+                  labelEnd={
+                    <BDEnergieType type={winnerDetail.resistances ?? []} />
+                  }
+                />
+                <StatsRow
+                  labelStart={
+                    <BDEnergieType type={loserDetail.weaknesses ?? []} />
+                  }
+                  labelMiddle="Weakness"
+                  labelEnd={
+                    <BDEnergieType type={winnerDetail.weaknesses ?? []} />
+                  }
+                />
+              </StatsTable>
+            </BDCard>
           </>
-        )}
+        ) : null}
       </ScrollView>
     </SafeAreaView>
   );

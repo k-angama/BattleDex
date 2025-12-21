@@ -1,8 +1,8 @@
-import { RawSearchCard } from '../../../../common/api/types';
+import { SearchCardRaw } from '../../../../common/api/dto/SearchCardRaw';
 import { SearchCardSuggestionEntity } from '../../domaine/entities/SearchCardSuggestionEntity';
 
 export class SearchCardMapper {
-  static toEntity(dto: RawSearchCard): SearchCardSuggestionEntity {
+  static toEntity(dto: SearchCardRaw): SearchCardSuggestionEntity {
     return {
       id: dto.id,
       title: dto.name,
@@ -11,7 +11,7 @@ export class SearchCardMapper {
     };
   }
 
-  static fromEntity(entity: SearchCardSuggestionEntity): RawSearchCard {
+  static fromEntity(entity: SearchCardSuggestionEntity): SearchCardRaw {
     return {
       id: entity.id,
       name: entity.title,

@@ -1,10 +1,9 @@
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
-import { useTheme } from '../../../../styles';
+import { Platform, StyleSheet } from 'react-native';
+import { useTheme } from '../../../../common/styles';
 
 export const useStyles = (topInset: number) => {
   const { theme } = useTheme();
-  const searchContainerHeight = theme.spacing.sm + topInset + 60;
   const styles = useMemo(
     () =>
       StyleSheet.create({
@@ -18,7 +17,8 @@ export const useStyles = (topInset: number) => {
         searchContainer: {
           paddingHorizontal: theme.spacing.lg,
           paddingBottom: theme.spacing.md,
-          paddingTop: theme.spacing.sm + topInset,
+          paddingTop:
+            theme.spacing.sm + (Platform.OS === 'ios' ? topInset + 10 : 0),
           backgroundColor: theme.colors.background,
           shadowColor: theme.colors.textDark,
           shadowOffset: { width: 0, height: 2 },
@@ -33,5 +33,5 @@ export const useStyles = (topInset: number) => {
     [theme, topInset],
   );
 
-  return { styles, searchContainerHeight };
+  return { styles };
 };

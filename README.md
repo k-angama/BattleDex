@@ -4,17 +4,21 @@ A mobile app that compares Pokémon cards and determines which one is stronger b
 
 ## Overview
 
-BattleDex lets you select any two Pokémon cards and instantly see which one wins in a matchup. The app calculates a Power Score using HP, damage output, energy costs, type effectiveness, and weaknesses/resistances. Results are displayed side-by-side with a clear winner announcement.
+BattleDex lets you select any two Pokémon cards and instantly see which one wins in a matchup. The app calculates a Power Score using HP, damage output, energy costs, type effectiveness, and weaknesses/resistances. Results are displayed side-by-side with a clear winner announcement, with polished loading skeletons and animated transitions.
 
 ## Tech Stack
 
-- **Framework**: React Native 0.82
+- **Framework**: React Native 0.82.1
 - **Language**: TypeScript
 - **Navigation**: React Navigation (Native Stack)
 - **Architecture**: MVVM with feature-specific hooks
 - **Database**: @op-engineering/op-sqlite
 - **Theming**: Custom theme provider with light/dark modes
 - **API**: PCPowerScoreAPI with mapper layer
+- **Crypto**: `node-forge` for HMAC-SHA256 signing
+- **UI Kit**: BD component system with Poppins fonts and skeleton loaders
+- **Animations**: React Native Reanimated
+- **Graphics**: React Native Skia
 - **Testing**: Jest + @testing-library/react-native
 
 ---
@@ -201,7 +205,7 @@ Business logic lives in dedicated use case classes (e.g., `SearchCardNamesUseCas
 **Database Repositories:**
 
 - Use `CompareLocalDatabase` (op-sqlite) for local persistence
-- Convert database rows via mappers (`StoredCardMapper`, `ComparePreviewMapper`)
+- Convert database rows via mappers (`CardMapper`, `ComparePreviewMapper`)
 
 #### Common Utilities
 

@@ -1,6 +1,7 @@
 import React from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
 import { SearchCardSuggestionEntity } from '../../features/home/domaine/entities/SearchCardSuggestionEntity';
+import { BDTypography } from './BDTypography';
 import { useSearchCardStyles } from './styles/searchCard.style';
 
 interface SearchCardProps {
@@ -18,17 +19,26 @@ export function SearchCard({ item, onSelect }: SearchCardProps) {
     >
       {!item.imageUrl ? (
         <View style={[styles.cardImage, styles.missingImage]}>
-          <Text style={styles.missingText}>No Image</Text>
+          <BDTypography style={styles.missingText}>No Image</BDTypography>
         </View>
       ) : (
         <Image source={{ uri: item.imageUrl ?? '' }} style={styles.cardImage} />
       )}
-      <Text style={styles.cardName} numberOfLines={1}>
+      <BDTypography
+        variant="label"
+        weight="semibold"
+        style={styles.cardName}
+        numberOfLines={1}
+      >
         {item.title}
-      </Text>
-      <Text style={styles.cardMeta} numberOfLines={1}>
+      </BDTypography>
+      <BDTypography
+        variant="overline"
+        style={styles.cardMeta}
+        numberOfLines={1}
+      >
         {item.subtitle}
-      </Text>
+      </BDTypography>
     </TouchableOpacity>
   );
 }

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
-import { useTheme } from '../../../../styles';
+import { Platform, StyleSheet } from 'react-native';
+import { useTheme } from '../../../../common/styles';
 
 export const useStyles = () => {
   const { theme } = useTheme();
@@ -10,13 +10,14 @@ export const useStyles = () => {
         container: {
           flex: 1,
           backgroundColor: theme.colors.background,
+          paddingTop: Platform.OS === 'ios' ? theme.spacing.lg : 0,
         },
         scrollContent: {
           paddingBottom: theme.spacing.xxl,
           paddingTop: theme.spacing.xxxl,
         },
         battleArena: {
-          height: 400,
+          height: 270,
           position: 'relative',
           paddingTop: theme.spacing.lg,
         },
@@ -27,7 +28,7 @@ export const useStyles = () => {
         },
         cardLeft: {
           left: 30,
-          top: 50,
+          top: 56,
         },
         cardRight: {
           right: 30,
@@ -52,110 +53,42 @@ export const useStyles = () => {
           width: '100%',
           height: '100%',
         },
-        cardName: {
-          marginTop: theme.spacing.md,
-          fontSize: theme.typography.size.md,
-          fontWeight: '700',
-          color: theme.colors.text,
-        },
-        cardNameWinner: {
-          marginTop: theme.spacing.md,
-          fontSize: theme.typography.size.md,
-          fontWeight: '700',
-          color: theme.colors.success,
+        winNameTag: {
+          marginLeft: 'auto',
         },
         winTag: {
           position: 'absolute',
           top: 0,
           right: 28,
-          backgroundColor: theme.colors.success,
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.xs,
-          borderRadius: theme.radius.md,
           zIndex: 10,
-        },
-        winTagText: {
-          color: theme.colors.surface,
-          fontSize: theme.typography.size.md,
-          fontWeight: '900',
         },
         loseTag: {
           position: 'absolute',
           top: 32,
           left: 28,
-          backgroundColor: theme.colors.loserBadge,
-          paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.xs,
-          borderRadius: theme.radius.md,
           zIndex: 10,
         },
-        loseTagText: {
-          color: theme.colors.surface,
-          fontSize: theme.typography.size.md,
-          fontWeight: '900',
+        drawTag: {
+          position: 'relative',
+          top: -120,
+          margin: 'auto',
+          width: '50%',
+          zIndex: 10,
         },
-        scoreBox: {
-          marginTop: theme.spacing.sm,
-          backgroundColor: theme.colors.card,
+        loseNameTag: {
+          marginRight: 'auto',
+        },
+        containerNameTag: {
           paddingHorizontal: theme.spacing.lg,
-          paddingVertical: theme.spacing.sm,
-          borderRadius: theme.radius.md,
-          borderWidth: 2,
-          borderColor: theme.colors.border,
-          minWidth: 120,
-          alignItems: 'center',
-        },
-        scoreBoxWinner: {
-          marginTop: theme.spacing.sm,
-          backgroundColor: theme.colors.success,
-          paddingHorizontal: theme.spacing.lg,
-          paddingVertical: theme.spacing.sm,
-          borderRadius: theme.radius.md,
-          minWidth: 120,
-          alignItems: 'center',
-        },
-        scoreLabel: {
-          fontSize: theme.typography.size.xs,
-          textTransform: 'uppercase',
-          color: theme.colors.textSecondary,
-          fontWeight: '600',
-        },
-        scoreLabelWinner: {
-          fontSize: theme.typography.size.xs,
-          textTransform: 'uppercase',
-          color: theme.colors.surface,
-          fontWeight: '700',
-        },
-        scoreValue: {
-          fontSize: theme.typography.size.xl,
-          fontWeight: '900',
-          color: theme.colors.text,
-        },
-        scoreValueWinner: {
-          fontSize: theme.typography.size.xl,
-          fontWeight: '900',
-          color: theme.colors.surface,
+          gap: theme.spacing.md,
         },
         vsCircle: {
           position: 'absolute',
           top: '45%',
           left: '50%',
           transform: [{ translateX: -28 }, { translateY: -28 }],
-          width: 56,
-          height: 56,
-          borderRadius: theme.radius.xl,
-          backgroundColor: theme.colors.surface,
-          borderWidth: 3,
-          borderColor: theme.colors.border,
-          alignItems: 'center',
-          justifyContent: 'center',
           elevation: 8,
           zIndex: 10,
-        },
-        vsText: {
-          fontSize: theme.typography.size.md,
-          fontWeight: '900',
-          color: theme.colors.text,
         },
         statusText: {
           textAlign: 'center',
@@ -170,18 +103,12 @@ export const useStyles = () => {
           fontWeight: '600',
         },
         section: {
-          backgroundColor: theme.colors.surface,
           marginTop: theme.spacing.xl,
           marginHorizontal: theme.spacing.lg,
-          borderRadius: theme.radius.lg,
-          padding: theme.spacing.xl,
-          elevation: 4,
+          paddingHorizontal: 0,
         },
         sectionTitle: {
-          fontSize: theme.typography.size.lg,
-          fontWeight: '700',
-          color: theme.colors.text,
-          marginBottom: theme.spacing.lg,
+          paddingHorizontal: theme.spacing.xl,
         },
         powerGrid: {
           flexDirection: 'row',
@@ -233,55 +160,6 @@ export const useStyles = () => {
           fontSize: theme.typography.size.xl,
           fontWeight: '800',
           color: theme.colors.surface,
-        },
-        statsTable: {
-          backgroundColor: theme.colors.card,
-          borderRadius: theme.radius.md,
-          borderWidth: 2,
-          borderColor: theme.colors.border,
-          overflow: 'hidden',
-        },
-        statsHeader: {
-          flexDirection: 'row',
-          backgroundColor: theme.colors.background,
-          paddingVertical: theme.spacing.md,
-        },
-        headerCell: {
-          flex: 1,
-          textAlign: 'center',
-          fontWeight: '700',
-          color: theme.colors.text,
-        },
-        headerCellCenter: {
-          flex: 1,
-          textAlign: 'center',
-          color: theme.colors.textSecondary,
-          fontWeight: '700',
-        },
-        statRow: {
-          flexDirection: 'row',
-          paddingVertical: theme.spacing.md,
-          borderBottomWidth: 1,
-          borderBottomColor: theme.colors.border,
-        },
-        statCell: {
-          flex: 1,
-          alignItems: 'center',
-          paddingVertical: theme.spacing.xs,
-        },
-        statLabel: {
-          flex: 1,
-          alignItems: 'center',
-        },
-        statLabelText: {
-          fontSize: theme.typography.size.sm,
-          fontWeight: '600',
-          color: theme.colors.textSecondary,
-        },
-        statValue: {
-          fontSize: theme.typography.size.md,
-          fontWeight: '600',
-          color: theme.colors.text,
         },
         winnerCell: {
           backgroundColor: theme.colors.winnerBadge,

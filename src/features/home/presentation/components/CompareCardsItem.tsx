@@ -1,4 +1,7 @@
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View } from 'react-native';
+import { BDCard } from '../../../../common/components/BDCard';
+import { BDCircularBadge } from '../../../../common/components/BDCircularBadge';
+import { BDTypography } from '../../../../common/components/BDTypography';
 import { CompareCardsPreviewEntity } from '../../domaine/entities/CompareCardsPreviewEntity';
 import { useStyles } from './styles/compareCardsItem.style';
 
@@ -14,66 +17,101 @@ export function CompareCardsItem({
   onPress,
 }: CompareCardsItemProps) {
   const styles = useStyles();
+  const isDraw = compareCards.winner === 'draw';
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
+    <BDCard style={styles.container}>
       {/* Time Badge */}
       <View style={styles.timeBadge}>
-        <Text style={styles.timeText}>{timeAgo}</Text>
+        <BDTypography style={styles.timeText}>{timeAgo}</BDTypography>
       </View>
-      {/* Cards Row */}
-      <View style={styles.row}>
-        {/* Loser Card */}
-        <View style={styles.cardBox}>
-          <View style={styles.imageWrapper}>
-            <Image
-              source={{ uri: compareCards.loseCard.imageUrl }}
-              style={styles.cardImage}
-            />
-            <View style={styles.loseOverlay}>
-              <Text style={styles.loseText}>LOSE</Text>
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        {/* Cards Row */}
+        <View style={styles.row}>
+          {/* Loser Card */}
+          <View style={styles.cardBox}>
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{ uri: compareCards.loseCard.imageUrl }}
+                style={styles.cardImage}
+              />
+              {isDraw ? (
+                <View style={styles.drawOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.drawText}
+                  >
+                    DRAW
+                  </BDTypography>
+                </View>
+              ) : (
+                <View style={styles.loseOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.loseText}
+                  >
+                    LOSE
+                  </BDTypography>
+                </View>
+              )}
             </View>
+            <BDTypography
+              variant="label"
+              weight="semibold"
+              style={styles.cardName}
+              numberOfLines={1}
+            >
+              {compareCards.loseCard.name}
+            </BDTypography>
           </View>
-          <Text style={styles.cardName} numberOfLines={1}>
-            {compareCards.loseCard.name}
-          </Text>
-        </View>
 
-        {/* VS Circle */}
-        <View style={styles.vsContainer}>
-          <View style={styles.vsCircle}>
-            <Text style={styles.vsText}>VS</Text>
+          {/* VS Circle */}
+          <View style={styles.vsContainer}>
+            <BDCircularBadge style={styles.vsCircle} label="VS" />
+            <View style={styles.vsLine} />
           </View>
-          <View style={styles.vsLine} />
-        </View>
 
-        {/* Winner Card */}
-        <View style={styles.cardBox}>
-          <View style={styles.imageWrapper}>
-            <Image
-              source={{ uri: compareCards.windCard.imageUrl }}
-              style={styles.cardImage}
-            />
-            <View style={styles.winOverlay}>
-              <Text style={styles.winText}>WIN</Text>
+          {/* Winner Card */}
+          <View style={styles.cardBox}>
+            <View style={styles.imageWrapper}>
+              <Image
+                source={{ uri: compareCards.windCard.imageUrl }}
+                style={styles.cardImage}
+              />
+              {isDraw ? (
+                <View style={styles.drawOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.drawText}
+                  >
+                    DRAW
+                  </BDTypography>
+                </View>
+              ) : (
+                <View style={styles.winOverlay}>
+                  <BDTypography
+                    variant="label"
+                    weight="bold"
+                    style={styles.winText}
+                  >
+                    WIN
+                  </BDTypography>
+                </View>
+              )}
             </View>
+            <BDTypography
+              variant="label"
+              weight="semibold"
+              style={styles.cardName}
+              numberOfLines={1}
+            >
+              {compareCards.windCard.name}
+            </BDTypography>
           </View>
-          <Text style={styles.cardName} numberOfLines={1}>
-            {compareCards.windCard.name}
-          </Text>
         </View>
-      </View>
-      {/* Tap to view hint */}
-      {/*
-      <View style={styles.footer}>
-        <View style={styles.tapHint}>
-          <Text style={styles.tapHintText}>Tap to view details</Text>
-        </View>
-      </View>
-      */}
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </BDCard>
   );
 }

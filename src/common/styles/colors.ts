@@ -1,8 +1,8 @@
 export const lightColors = {
   // brand
-  primary: '#4F46E5',
-  primaryDark: '#3730A3',
-  secondary: '#F97316',
+  primary: '#327CD1',
+  primaryDark: '#154D8C',
+  secondary: '#FEC000',
 
   // surfaces
   background: '#FAFAFA',
@@ -32,9 +32,9 @@ export const lightColors = {
 };
 
 export const darkColors = {
-  primary: '#818CF8',
-  primaryDark: '#6366F1',
-  secondary: '#FB923C',
+  primary: '#154D8C',
+  primaryDark: '#154781ff',
+  secondary: '#ba8c02ff',
   background: '#0F172A',
   surface: '#1F2937',
   card: '#111827',

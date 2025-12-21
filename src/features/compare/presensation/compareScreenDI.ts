@@ -1,4 +1,5 @@
-import { pcPowerScoreAPI } from '../../../common/api/apiDI';
+import { pcPowerScoreAPI } from '../../../common/api/PCPowerScoreAPI';
+import { compareLocalDatabase } from '../../../common/db/CompareLocalDatabase';
 import { isMockDataSource } from '../../../common/utils/environment';
 import { CompareCardsRepositoryImpl } from '../data/CompareCardsRepositoryImpl';
 import { DBSaveCardRepositoryImpl } from '../data/DBSaveCardRepositoryImpl';
@@ -13,7 +14,9 @@ const createCompareCardsRepository = () =>
     : new CompareCardsRepositoryImpl(pcPowerScoreAPI);
 
 const createDbSaveCardRepository = () =>
-  useMocks ? new DBSaveCardMockRepository() : new DBSaveCardRepositoryImpl();
+  useMocks
+    ? new DBSaveCardMockRepository()
+    : new DBSaveCardRepositoryImpl(compareLocalDatabase);
 
 export const compareCardsRepository = createCompareCardsRepository();
 export const dbSaveCardRepository = createDbSaveCardRepository();

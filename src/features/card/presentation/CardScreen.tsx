@@ -1,34 +1,52 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Alert, Dimensions, Platform, View } from 'react-native';
+import Animated, {
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { RootStackParamList } from '../../../../App';
-import { Skeleton } from '../../../common/components/Skeleton';
+import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
+import { BDBadge } from '../../../common/components/BDBadge';
+import { BDButton } from '../../../common/components/BDButton';
+import { BDCard } from '../../../common/components/BDCard';
+import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
+import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
+import { BDTypography } from '../../../common/components/BDTypography';
+import { useTheme } from '../../../common/styles';
+import { StatsRow } from '../../compare/presensation/components/StatsRow';
+import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
+import { ActionButtonsSkeleton } from './components/ActionButtonsSkeleton';
+import { CardScreenSkeleton } from './components/CardScreenSkeleton';
 import { CardSelectorBottomSheet } from './components/CardSelectorBottomSheet';
 import { DuelCard } from './components/DuelCard';
+import { DuelCardsSkeleton } from './components/DuelCardsSkeleton';
 import { HolographicCard } from './components/HolographicCard';
 import { useStyles } from './styles/cardScreen.styles';
 import { useCardScreenViewModel } from './useCardScreenViewModel';
-
-const getSizeCard = () => {
-  const { width, height } = Dimensions.get('window');
-  return {
-    cardWith: height * 0.38,
-    duelCardWith: width * 0.45,
-  };
-};
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 type CardScreenRouteProp = RouteProp<RootStackParamList, 'Card'>;
 
 export function CardScreen() {
   const styles = useStyles();
+  const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
+  const bottomInset = Platform.OS === 'ios' ? insets.bottom : 0;
+  const actionTranslateY = useSharedValue<number>(0);
   const viewModel = useCardScreenViewModel();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CardScreenRouteProp>();
   const [isSelectorVisible, setIsSelectorVisible] = useState(false);
+  const [actionBarHeight, setActionBarHeight] = useState(0);
 
   const {
     firstCard,
@@ -112,118 +130,223 @@ export function CardScreen() {
     if (errorMessage?.length) createTwoButtonAlert();
   }, [errorMessage, getDetailFirstCard, navigation, route.params.cardId]);
 
+  const onScroll = useAnimatedScrollHandler({
+    onScroll: e => {
+      const y = e.contentOffset.y;
+      const h = e.layoutMeasurement.height;
+      const contentH = e.contentSize.height;
+      if (contentH <= h + 20) {
+        actionTranslateY.value = 0;
+        return;
+      }
+      const isNearBottom = y + h >= contentH - 50;
+
+      // Show at bottom (0), hide at top (100)
+      const to = isNearBottom ? 220 : 0;
+      actionTranslateY.value = withTiming(to, { duration: 220 });
+    },
+  });
+
+  const actionsAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: actionTranslateY.value }],
+  }));
+
+  const getSizeCard = () => {
+    const { width, height } = Dimensions.get('window');
+    return {
+      cardWith: height * 0.38,
+      duelCardWith: width * 0.45,
+    };
+  };
+
   return (
-    <SafeAreaView style={styles.container} edges={['bottom']}>
+    <View style={styles.container}>
       <View style={styles.content}>
         {/* Card Display Area */}
         <View style={styles.cardContainer}>
-          {selectedCard && firstCard ? (
-            <>
-              <Text style={styles.cardSubtitle}>
-                Preview the duel before launching the comparison
-              </Text>
-              <View style={styles.duelArena}>
-                <DuelCard
-                  side="left"
-                  imageUrl={firstCard.imageUrl ?? ''}
-                  name={firstCard.name}
-                  subtitle={`HP ${firstCard.hp}`}
-                  width={getSizeCard().duelCardWith}
-                  isLoading={isLoading}
-                />
-                <View style={styles.vsBadge}>
-                  <Text style={styles.vsBadgeText}>VS</Text>
-                </View>
-                <DuelCard
-                  side="right"
-                  imageUrl={selectedCard.imageUrl}
-                  name={selectedCard.title}
-                  subtitle={`HP ${secondCard?.hp}`}
-                  width={getSizeCard().duelCardWith}
-                  isLoading={isLoading}
-                />
-              </View>
-            </>
-          ) : (
-            <>
-              <Text style={styles.cardSubtitle}>Tilt and explore the card</Text>
+          <Animated.ScrollView
+            contentContainerStyle={[
+              styles.scrollContent,
+              {
+                paddingBottom: theme.spacing.lg + actionBarHeight + bottomInset,
+              },
+            ]}
+            scrollEventThrottle={16}
+            onScroll={onScroll}
+            showsVerticalScrollIndicator
+          >
+            {selectedCard && firstCard ? (
+              <>
+                {isLoading ? (
+                  <DuelCardsSkeleton
+                    duelCardWidth={getSizeCard().duelCardWith}
+                  />
+                ) : (
+                  <>
+                    <View style={styles.duelArena}>
+                      <DuelCard
+                        side="left"
+                        imageUrl={firstCard.imageUrl ?? ''}
+                        width={getSizeCard().duelCardWith}
+                      />
+                      <BDCircularBadge variant="normal" label="VS" />
+                      <DuelCard
+                        side="right"
+                        imageUrl={selectedCard.imageUrl}
+                        width={getSizeCard().duelCardWith}
+                      />
+                    </View>
+                    <View style={styles.containerNameTag}>
+                      <BDBadge
+                        style={styles.nameTag}
+                        label={firstCard.name}
+                        variant="info"
+                      />
+                      <BDBadge
+                        style={styles.nameTag}
+                        label={secondCard?.name ?? '-'}
+                        variant="info"
+                      />
+                    </View>
+                    <StatsTable>
+                      {/* Rows */}
+                      <StatsRow
+                        labelStart={`HP ${firstCard.hp}`}
+                        labelMiddle="Energy cost"
+                        labelEnd={`HP ${secondCard?.hp}`}
+                      />
+                      <StatsRow
+                        labelStart={
+                          <BDEnergieType type={firstCard.resistances ?? []} />
+                        }
+                        labelMiddle="resistances"
+                        labelEnd={
+                          <BDEnergieType type={secondCard?.resistances ?? []} />
+                        }
+                      />
+                      {/* Weakness (non numeric row) */}
 
-              <HolographicCard
-                imageUrl={firstCard?.imageUrl ?? ''}
-                width={getSizeCard().cardWith}
-                isLoading={isLoading}
-              />
+                      <StatsRow
+                        labelStart={
+                          <BDEnergieType type={firstCard.weaknesses ?? []} />
+                        }
+                        labelMiddle="Weakness"
+                        labelEnd={
+                          <BDEnergieType type={secondCard?.weaknesses ?? []} />
+                        }
+                      />
 
-              <Skeleton isLoading={isLoading}>
-                <View style={styles.infoContainer}>
-                  <View style={styles.infoRow}>
-                    <View style={styles.infoBadge}>
-                      <Text style={styles.infoBadgeLabel}>HP</Text>
-                      <Text style={styles.infoBadgeValue} numberOfLines={1}>
-                        {firstCard?.hp.toString() ?? '-'}
-                      </Text>
-                    </View>
-                    <View style={styles.infoBadge}>
-                      <Text style={styles.infoBadgeLabel}>Type</Text>
-                      <Text style={styles.infoBadgeValue} numberOfLines={1}>
-                        {firstCard?.type ?? '-'}
-                      </Text>
-                    </View>
-                    <View style={styles.infoBadge}>
-                      <Text style={styles.infoBadgeLabel}>Rarity</Text>
-                      <Text style={styles.infoBadgeValue} numberOfLines={1}>
-                        {firstCard?.rarity ?? '-'}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </Skeleton>
-            </>
-          )}
+                      <StatsRow
+                        labelStart={
+                          <BDAttacksTypes attacks={firstCard.attacks ?? []} />
+                        }
+                        labelMiddle="Energy cost"
+                        labelEnd={
+                          <BDAttacksTypes attacks={secondCard?.attacks ?? []} />
+                        }
+                      />
+                    </StatsTable>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                {isLoading ? (
+                  <CardScreenSkeleton cardWidth={getSizeCard().cardWith} />
+                ) : (
+                  <>
+                    <HolographicCard
+                      imageUrl={firstCard?.imageUrl ?? ''}
+                      width={getSizeCard().cardWith}
+                    />
+
+                    <BDCard style={styles.containerInfo} title="Information">
+                      <BDTypography variant="label">
+                        {firstCard?.setName ?? '-'}
+                      </BDTypography>
+                      <BDTypography variant="label">
+                        {firstCard?.hp.toString() ?? '-'} HP
+                      </BDTypography>
+                      <BDTypography variant="label">
+                        🔥 {firstCard?.type ?? '-'} type Card
+                      </BDTypography>
+                    </BDCard>
+
+                    <BDCard title="Attacks">
+                      <BDTypography variant="body" weight="semibold">
+                        <BDAttacksTypes
+                          diplay="row"
+                          attacks={firstCard?.attacks ?? []}
+                        />
+                      </BDTypography>
+                    </BDCard>
+
+                    <BDCard style={styles.containerLastInfo}>
+                      <View>
+                        <BDTypography variant="caption" weight="semibold">
+                          Resistances
+                        </BDTypography>
+                        <BDEnergieType type={firstCard?.resistances ?? []} />
+                      </View>
+                      <View>
+                        <BDTypography variant="caption" weight="semibold">
+                          Weaknesses
+                        </BDTypography>
+                        <BDEnergieType type={firstCard?.weaknesses ?? []} />
+                      </View>
+                    </BDCard>
+                  </>
+                )}
+              </>
+            )}
+          </Animated.ScrollView>
         </View>
 
         {/* Compare Button */}
-        <Skeleton isLoading={isLoading}>
-          <View style={styles.actionContainer}>
-            {!selectedCard && (
-              <TouchableOpacity
-                onPress={handleCompare}
-                style={styles.compareButton}
-                activeOpacity={0.8}
-                disabled={errorMessage !== null}
-              >
-                <Text style={styles.compareButtonText}>
-                  ⚔️ Compare with Another Card
-                </Text>
-              </TouchableOpacity>
-            )}
+        {isLoading ? (
+          <ActionButtonsSkeleton />
+        ) : (
+          <Animated.View style={[styles.actionContainer, actionsAnimatedStyle]}>
+            <SafeAreaView
+              style={styles.container}
+              edges={['bottom']}
+              onLayout={event => {
+                setActionBarHeight(event.nativeEvent.layout.height);
+              }}
+            >
+              {!selectedCard && (
+                <BDButton
+                  title="⚔️ Compare with Another Card"
+                  onPress={handleCompare}
+                  disabled={errorMessage !== null}
+                />
+              )}
 
-            <Text style={styles.hintText}>
-              {selectedCard
-                ? 'Cards locked in. Ready to compare?'
-                : 'Select another card to see the battle comparison'}
-            </Text>
+              <BDTypography variant="label" style={styles.hintText}>
+                {selectedCard
+                  ? 'Cards locked in. Ready to compare?'
+                  : 'Select another card to see the battle comparison'}
+              </BDTypography>
 
-            {selectedCard && (
-              <TouchableOpacity
-                style={styles.changeOpponentButton}
-                onPress={handleCompare}
-                activeOpacity={0.7}
-              >
-                <Text style={styles.changeOpponentText}>Change opponent</Text>
-              </TouchableOpacity>
-            )}
-            {selectedCard && (
-              <TouchableOpacity
-                style={styles.compareNowButton}
-                onPress={handleCompareNow}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.compareNowText}>Compare Now</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </Skeleton>
+              {selectedCard && (
+                <BDButton
+                  title="Change opponent"
+                  variant="text"
+                  size="sm"
+                  onPress={handleCompare}
+                  style={styles.changeOpponentButton}
+                />
+              )}
+              {selectedCard && (
+                <BDButton
+                  title="Compare Now"
+                  variant="secondary"
+                  onPress={handleCompareNow}
+                />
+              )}
+            </SafeAreaView>
+          </Animated.View>
+        )}
       </View>
       <CardSelectorBottomSheet
         visible={isSelectorVisible}
@@ -234,6 +357,6 @@ export function CardScreen() {
         isLoading={isLoadingSearch}
         errorMessage={errorSearchMessage}
       />
-    </SafeAreaView>
+    </View>
   );
 }

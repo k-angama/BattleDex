@@ -15,20 +15,23 @@ describe('useCompareScreenViewModel', () => {
     attacks: [],
     weaknesses: [],
     resistances: [],
+    setName: 'Mock Set',
   };
   const cardB: CardEntity = { ...cardA, id: 'b', name: 'Beta' };
 
   const comparison: MatchResultEntity = {
     winnerCard: {
-      score: 10,
-      offensivePower: 5,
-      defensivePower: 5,
+      powerScore: '10.0',
+      staticPowerScore: '5.0',
+      finalHp: '100',
+      damageDealtp: '50',
       detail: cardA,
     },
     loserCard: {
-      score: 8,
-      offensivePower: 4,
-      defensivePower: 4,
+      powerScore: '8.0',
+      staticPowerScore: '4.0',
+      finalHp: '80',
+      damageDealtp: '40',
       detail: cardB,
     },
   };

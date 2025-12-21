@@ -10,17 +10,20 @@ export class CompareCardsMockRepository implements CompareCardRepository {
   ): Promise<MatchResultEntity> {
     await delay(1000); // Simulate network delay
     return {
+      winner: 'card1',
       winnerCard: {
-        score: 88,
-        offensivePower: 92,
-        defensivePower: 84,
+        powerScore: '88',
+        finalHp: '92',
+        staticPowerScore: '84',
         detail: cardOne,
+        damageDealtp: '180',
       },
       loserCard: {
-        score: 76,
-        offensivePower: 70,
-        defensivePower: 78,
+        powerScore: '76',
+        finalHp: '70',
+        staticPowerScore: '78',
         detail: cardTwo,
+        damageDealtp: '18',
       },
     };
   }

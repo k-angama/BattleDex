@@ -1,72 +1,48 @@
+import { CardRaw } from '../../../../common/api/dto/CardRaw';
 import {
-  RawCard,
-  RawCardResult,
-  RawMatchResult,
-} from '../../../../common/api/types';
+  MatchResultRaw,
+  PowerScoreCardResultRaw,
+} from '../../../../common/api/dto/MatchResultRaw';
+import { CardMapper } from '../../../home/data/mappers/CardMappter';
 import { CardEntity } from '../../../home/domaine/entities/CardEntity';
 import { MatchResultEntity } from '../../domaine/entities/MatchResultEntity';
 
 export class MatchResultMapper {
-  static toEntity(dto: RawMatchResult): MatchResultEntity {
+  static toEntity(dto: MatchResultRaw): MatchResultEntity {
+    const [winnerCard, loserCard] = this.resolveWinnerLoser(dto);
     return {
-      winnerCard: this.mapRawCardResult(dto.winnerCard),
-      loserCard: this.mapRawCardResult(dto.loserCard),
+      winner: dto.winner,
+      winnerCard: this.mapCardRawResult(winnerCard),
+      loserCard: this.mapCardRawResult(loserCard),
     };
   }
 
-  static fromEntity(entity: MatchResultEntity): RawMatchResult {
-    return {
-      winnerCard: this.mapEntityResult(entity.winnerCard),
-      loserCard: this.mapEntityResult(entity.loserCard),
-      winnerCardId: entity.winnerCard.detail.id,
-    };
+  private static resolveWinnerLoser(dto: MatchResultRaw) {
+    if (dto.winner === 'card1') {
+      return [dto.card1, dto.card2];
+    }
+    if (dto.winner === 'card2') {
+      return [dto.card2, dto.card1];
+    }
+
+    return [dto.card1, dto.card2];
   }
 
-  private static mapRawCardResult(
-    raw: RawCardResult,
+  private static mapCardRawResult(
+    raw: PowerScoreCardResultRaw,
   ): MatchResultEntity['winnerCard'] {
     return {
-      score: raw.score,
-      offensivePower: raw.offensivePower,
-      defensivePower: raw.defensivePower,
-      detail: this.mapRawCard(raw.detail),
+      powerScore: raw.powerScore ? raw.powerScore.toFixed(1) : '-',
+      staticPowerScore: raw.staticPowerScore
+        ? raw.staticPowerScore.toFixed(1)
+        : '-',
+      finalHp: (raw.finalHp ?? 0).toString(),
+      damageDealtp: (raw.damageDealt ?? 0).toString(),
+      detail: this.mapCardRaw(raw.card),
     };
   }
 
-  private static mapEntityResult(
-    result: MatchResultEntity['winnerCard'],
-  ): RawCardResult {
-    return {
-      score: result.score,
-      offensivePower: result.offensivePower,
-      defensivePower: result.defensivePower,
-      detail: this.mapCardEntity(result.detail),
-    };
-  }
-
-  private static mapRawCard(raw: RawCard): CardEntity {
-    return {
-      id: raw.id,
-      name: raw.name,
-      type: raw.type as CardEntity['type'],
-      hp: raw.hp,
-      imageUrl: raw.imageUrl,
-      attacks: raw.attacks ?? [],
-      weaknesses: raw.weaknesses ?? [],
-      resistances: raw.resistances ?? [],
-    };
-  }
-
-  private static mapCardEntity(card: CardEntity): RawCard {
-    return {
-      id: card.id,
-      name: card.name,
-      type: card.type,
-      hp: card.hp,
-      imageUrl: card.imageUrl,
-      attacks: card.attacks,
-      weaknesses: card.weaknesses,
-      resistances: card.resistances,
-    };
+  private static mapCardRaw(raw: CardRaw): CardEntity {
+    return CardMapper.toEntity(raw);
   }
 }

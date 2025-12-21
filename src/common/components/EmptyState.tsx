@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
+import { BDTypography } from './BDTypography';
+import { useEmptyStateStyles } from './styles/emptyState.style';
 
 type EmptyStateProps = {
   message: string;
@@ -7,29 +9,11 @@ type EmptyStateProps = {
 };
 
 export function EmptyState({ message, emoji = '📭' }: EmptyStateProps) {
+  const styles = useEmptyStateStyles();
   return (
     <View style={styles.container}>
       <Text style={styles.emoji}>{emoji}</Text>
-      <Text style={styles.message}>{message}</Text>
+      <BDTypography style={styles.message}>{message}</BDTypography>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingVertical: 48,
-  },
-  emoji: {
-    fontSize: 48,
-    marginBottom: 16,
-  },
-  message: {
-    textAlign: 'center',
-    fontSize: 16,
-    color: '#6B7280',
-    fontWeight: '600',
-  },
-});

@@ -1,30 +1,19 @@
-import { RawCompareRow, RawStoredCard } from '../../../../common/db/types';
-import { StoredCardMapper } from '../../../compare/data/mappers/StoredCardMapper';
+import { CompareRowRaw } from '../../../../common/db/dto/CompareRowRaw';
+import { DuelWinnerEntity } from '../../../compare/domaine/entities/MatchResultEntity';
 import { CompareCardsPreviewEntity } from '../../domaine/entities/CompareCardsPreviewEntity';
+import { CardMapper } from './CardMappter';
 
 export class ComparePreviewMapper {
-  static toEntity(row: RawCompareRow): CompareCardsPreviewEntity {
-    const winner = StoredCardMapper.toEntity(
-      JSON.parse(row.winner_json) as RawStoredCard,
-    );
-    const loser = StoredCardMapper.toEntity(
-      JSON.parse(row.loser_json) as RawStoredCard,
-    );
+  static toEntity(row: CompareRowRaw): CompareCardsPreviewEntity {
+    const winner = CardMapper.toEntity(JSON.parse(row.winner_json));
+    const loser = CardMapper.toEntity(JSON.parse(row.loser_json));
 
     return {
       id: row.id,
+      winner: (row.winner ?? 'none') as DuelWinnerEntity,
       windCard: winner,
       loseCard: loser,
       comparisonDate: new Date(row.comparison_date),
-    };
-  }
-
-  static fromEntity(entity: CompareCardsPreviewEntity): RawCompareRow {
-    return {
-      id: entity.id,
-      winner_json: JSON.stringify(StoredCardMapper.fromEntity(entity.windCard)),
-      loser_json: JSON.stringify(StoredCardMapper.fromEntity(entity.loseCard)),
-      comparison_date: entity.comparisonDate.getTime(),
     };
   }
 }

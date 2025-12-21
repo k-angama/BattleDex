@@ -3,7 +3,7 @@ import { Platform } from 'react-native';
 import { HomeScreen } from './HomeScreen';
 
 const options: NativeStackNavigationOptions = {
-  title: 'Battle Cards',
+  title: 'BattleDex',
   headerShadowVisible: false,
   headerLargeTitle: Platform.OS === 'ios',
   headerLargeTitleShadowVisible: true,

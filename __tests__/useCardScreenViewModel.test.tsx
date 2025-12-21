@@ -10,11 +10,12 @@ describe('useCardScreenViewModel', () => {
     id: '1',
     name: 'Alpha',
     type: 'Fire',
-    hp: 100,
+    hp: '100',
     imageUrl: 'x',
     attacks: [],
     weaknesses: [],
     resistances: [],
+    setName: 'set name',
   };
 
   let repo: jest.Mocked<GetDetailCardRepository>;

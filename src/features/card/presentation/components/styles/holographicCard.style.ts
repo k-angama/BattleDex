@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
-import { useTheme } from '../../../../../styles';
+import { useTheme } from '../../../../../common/styles';
 
 export const useHolographicCardStyles = () => {
   const { theme } = useTheme();
@@ -12,7 +12,8 @@ export const useHolographicCardStyles = () => {
           justifyContent: 'center',
         },
         canvas: {
-          borderRadius: theme.radius.lg,
+          borderRadius: theme.radius.sm,
+          overflow: 'hidden',
         },
       }),
     [theme],

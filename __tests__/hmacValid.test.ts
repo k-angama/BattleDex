@@ -1,19 +1,20 @@
-import QuickCrypto from 'react-native-quick-crypto';
+import forge from 'node-forge';
 import { hmacValid } from '../src/common/utils/hmacValid';
 
-jest.mock('react-native-quick-crypto', () => {
-  const createHmac = jest.fn(() => {
-    const update = jest.fn().mockReturnThis();
-    const digest = jest.fn().mockReturnValue('mocked-signature');
-    return { update, digest };
-  });
-
-  return {
-    __esModule: true,
-    default: { createHmac },
-    createHmac,
-  };
-});
+jest.mock('node-forge', () => ({
+  util: {
+    encodeUtf8: jest.fn((value: string) => value),
+  },
+  hmac: {
+    create: jest.fn(() => ({
+      start: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      digest: jest.fn(() => ({
+        toHex: jest.fn().mockReturnValue('mocked-signature'),
+      })),
+    })),
+  },
+}));
 
 describe('hmacValid', () => {
   const fixedDate = new Date('2024-01-01T00:00:00.000Z');
@@ -49,12 +50,14 @@ describe('hmacValid', () => {
       '{"name":"Pikachu"}',
     ].join('\n');
 
-    const createHmacMock = QuickCrypto.createHmac as jest.Mock;
+    const createHmacMock = forge.hmac.create as unknown as jest.Mock;
     const hmacInstance = createHmacMock.mock.results[0].value;
 
-    expect(createHmacMock).toHaveBeenCalledWith('sha256', 'test-secret');
+    expect(createHmacMock).toHaveBeenCalledTimes(1);
+    expect(hmacInstance.start).toHaveBeenCalledWith('sha256', 'test-secret');
+    expect(forge.util.encodeUtf8).toHaveBeenCalledWith(canonical);
     expect(hmacInstance.update).toHaveBeenCalledWith(canonical);
-    expect(hmacInstance.digest).toHaveBeenCalledWith('hex');
+    expect(hmacInstance.digest).toHaveBeenCalled();
 
     expect(headers).toEqual({
       'X-Api-Key': 'test-key',
