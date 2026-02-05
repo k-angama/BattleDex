@@ -13,4 +13,12 @@ export class DataBaseCardsRepositoryImpl implements DataBaseCardsRepository {
         rows.map((row: CompareRowRaw) => ComparePreviewMapper.toEntity(row)),
       );
   }
+
+  async deleteComparison(id: string): Promise<void> {
+    return this.compareLocalDatabase.deleteCompareById(id);
+  }
+
+  async deleteComparisons(ids: string[]): Promise<void> {
+    return this.compareLocalDatabase.deleteCompareByIds(ids);
+  }
 }

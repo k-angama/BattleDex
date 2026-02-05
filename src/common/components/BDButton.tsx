@@ -11,7 +11,7 @@ import {
 import { Theme, useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
-type ButtonVariant = 'primary' | 'secondary' | 'text';
+type ButtonVariant = 'primary' | 'secondary' | 'text' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
@@ -123,7 +123,7 @@ const createBaseStyles = (theme: Theme) =>
       fontFamily: theme.typography.family.semibold,
     },
     textDisabled: {
-      color: theme.colors.textMuted,
+      color: theme.colors.surface,
     },
     content: {
       flexDirection: 'row',
@@ -170,6 +170,14 @@ const createVariantStyles = (theme: Theme) => ({
     } as ViewStyle,
     text: {
       color: theme.colors.primary,
+    } as TextStyle,
+  },
+  danger: {
+    container: {
+      backgroundColor: theme.colors.danger,
+    } as ViewStyle,
+    text: {
+      color: theme.colors.surface,
     } as TextStyle,
   },
 });

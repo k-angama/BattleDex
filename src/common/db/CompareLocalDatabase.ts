@@ -60,6 +60,20 @@ export class CompareLocalDatabase {
       comparison_date: Number(row.comparison_date),
     }));
   }
+
+  async deleteCompareById(id: string): Promise<void> {
+    await this.db.executeSync('DELETE FROM compare_results WHERE id = ?;', [
+      id,
+    ]);
+  }
+
+  async deleteCompareByIds(ids: string[]): Promise<void> {
+    if (!ids || ids.length === 0) return;
+    // Build placeholders for parameterized query
+    const placeholders = ids.map(() => '?').join(',');
+    const query = `DELETE FROM compare_results WHERE id IN (${placeholders});`;
+    await this.db.executeSync(query, ids);
+  }
 }
 
 export const compareLocalDatabase = new CompareLocalDatabase();

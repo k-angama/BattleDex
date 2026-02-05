@@ -29,6 +29,13 @@ export const useStyles = (topInset: number) => {
           paddingHorizontal: theme.spacing.sm,
           paddingBottom: theme.spacing.xl,
         },
+        deleteBar: {
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          paddingHorizontal: theme.spacing.lg,
+          paddingTop: theme.spacing.md,
+        },
       }),
     [theme, topInset],
   );
