@@ -28,6 +28,7 @@ export function useHomeScreenViewModel({
     null,
   );
   const [cardNames, setCardNames] = useState<SearchCardSuggestionEntity[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const getCompareCards = useCallback(async () => {
     setIsLoading(true);
@@ -124,14 +125,28 @@ export function useHomeScreenViewModel({
     [useCase],
   );
 
+  const toggleSelectIds = useCallback((id: string) => {
+    setSelectedIds(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      return [...prev, id];
+    });
+  }, []);
+
+  const clearSelectedIds = useCallback(() => {
+    setSelectedIds([]);
+  }, []);
+
   return {
     // Data
     compareCards,
     cardNames,
+    selectedIds,
 
     // Actions
     searchCardNames,
     getCompareCards,
+    toggleSelectIds,
+    clearSelectedIds,
 
     // Loading & error state
     isLoading,

@@ -132,6 +132,25 @@ export const useStyles = () => {
           backgroundColor: theme.colors.border,
           zIndex: -1,
         },
+        revealContainer: {
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          top: 0,
+          bottom: 0,
+          justifyContent: 'center',
+          alignItems: 'flex-end',
+          paddingRight: theme.spacing.lg,
+          zIndex: 0,
+        },
+        deleteContainer: {
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 0,
+        },
+        slideWrapper: {
+          zIndex: 5,
+        },
       }),
     [theme],
   );

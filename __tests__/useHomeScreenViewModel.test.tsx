@@ -86,4 +86,30 @@ describe('useHomeScreenViewModel', () => {
     expect(result.current.cardNames).toEqual([]);
     expect(result.current.isLoadingSearch).toBe(false);
   });
+
+  it('manages selectedIds state', async () => {
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    expect(result.current.selectedIds).toEqual([]);
+
+    await act(() => result.current.toggleSelectIds('a'));
+    await act(() => result.current.toggleSelectIds('b'));
+
+    expect(result.current.selectedIds).toEqual(['a', 'b']);
+  });
+
+  it('clears selectedIds state', async () => {
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await act(() => result.current.toggleSelectIds('a'));
+    await act(() => result.current.toggleSelectIds('b'));
+    expect(result.current.selectedIds).toEqual(['a', 'b']);
+
+    await act(() => result.current.clearSelectedIds());
+    expect(result.current.selectedIds).toEqual([]);
+  });
 });

@@ -50,12 +50,15 @@ export function HomeScreen() {
     isLoading,
     isLoadingSearch,
     cardNames,
+    selectedIds,
     searchCardNames,
     getCompareCards,
     deleteComparisons,
+    deleteComparison,
+    toggleSelectIds,
+    clearSelectedIds,
   } = viewModel;
   const [isEditMode, setIsEditMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const deleteBarOpacity = useSharedValue(0);
   const deleteBarTranslateY = useSharedValue(-20);
   const deleteBarHeight = useSharedValue(0);
@@ -81,13 +84,6 @@ export function HomeScreen() {
     }
   }, [route.params, getCompareCards, navigation]);
 
-  const toggleSelect = useCallback((id: string) => {
-    setSelectedIds(prev => {
-      if (prev.includes(id)) return prev.filter(x => x !== id);
-      return [...prev, id];
-    });
-  }, []);
-
   const handleDeleteSelected = useCallback(async () => {
     if (selectedIds.length === 0) return;
     Alert.alert(
@@ -102,13 +98,13 @@ export function HomeScreen() {
           style: 'destructive',
           onPress: async () => {
             await deleteComparisons(selectedIds);
-            setSelectedIds([]);
+            clearSelectedIds();
             setIsEditMode(false);
           },
         },
       ],
     );
-  }, [selectedIds, deleteComparisons]);
+  }, [selectedIds, deleteComparisons, clearSelectedIds]);
 
   const handleClearSearch = useCallback(() => {
     setSearchQuery('');
@@ -173,7 +169,24 @@ export function HomeScreen() {
       }}
       isEditMode={isEditMode}
       selected={selectedIds.includes(item.id)}
-      onToggleSelect={id => toggleSelect(id)}
+      onToggleSelect={id => toggleSelectIds(id)}
+      onDelete={id => {
+        Alert.alert(
+          'Delete comparison',
+          'Are you sure you want to delete this comparison?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: async () => {
+                await deleteComparison(id);
+                clearSelectedIds();
+              },
+            },
+          ],
+        );
+      }}
     />
   );
 
