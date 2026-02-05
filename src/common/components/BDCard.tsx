@@ -1,19 +1,28 @@
 import { useMemo } from 'react';
-import { StyleSheet, View, ViewStyle } from 'react-native';
+import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
 type BDCardProps = {
   title?: string;
   children: React.ReactNode;
-  style?: ViewStyle;
+  style?: StyleProp<ViewStyle>;
   styleTitle?: ViewStyle;
+  selected?: boolean;
 };
 
-export function BDCard({ children, title, style, styleTitle }: BDCardProps) {
+export function BDCard({
+  children,
+  title,
+  style,
+  styleTitle,
+  selected,
+}: BDCardProps) {
   const styles = useStyles();
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style, selected && styles.editModeContainer]}
+    >
       {title && (
         <BDTypography
           style={[styles.text, styleTitle]}
@@ -39,6 +48,11 @@ export const useStyles = () => {
           padding: theme.spacing.xl,
           overflow: 'hidden',
           ...theme.shadow.card,
+          borderWidth: 0,
+        },
+        editModeContainer: {
+          borderColor: theme.colors.primary,
+          borderWidth: 2,
         },
         text: {
           marginBottom: theme.spacing.sm,

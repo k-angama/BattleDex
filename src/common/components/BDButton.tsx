@@ -123,7 +123,7 @@ const createBaseStyles = (theme: Theme) =>
       fontFamily: theme.typography.family.semibold,
     },
     textDisabled: {
-      color: theme.colors.textMuted,
+      color: theme.colors.surface,
     },
     content: {
       flexDirection: 'row',

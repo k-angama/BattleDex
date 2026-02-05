@@ -11,6 +11,11 @@ export const useStyles = () => {
           marginVertical: theme.spacing.sm,
           marginHorizontal: theme.spacing.lg,
         },
+        editModeContainer: {
+          backgroundColor: 'transparent',
+          borderColor: theme.colors.primary,
+          borderWidth: 1,
+        },
         timeBadge: {
           position: 'absolute',
           top: theme.spacing.md,

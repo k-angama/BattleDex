@@ -46,6 +46,56 @@ export function useHomeScreenViewModel({
     setIsLoading(false);
   }, [dataBase]);
 
+  const deleteComparison = useCallback(
+    async (id: string) => {
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      const [, error] = await safeCall(
+        () => dataBase.deleteComparison(id),
+        undefined,
+        setErrorMessage,
+        {
+          operation: 'Delete Comparison',
+          fallbackMessage: 'Unable to delete comparison. Please try again.',
+        },
+      );
+
+      if (!error) {
+        // Refresh list after successful delete
+        await getCompareCards();
+      }
+
+      setIsLoading(false);
+    },
+    [dataBase, getCompareCards],
+  );
+
+  const deleteComparisons = useCallback(
+    async (ids: string[]) => {
+      if (!ids || ids.length === 0) return;
+      setIsLoading(true);
+      setErrorMessage(null);
+
+      const [, error] = await safeCall(
+        () => dataBase.deleteComparisons(ids),
+        undefined,
+        setErrorMessage,
+        {
+          operation: 'Bulk Delete Comparisons',
+          fallbackMessage: 'Unable to delete comparisons. Please try again.',
+        },
+      );
+
+      if (!error) {
+        await getCompareCards();
+      }
+
+      setIsLoading(false);
+    },
+    [dataBase, getCompareCards],
+  );
+
   useEffect(() => {
     getCompareCards();
   }, [dataBase, getCompareCards]);
@@ -88,5 +138,7 @@ export function useHomeScreenViewModel({
     isLoadingSearch,
     errorMessage,
     errorSearchMessage,
+    deleteComparison,
+    deleteComparisons,
   };
 }
