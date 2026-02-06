@@ -23,6 +23,8 @@ target 'BattleDex' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'NitroModules', :path => '../node_modules/react-native-nitro-modules'
+
   post_install do |installer|
     react_native_post_install(
       installer,

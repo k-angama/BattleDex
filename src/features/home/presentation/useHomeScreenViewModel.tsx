@@ -1,22 +1,30 @@
 import { useCallback, useEffect, useState } from 'react';
 import { safeCall } from '../../../common/utils/safeAsync';
+import { SettingsRepository } from '../../settings/domaine/SettingsRepository';
+import { settingsRepositoryImp } from '../../settings/presentation/settingsScreenDI';
 import { DataBaseCardsRepository } from '../domaine/DataBaseCardsRepository';
 import { CompareCardsPreviewEntity } from '../domaine/entities/CompareCardsPreviewEntity';
 import { SearchCardSuggestionEntity } from '../domaine/entities/SearchCardSuggestionEntity';
+import { ThemeRepository } from '../domaine/ThemeRepository';
 import { SearchCardNamesUseCase } from '../domaine/usecases/SearchCardNamesUseCase';
 import {
   dataBaseCardsRepository,
   searchCardNamesUseCase,
+  themeRepositoryImp,
 } from './homeScreenDI';
 
 interface HomeScreenViewModelParams {
   dataBase?: DataBaseCardsRepository;
   useCase?: SearchCardNamesUseCase;
+  themeRepository?: ThemeRepository;
+  settingsRepository?: SettingsRepository;
 }
 
 export function useHomeScreenViewModel({
   dataBase = dataBaseCardsRepository,
   useCase = searchCardNamesUseCase,
+  themeRepository = themeRepositoryImp(),
+  settingsRepository = settingsRepositoryImp,
 }: HomeScreenViewModelParams = {}) {
   const [compareCards, setCompareCards] = useState<CompareCardsPreviewEntity[]>(
     [],
@@ -29,6 +37,13 @@ export function useHomeScreenViewModel({
   );
   const [cardNames, setCardNames] = useState<SearchCardSuggestionEntity[]>([]);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const saved = settingsRepository?.getThemeMode();
+    if (saved) {
+      themeRepository?.setThemeMode(saved);
+    }
+  }, [settingsRepository, themeRepository]);
 
   const getCompareCards = useCallback(async () => {
     setIsLoading(true);
