@@ -46,7 +46,7 @@ export const useStyles = () => {
           backgroundColor: theme.colors.surface,
           borderRadius: theme.radius.lg,
           padding: theme.spacing.xl,
-          overflow: 'hidden',
+          // overflow: 'hidden',
           ...theme.shadow.card,
           borderWidth: 0,
         },

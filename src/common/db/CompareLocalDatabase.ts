@@ -74,6 +74,10 @@ export class CompareLocalDatabase {
     const query = `DELETE FROM compare_results WHERE id IN (${placeholders});`;
     await this.db.executeSync(query, ids);
   }
+
+  async clearAllComparisons(): Promise<void> {
+    await this.db.executeSync('DELETE FROM compare_results;');
+  }
 }
 
 export const compareLocalDatabase = new CompareLocalDatabase();

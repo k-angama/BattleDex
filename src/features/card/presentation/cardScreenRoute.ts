@@ -8,6 +8,7 @@ const options: NativeStackNavigationOptions = {
   headerLargeTitleShadowVisible: false,
   headerTitleAlign: 'center',
   headerBackButtonDisplayMode: 'minimal',
+  presentation: 'containedModal',
 };
 
 export const cardScreenRoute = {

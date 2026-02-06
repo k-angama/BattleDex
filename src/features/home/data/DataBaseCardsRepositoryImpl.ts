@@ -21,4 +21,8 @@ export class DataBaseCardsRepositoryImpl implements DataBaseCardsRepository {
   async deleteComparisons(ids: string[]): Promise<void> {
     return this.compareLocalDatabase.deleteCompareByIds(ids);
   }
+
+  async clearAllComparisons(): Promise<void> {
+    return this.compareLocalDatabase.clearAllComparisons();
+  }
 }

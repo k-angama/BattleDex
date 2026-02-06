@@ -25,4 +25,9 @@ export class DataBaseCardsMockRepository implements DataBaseCardsRepository {
     );
     return Promise.resolve();
   }
+
+  clearAllComparisons(): Promise<void> {
+    this.compareCards = [];
+    return Promise.resolve();
+  }
 }
