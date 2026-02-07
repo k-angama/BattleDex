@@ -112,4 +112,87 @@ describe('useHomeScreenViewModel', () => {
     await act(() => result.current.clearSelectedIds());
     expect(result.current.selectedIds).toEqual([]);
   });
+
+  it('deletes single comparison', async () => {
+    mockDataBase.deleteComparison = jest
+      .fn()
+      .mockResolvedValue(undefined) as any;
+
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(() => result.current.deleteComparison('id-1'));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockDataBase.deleteComparison).toHaveBeenCalledWith('id-1');
+  });
+
+  it('deletes multiple comparisons and refreshes list', async () => {
+    mockDataBase.deleteComparisons = jest
+      .fn()
+      .mockResolvedValue(undefined) as any;
+    mockDataBase.getCompareCards = jest
+      .fn()
+      .mockResolvedValueOnce(mockCompareCards)
+      .mockResolvedValueOnce([mockCompareCards[0]]);
+
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(() => result.current.deleteComparisons(['id-1', 'id-2']));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockDataBase.deleteComparisons).toHaveBeenCalledWith([
+      'id-1',
+      'id-2',
+    ]);
+  });
+
+  it('toggles the same ID twice to remove it', async () => {
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await act(() => result.current.toggleSelectIds('a'));
+    expect(result.current.selectedIds).toEqual(['a']);
+
+    await act(() => result.current.toggleSelectIds('a'));
+    expect(result.current.selectedIds).toEqual([]);
+  });
+
+  it('handles search error', async () => {
+    mockUseCase.execute.mockRejectedValueOnce(new Error('search failed'));
+
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    await act(() => result.current.searchCardNames('pika'));
+    await waitFor(() => expect(result.current.isLoadingSearch).toBe(false));
+
+    expect(result.current.errorSearchMessage).toBeTruthy();
+    expect(result.current.cardNames).toEqual([]);
+  });
+
+  it('manually calls getCompareCards to refresh', async () => {
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(mockDataBase.getCompareCards).toHaveBeenCalledTimes(1);
+
+    await act(() => result.current.getCompareCards());
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(mockDataBase.getCompareCards).toHaveBeenCalledTimes(2);
+  });
 });
