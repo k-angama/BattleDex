@@ -3,7 +3,6 @@ import { compareLocalDatabase } from '../../../common/db/CompareLocalDatabase';
 import { isMockDataSource } from '../../../common/utils/environment';
 import { APICardsRepositoryImpl } from '../data/APICardsRepositoryImpl';
 import { DataBaseCardsRepositoryImpl } from '../data/DataBaseCardsRepositoryImpl';
-import { useThemeRepository } from '../data/ThemeRepositoryImpl';
 import { APICardsMockRepository } from '../domaine/mocks/APICardsMockRepository';
 import { DataBaseCardsMockRepository } from '../domaine/mocks/DataBaseCardsMockRepository';
 import { SearchCardNamesUseCase } from '../domaine/usecases/SearchCardNamesUseCase';
@@ -26,5 +25,3 @@ const apICardsRepository = createApiRepository();
 export const searchCardNamesUseCase = new SearchCardNamesUseCase(
   apICardsRepository,
 );
-
-export const themeRepositoryImp = useThemeRepository;

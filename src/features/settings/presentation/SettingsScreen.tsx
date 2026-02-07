@@ -13,20 +13,14 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { BDTypography } from '../../../common/components/BDTypography';
-import { useThemeRepository } from '../data/ThemeRepositoryImpl';
-import { dataBaseCardsRepository } from './settingsScreenDI';
 import { useStyles } from './styles/settingsScreen.styles';
 import { useSettingsViewModel } from './useSettingsViewModel';
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { styles } = useStyles(insets.top);
-  const themeRepository = useThemeRepository();
   const { themeMode, changeTheme, clearHistory, isClearingHistory } =
-    useSettingsViewModel({
-      dataBase: dataBaseCardsRepository,
-      themeRepository,
-    });
+    useSettingsViewModel();
 
   const handleClearHistory = () => {
     Alert.alert(

@@ -3,7 +3,6 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import React, { useEffect } from 'react';
 import { Animated, Image, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { RootStackParamList } from '../../../../App';
 import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
 import { BDBadge } from '../../../common/components/BDBadge';
 import { BDCard } from '../../../common/components/BDCard';
@@ -11,6 +10,8 @@ import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
 import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
 import { BDTypography } from '../../../common/components/BDTypography';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
+import { compareCardsStore } from '../../../common/services/CompareCardsStore';
+import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { CompareScreenSkeleton } from './components/CompareScreenSkeleton';
 import { StatsRow } from './components/StatsRow';
 import { StatsTable } from './components/StatsTable';
@@ -22,7 +23,7 @@ type CompareScreenProp = RouteProp<RootStackParamList, 'Compare'>;
 
 export function CompareScreen() {
   const styles = useStyles();
-  const { compareCards, result, isLoading, errorMessage } =
+  const { onCompareCards, compareCards, result, isLoading, errorMessage } =
     useCompareScreenViewModel();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CompareScreenProp>();
@@ -31,8 +32,13 @@ export function CompareScreen() {
   const rightCardScale = React.useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    compareCards(firstCard, secondCard, isDataLocal);
-  }, [compareCards, firstCard, secondCard, isDataLocal]);
+    onCompareCards(firstCard, secondCard, isDataLocal);
+  }, [onCompareCards, firstCard, secondCard, isDataLocal]);
+
+  useEffect(() => {
+    if (!compareCards) return;
+    compareCardsStore.addCard(compareCards);
+  }, [compareCards]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -54,12 +60,6 @@ export function CompareScreen() {
       ]).start();
     }
   }, [isLoading, leftCardScale, rightCardScale]);
-
-  useEffect(() => {
-    return () => {
-      if (!isDataLocal) navigation.popTo('Home', { isReloadData: true });
-    };
-  }, [isDataLocal, navigation]);
 
   const winnerDetail = result?.winnerCard.detail ?? firstCard;
   const loserDetail = result?.loserCard.detail ?? secondCard;

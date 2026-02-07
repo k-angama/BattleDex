@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { safeCall } from '../../../common/utils/safeAsync';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
+import { CompareCardsPreviewEntity } from '../../home/domaine/entities/CompareCardsPreviewEntity';
 import { CompareCardRepository } from '../domaine/CompareCardRepository';
 import { DBSaveCardRepository } from '../domaine/DBSaveCardRepository';
 import { MatchResultEntity } from '../domaine/entities/MatchResultEntity';
@@ -18,18 +19,23 @@ export function useCompareScreenViewModel({
   repository = compareCardsRepository,
   dataBaseRepository = dbSaveCardRepository,
 }: CompareScreenViewModelParams = {}) {
+  const [compareCards, setCompareCards] =
+    useState<CompareCardsPreviewEntity | null>(null);
   const [result, setResult] = useState<MatchResultEntity | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const saveComparedCardToDB = useCallback(
     async (comparedCard: MatchResultEntity) => {
-      await safeCall(() => dataBaseRepository.saveCardToDB(comparedCard));
+      await safeCall(
+        () => dataBaseRepository.saveCardToDB(comparedCard),
+        setCompareCards,
+      );
     },
     [dataBaseRepository],
   );
 
-  const compareCards = useCallback(
+  const onCompareCards = useCallback(
     async (cardOne: CardEntity, cardTwo: CardEntity, isDataLocal?: boolean) => {
       setIsLoading(true);
       setErrorMessage(null);
@@ -57,6 +63,7 @@ export function useCompareScreenViewModel({
 
     // Data
     result,
+    onCompareCards,
 
     // Loading & error state
     isLoading,

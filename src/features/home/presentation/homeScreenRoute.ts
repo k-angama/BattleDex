@@ -1,6 +1,6 @@
 import { NativeStackNavigationOptions } from '@react-navigation/native-stack';
 import { Platform } from 'react-native';
-import { HomeScreen } from './HomeScreen';
+import HomeScreen from './HomeScreen';
 
 const options: NativeStackNavigationOptions = {
   title: 'BattleDex',
