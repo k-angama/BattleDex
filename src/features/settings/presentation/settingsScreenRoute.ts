@@ -12,7 +12,7 @@ const options: NativeStackNavigationOptions = {
 };
 
 export const settingsScreenRoute = {
-  Settings: {
+  SettingsMain: {
     screen: SettingsScreen,
     options,
   },

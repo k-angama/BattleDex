@@ -55,8 +55,8 @@ export const useStyles = (top: number) => {
           alignItems: 'center',
         },
         segmentedControl: {
-          width: '55%',
-          transform: [{ scale: 0.9 }],
+          width: '60%',
+          //transform: [{ scale: 0.9 }],
         },
         dangerButton: {
           paddingVertical: theme.spacing.md,

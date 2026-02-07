@@ -32,6 +32,7 @@ export type RootStackParamList = {
     isDataLocal?: boolean;
   };
   Card: { cardId: string; name: string };
+  SettingsMain: undefined;
 };
 
 export type RootTabParamList = {
@@ -126,7 +127,6 @@ function TabNavigator() {
           borderTopColor: theme.colors.surface,
         },
         tabBarLabelStyle: {
-          fontSize: theme.typography.size.xs,
           fontFamily: theme.typography.family.regular,
         },
         tabBarActiveTintColor: theme.colors.primary,

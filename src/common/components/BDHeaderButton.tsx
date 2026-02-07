@@ -25,7 +25,7 @@ export function BDHeaderButton({
       <BDTypography
         variant="label"
         weight="semibold"
-        style={[disabled && styles.textDisabled]}
+        style={[disabled && styles.textDisabled, styles.text]}
       >
         {title}
       </BDTypography>
@@ -43,6 +43,9 @@ export const useStyles = () => {
         },
         textDisabled: {
           color: theme.colors.textMuted,
+        },
+        text: {
+          padding: theme.spacing.md,
         },
       }),
     [theme],

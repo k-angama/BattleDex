@@ -1,13 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, Animated, Keyboard, Platform } from 'react-native';
 import Reanimated, {
   useAnimatedStyle,
@@ -135,6 +129,19 @@ const HomeScreen = observer(
     );
 
     const renderItemHeader = useCallback(() => {
+      /*return (
+        <Button
+          disabled={compareCardsStoreData.length === 0}
+          title={
+            isEditMode && compareCardsStoreData.length > 0 ? 'Done' : 'Edit'
+          }
+          onPress={() => {
+            Keyboard.dismiss();
+            handleClearSearch();
+            setIsEditMode(prev => !prev);
+          }}
+        />
+      );*/
       return (
         <BDHeaderButton
           disabled={compareCardsStoreData.length === 0}
@@ -150,7 +157,7 @@ const HomeScreen = observer(
       );
     }, [isEditMode, compareCardsStoreData.length, handleClearSearch]);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       navigation.setOptions({
         headerRight: () => renderItemHeader(),
       });
