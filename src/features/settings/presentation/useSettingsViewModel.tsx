@@ -7,7 +7,6 @@ import { ThemeRepository } from '../domaine/ThemeRepository';
 import {
   dataBaseCardsRepository,
   settingsRepositoryImp,
-  themeRepositoryImp,
 } from './settingsScreenDI';
 
 interface SettingsScreenViewModelParams {
@@ -18,10 +17,10 @@ interface SettingsScreenViewModelParams {
 
 export function useSettingsViewModel({
   dataBase = dataBaseCardsRepository,
-  themeRepository = themeRepositoryImp(),
   settingsRepository = settingsRepositoryImp,
 }: SettingsScreenViewModelParams = {}) {
   const [isClearingHistory, setIsClearingHistory] = useState(false);
+
   const clearHistory = async () => {
     if (!dataBase) return;
     setIsClearingHistory(true);
@@ -33,11 +32,9 @@ export function useSettingsViewModel({
 
   const changeTheme = (mode: ThemeMode) => {
     settingsRepository?.setThemeMode(mode);
-    themeRepository?.setThemeMode(mode);
   };
 
   return {
-    themeMode: themeRepository?.getThemeMode(),
     changeTheme,
     clearHistory,
     isClearingHistory,

@@ -13,13 +13,15 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { BDTypography } from '../../../common/components/BDTypography';
+import { useTheme } from '../../../common/styles';
 import { useStyles } from './styles/settingsScreen.styles';
 import { useSettingsViewModel } from './useSettingsViewModel';
 
 export function SettingsScreen() {
   const insets = useSafeAreaInsets();
   const { styles } = useStyles(insets.top);
-  const { themeMode, changeTheme, clearHistory, isClearingHistory } =
+  const { setThemeMode, themeMode } = useTheme();
+  const { changeTheme, clearHistory, isClearingHistory } =
     useSettingsViewModel();
 
   const handleClearHistory = () => {
@@ -59,7 +61,9 @@ export function SettingsScreen() {
   const selectedIndex = themeValues.indexOf(themeMode);
 
   const handleThemeChange = (index: number) => {
-    changeTheme(themeValues[index]);
+    const selectedMode = themeValues[index];
+    changeTheme(selectedMode);
+    setThemeMode(selectedMode);
   };
 
   return (

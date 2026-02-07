@@ -1,28 +1,22 @@
-import { createMMKV } from 'react-native-mmkv';
 import type { MMKV } from 'react-native-mmkv';
-
-export const STORAGE_KEYS = {
-  themeMode: 'themeMode',
-} as const;
+import { createMMKV } from 'react-native-mmkv';
 
 export class StorageService {
   private storage: MMKV;
+
+  static readonly STORAGE_KEYS = {
+    themeMode: 'themeMode',
+  } as const;
 
   constructor(storage?: MMKV) {
     this.storage = storage ?? createMMKV();
   }
 
-  getString(key: string): string | undefined {
-    return this.storage.getString(key) ?? undefined;
+  getThemeMode(): string | undefined {
+    return this.storage.getString(StorageService.STORAGE_KEYS.themeMode);
   }
 
-  setString(key: string, value: string): void {
-    this.storage.set(key, value);
-  }
-
-  remove(key: string): void {
-    this.storage.remove(key);
+  setThemeMode(mode: string): void {
+    this.storage.set(StorageService.STORAGE_KEYS.themeMode, mode);
   }
 }
-
-export const storageService = new StorageService();

@@ -1,12 +1,11 @@
 import { compareLocalDatabase } from '../../../common/db/CompareLocalDatabase';
-import { storageService } from '../../../common/services/StorageService';
+import { StorageService } from '../../../common/services/StorageService';
 import { DataBaseCardsRepositoryImpl } from '../../home/data/DataBaseCardsRepositoryImpl';
 import { SettingsRepositoryImpl } from '../data/SettingsRepositoryImpl';
-import { useThemeRepository } from '../data/ThemeRepositoryImpl';
 
 export const dataBaseCardsRepository = new DataBaseCardsRepositoryImpl(
   compareLocalDatabase,
 );
 
-export const themeRepositoryImp = useThemeRepository;
+const storageService = new StorageService();
 export const settingsRepositoryImp = new SettingsRepositoryImpl(storageService);

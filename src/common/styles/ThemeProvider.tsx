@@ -4,6 +4,10 @@ import { darkTheme, lightTheme, Theme } from './themes';
 
 export type ThemeMode = 'dark' | 'light' | 'system';
 
+export const isThemeMode = (value?: string): value is ThemeMode => {
+  return value === 'dark' || value === 'light' || value === 'system';
+};
+
 type ThemeContextValue = {
   theme: Theme;
   themeMode: ThemeMode;

@@ -12,6 +12,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
+import { useEffect } from 'react';
 import { StatusBar, useColorScheme } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -140,8 +141,7 @@ function TabNavigator() {
   );
 }
 
-function ScreensStackNavigator() {
-  const { theme } = useTheme();
+function ScreensStackNavigator({ theme }: { theme: Theme }) {
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen
@@ -162,9 +162,14 @@ function ScreensStackNavigator() {
 }
 
 export function NavigationScreen() {
-  useNavigationScreenViewModel();
+  const { themeMode } = useNavigationScreenViewModel();
+  const { theme, setThemeMode } = useTheme();
   const isDarkMode = useColorScheme() === 'dark';
-  const { theme } = useTheme();
+
+  useEffect(() => {
+    setThemeMode(themeMode);
+  }, [setThemeMode, themeMode]);
+
   return (
     <SafeAreaProvider>
       <BottomSheetModalProvider>
@@ -173,7 +178,7 @@ export function NavigationScreen() {
           backgroundColor={theme.colors.background}
         />
         <NavigationContainer>
-          <ScreensStackNavigator />
+          <ScreensStackNavigator theme={theme} />
         </NavigationContainer>
       </BottomSheetModalProvider>
     </SafeAreaProvider>
