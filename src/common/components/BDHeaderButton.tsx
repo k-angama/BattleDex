@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
@@ -45,7 +45,7 @@ export const useStyles = () => {
           color: theme.colors.textMuted,
         },
         text: {
-          padding: theme.spacing.md,
+          padding: Platform.OS === 'ios' ? 0 : theme.spacing.md,
         },
       }),
     [theme],

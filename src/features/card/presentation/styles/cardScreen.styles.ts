@@ -1,9 +1,11 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useMemo } from 'react';
 import { StyleSheet } from 'react-native';
 import { useTheme } from '../../../../common/styles';
 
 export const useStyles = () => {
   const { theme } = useTheme();
+  const headerHeight = useHeaderHeight();
   return useMemo(
     () =>
       StyleSheet.create({
@@ -13,6 +15,7 @@ export const useStyles = () => {
         },
         content: {
           flex: 1,
+          marginTop: headerHeight,
           justifyContent: 'space-between',
         },
         scrollContent: {
@@ -75,6 +78,6 @@ export const useStyles = () => {
         },
         nameTag: { flex: 1 },
       }),
-    [theme],
+    [theme, headerHeight],
   );
 };

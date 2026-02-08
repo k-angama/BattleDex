@@ -1,9 +1,11 @@
+import { useHeaderHeight } from '@react-navigation/elements';
 import { useMemo } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 import { useTheme } from '../../../../common/styles';
 
-export const useStyles = (top: number) => {
+export const useStyles = () => {
   const { theme } = useTheme();
+  const headerHeight = useHeaderHeight();
 
   const styles = useMemo(
     () =>
@@ -13,7 +15,7 @@ export const useStyles = (top: number) => {
           backgroundColor: theme.colors.background,
         },
         scrollContent: {
-          paddingTop: top,
+          paddingTop: Platform.OS === 'ios' ? 0 : headerHeight,
           paddingHorizontal: theme.spacing.lg,
           paddingBottom: theme.spacing.xl,
         },
@@ -25,7 +27,7 @@ export const useStyles = (top: number) => {
           marginTop: theme.spacing.md,
         },
         section: {
-          marginTop: theme.spacing.xl,
+          marginTop: theme.spacing.lg,
         },
         sectionTitle: {
           fontSize: theme.typography.size.sm,
@@ -56,7 +58,6 @@ export const useStyles = (top: number) => {
         },
         segmentedControl: {
           width: '60%',
-          //transform: [{ scale: 0.9 }],
         },
         dangerButton: {
           paddingVertical: theme.spacing.md,
@@ -96,7 +97,7 @@ export const useStyles = (top: number) => {
           lineHeight: 18,
         },
       }),
-    [theme, top],
+    [theme, headerHeight],
   );
 
   return { styles };

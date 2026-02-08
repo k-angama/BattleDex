@@ -129,19 +129,6 @@ const HomeScreen = observer(
     );
 
     const renderItemHeader = useCallback(() => {
-      /*return (
-        <Button
-          disabled={compareCardsStoreData.length === 0}
-          title={
-            isEditMode && compareCardsStoreData.length > 0 ? 'Done' : 'Edit'
-          }
-          onPress={() => {
-            Keyboard.dismiss();
-            handleClearSearch();
-            setIsEditMode(prev => !prev);
-          }}
-        />
-      );*/
       return (
         <BDHeaderButton
           disabled={compareCardsStoreData.length === 0}
@@ -322,6 +309,7 @@ const HomeScreen = observer(
               keyExtractor={item => item.id}
               contentContainerStyle={styles.listContent}
               showsVerticalScrollIndicator={false}
+              contentInsetAdjustmentBehavior="automatic"
               onScroll={Animated.event(
                 [{ nativeEvent: { contentOffset: { y: scrollY } } }],
                 { useNativeDriver: false }, // Must be false for shadow/elevation

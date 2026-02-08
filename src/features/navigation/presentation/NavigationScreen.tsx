@@ -32,19 +32,14 @@ export type RootStackParamList = {
     isDataLocal?: boolean;
   };
   Card: { cardId: string; name: string };
-  SettingsMain: undefined;
 };
-
-export type RootTabParamList = {
-  Battle: undefined;
-  Settings: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator<RootTabParamList>();
 
 const stackHomeScreens = {
   ...homeScreenRoute,
+};
+
+const stackSettingsScreens = {
+  ...settingsScreenRoute,
 };
 
 const stackCardScreens = {
@@ -52,13 +47,11 @@ const stackCardScreens = {
   ...cardScreenRoute,
 };
 
-const stackSettingsScreens = {
-  ...settingsScreenRoute,
-};
-
 const screenOptions = (theme: Theme): NativeStackNavigationOptions => {
   return {
     headerLargeTitle: false,
+    gestureEnabled: false,
+    headerTransparent: true,
     headerStyle: {
       backgroundColor: theme.colors.background,
     },
@@ -73,11 +66,12 @@ const screenOptions = (theme: Theme): NativeStackNavigationOptions => {
   };
 };
 
-function HomeStackNavigator() {
+function SettingsStackNavigator() {
   const { theme } = useTheme();
+  const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
-      {Object.entries(stackHomeScreens).map(([name, config]) => (
+      {Object.entries(stackSettingsScreens).map(([name, config]) => (
         <Stack.Screen
           key={name}
           name={name as keyof RootStackParamList}
@@ -89,11 +83,15 @@ function HomeStackNavigator() {
   );
 }
 
-function SettingsStackNavigator() {
+function HomeStackNavigator() {
   const { theme } = useTheme();
+  const Stack = createNativeStackNavigator<RootStackParamList>();
   return (
-    <Stack.Navigator screenOptions={screenOptions(theme)}>
-      {Object.entries(stackSettingsScreens).map(([name, config]) => (
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={screenOptions(theme)}
+    >
+      {Object.entries(stackHomeScreens).map(([name, config]) => (
         <Stack.Screen
           key={name}
           name={name as keyof RootStackParamList}
@@ -118,10 +116,12 @@ const getTabBarIcon = (
 
 function TabNavigator() {
   const { theme } = useTheme();
+  const Tab = createBottomTabNavigator();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: theme.colors.background,
           borderTopColor: theme.colors.surface,
@@ -142,6 +142,7 @@ function TabNavigator() {
 }
 
 function ScreensStackNavigator({ theme }: { theme: Theme }) {
+  const Stack = createNativeStackNavigator<RootStackParamList>();
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen

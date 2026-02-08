@@ -7,7 +7,6 @@ const options: NativeStackNavigationOptions = {
   headerShadowVisible: false,
   headerLargeTitle: Platform.OS === 'ios',
   headerLargeTitleShadowVisible: true,
-  scrollEdgeEffects: {},
   headerTitleAlign: 'left',
 };
 
