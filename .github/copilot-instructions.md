@@ -1,0 +1,410 @@
+# Copilot Instructions for BattleDex
+
+## Critical Architecture Rule: Screen Organization
+
+When creating features in this React Native project, follow this pattern:
+
+### Multiple Screens (2+) in a Feature
+
+✅ **Create a separate subdirectory for EACH screen** under `presentation/`
+
+```
+src/features/{featureName}/
+├── domaine/
+├── data/
+└── presentation/
+    ├── {screenName1}/                    ← Screen 1 directory
+    │   ├── {ScreenName1}Screen.tsx
+    │   ├── {screenName1}ScreenDI.ts
+    │   ├── {screenName1}ScreenRoute.ts
+    │   ├── use{ScreenName1}ScreenViewModel.tsx
+    │   ├── styles/
+    │   │   └── {screenName1}Screen.styles.ts
+    │   └── components/
+    │       └── styles/
+    │
+    └── {screenName2}/                    ← Screen 2 directory
+        ├── {ScreenName2}Screen.tsx
+        ├── {screenName2}ScreenDI.ts
+        ├── {screenName2}ScreenRoute.ts
+        ├── use{ScreenName2}ScreenViewModel.tsx
+        └── styles/
+            └── {screenName2}Screen.styles.ts
+```
+
+**Example**: `collection` feature has 2 screens:
+
+- `presentation/collection/` - Main collections list
+- `presentation/collectionGroup/` - Individual group details
+
+### Single Screen in a Feature
+
+✅ **NO subdirectory** - Keep files flat in `presentation/`
+
+```
+src/features/{featureName}/
+├── domaine/
+├── data/
+└── presentation/                         ← NO subdirectory!
+    ├── {ScreenName}Screen.tsx
+    ├── {screenName}ScreenDI.ts
+    ├── {screenName}ScreenRoute.ts
+    ├── use{ScreenName}ScreenViewModel.tsx
+    ├── styles/
+    │   └── {screenName}Screen.styles.ts
+    └── components/
+        └── styles/
+```
+
+**Example**: `card` feature has 1 screen:
+
+- `presentation/CardScreen.tsx` (directly in presentation/)
+- `presentation/cardScreenDI.ts`
+- `presentation/useCardScreenViewModel.tsx`
+
+## Clean Architecture Layers
+
+```
+src/features/{featureName}/
+├── domaine/          # Entities & repository interfaces
+│   ├── entities/
+│   │   └── {EntityName}.ts       ← Business entities
+│   └── {RepositoryName}.ts       ← Repository interfaces
+├── data/             # Repository implementations
+│   └── {RepositoryName}Impl.ts
+└── presentation/     # UI components & screens
+    └── {screenName}/
+        ├── {ScreenName}Screen.tsx
+        ├── components/
+        └── styles/
+```
+
+### Domain Layer (domaine/)
+
+- **entities/**: Define TypeScript interfaces for business entities
+  ```typescript
+  // domaine/entities/CollectionGroup.ts
+  export interface CollectionGroup {
+    id: string;
+    name: string;
+    cardCount: number;
+    color: string;
+  }
+  ```
+- **Repository Interfaces**: Define contracts for data access
+  ```typescript
+  // domaine/SavedCardsRepository.ts
+  export interface SavedCardsRepository {
+    getSavedCards(): CardEntity[];
+    addCard(card: CardEntity): void;
+  }
+  ```
+
+## Required Files per Screen
+
+Every screen needs:
+
+1. `{ScreenName}Screen.tsx` - Main component (default export, use `observer()` if reactive)
+2. `use{ScreenName}ScreenViewModel.tsx` - Business logic hook
+3. `{screenName}ScreenDI.ts` - Dependency injection
+4. `{screenName}ScreenRoute.ts` - Route configuration
+5. `styles/{screenName}Screen.styles.ts` - Memoized styles
+
+## Naming Conventions
+
+| Type              | Pattern                  | Example                            |
+| ----------------- | ------------------------ | ---------------------------------- |
+| Directories       | camelCase                | `collection`, `collectionGroup`    |
+| Screen Components | PascalCase + `Screen`    | `CollectionScreen.tsx`             |
+| ViewModels        | `use` + PascalCase       | `useCollectionScreenViewModel.tsx` |
+| Styles            | camelCase + `.styles.ts` | `collectionScreen.styles.ts`       |
+| DI Files          | camelCase + `DI.ts`      | `collectionScreenDI.ts`            |
+| Routes            | camelCase + `Route.ts`   | `collectionScreenRoute.ts`         |
+
+## Common Patterns
+
+### Screen Component
+
+```typescript
+import { observer } from 'mobx-react-lite';
+
+const ScreenName = observer(() => {
+  const { styles } = useStyles();
+  const { data } = useScreenNameViewModel();
+
+  return <SafeAreaView style={styles.container}>{/* UI */}</SafeAreaView>;
+});
+
+export default ScreenName;
+```
+
+### ViewModel Hook
+
+```typescript
+export function useScreenNameViewModel({
+  repository = repositoryInstance,
+}: ViewModelParams = {}) {
+  const data = useMemo(() => repository.getData(), [repository]);
+  return { data };
+}
+```
+
+### Styles Hook (Always memoized with theme)
+
+```typescript
+export const useStyles = () => {
+  const { theme } = useTheme();
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          backgroundColor: theme.colors.background, // Use theme
+          padding: theme.spacing.lg, // Use theme
+        },
+      }),
+    [theme],
+  );
+
+  return { styles };
+};
+```
+
+### List Item Components
+
+When creating items for a list, FlatList, or grid:
+
+✅ **Create reusable components** in `components/` directory
+✅ **Keep component styles** in `components/styles/` subdirectory
+
+```
+presentation/{screenName}/
+├── {ScreenName}Screen.tsx
+├── components/
+│   ├── {ItemName}Item.tsx              ← List/grid item component
+│   ├── {ComponentName}.tsx             ← Other components
+│   └── styles/
+│       ├── {itemName}Item.styles.ts    ← Item component styles
+│       └── {componentName}.styles.ts   ← Other component styles
+└── styles/
+    └── {screenName}Screen.styles.ts
+```
+
+**Example**: CollectionGroup screen with cards
+
+```
+presentation/collectionGroup/
+├── CollectionGroupScreen.tsx
+├── components/
+│   ├── CollectionGroupCard.tsx         ← Card item component (exported or inline)
+│   └── styles/
+│       └── collectionGroupCard.styles.ts
+└── styles/
+    └── collectionGroupScreen.styles.ts
+```
+
+```typescript
+// CollectionGroupCard.tsx (named export with entity import)
+import type { CollectionGroup } from '../../../domaine/entities/CollectionGroup';
+
+export interface CollectionGroupCardProps {
+  item: CollectionGroup;
+}
+
+export function CollectionGroupCard({ item }: CollectionGroupCardProps) {
+  const { styles } = useStyles();
+
+  return (
+    <View style={styles.cardContainer}>
+      <View style={styles.cardHeader}>{/* Card content */}</View>
+    </View>
+  );
+}
+```
+
+```typescript
+// collectionGroupCard.styles.ts
+export const useStyles = () => {
+  const { theme } = useTheme();
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        cardContainer: {
+          /* styles */
+        },
+        cardHeader: {
+          /* styles */
+        },
+        // ... other styles
+      }),
+    [theme],
+  );
+
+  return { styles };
+};
+```
+
+## Mock-First Repository Pattern
+
+When creating features with data access, follow this **mock-first** pattern before implementing real database operations:
+
+### Step 1: Create Repository Interface
+
+Define the contract in `domaine/repositories/`:
+
+```typescript
+// domaine/repositories/{EntityName}Repository.ts
+export interface EntityNameRepository {
+  getEntities(): Promise<Entity[]>;
+  addEntity(entity: Entity): Promise<void>;
+  removeEntity(id: string): Promise<void>;
+  // Add methods as needed for your feature
+}
+```
+
+### Step 2: Create Mock Implementation
+
+Implement the interface with mock data in `domaine/mocks/`:
+
+```typescript
+// domaine/mocks/{EntityName}RepositoryMock.ts
+import { EntityNameRepository } from '../repositories/{EntityName}Repository';
+import { mockData } from '../../../common/mocks/{entityName}Mock';
+
+export class EntityNameRepositoryMock implements EntityNameRepository {
+  private entities = [...mockData];
+
+  async getEntities(): Promise<Entity[]> {
+    // Simulate async delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return [...this.entities];
+  }
+
+  async addEntity(entity: Entity): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    this.entities.push(entity);
+  }
+
+  async removeEntity(id: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    this.entities = this.entities.filter(e => e.id !== id);
+  }
+}
+```
+
+### Step 3: Create Real Implementation Stub
+
+Create placeholder in `data/` (to be implemented later with op-sqlite):
+
+```typescript
+// data/{EntityName}RepositoryImpl.ts
+import { EntityNameRepository } from '../domaine/repositories/{EntityName}Repository';
+
+export class EntityNameRepositoryImpl implements EntityNameRepository {
+  async getEntities(): Promise<Entity[]> {
+    throw new Error('Method not implemented.');
+  }
+
+  async addEntity(_entity: Entity): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  async removeEntity(_id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+}
+```
+
+### Step 4: Initialize in DI File
+
+Set up dependency injection in `presentation/{screenName}/{screenName}ScreenDI.ts` with **conditional mock/real instantiation** using `isMockDataSource()`:
+
+```typescript
+// presentation/{screenName}/{screenName}ScreenDI.ts
+import { isMockDataSource } from '../../../../common/utils/environment';
+import { EntityNameRepositoryImpl } from '../../data/{EntityName}RepositoryImpl';
+import { EntityNameRepositoryMock } from '../../domaine/mocks/{EntityName}RepositoryMock';
+
+const useMocks = isMockDataSource();
+
+const createRepository = () =>
+  useMocks ? new EntityNameRepositoryMock() : new EntityNameRepositoryImpl();
+
+export const entityNameRepository = createRepository();
+```
+
+**Note**: The `isMockDataSource()` function checks your environment configuration to determine whether to use mocks or real implementations. This allows you to test with mocks in development and switch to real implementations in production without code changes.
+
+### Step 5: Use in ViewModel
+
+Inject the repository into your ViewModel hook following the homeScreenViewModel pattern:
+
+```typescript
+// presentation/{screenName}/use{ScreenName}ScreenViewModel.tsx
+import { entityNameRepository } from './{screenName}ScreenDI';
+
+export function use{ScreenName}ScreenViewModel({
+  repository = entityNameRepository,
+}: ViewModelParams = {}) {
+  const [entities, setEntities] = useState<Entity[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const getEntities = useCallback(async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    await safeCall(
+      () => repository.getEntities(),
+      setEntities,
+      setErrorMessage,
+      { operation: 'Fetch Entities', fallbackMessage: 'Failed to load entities' }
+    );
+    setIsLoading(false);
+  }, [repository]);
+
+  const addEntity = useCallback(async (entity: Entity) => {
+    setErrorMessage(null);
+    await safeCall(
+      () => repository.addEntity(entity),
+      null,
+      setErrorMessage,
+      { operation: 'Add Entity', fallbackMessage: 'Failed to add entity' }
+    );
+    if (!errorMessage) await getEntities();
+  }, [repository, getEntities, errorMessage]);
+
+  useEffect(() => {
+    getEntities();
+  }, [getEntities]);
+
+  return { entities, getEntities, addEntity, isLoading, errorMessage };
+}
+```
+
+### Benefits of This Pattern
+
+- ✅ **Immediate testing** - Mock works right away while real implementation is stubbed
+- ✅ **Swappable** - Change DI file to swap from mock to real without changing screens
+- ✅ **Incremental development** - Complete UI first, implement persistence later
+- ✅ **Clear separation** - Mock data, interface, and implementation are isolated
+
+## Key Rules
+
+1. **Always use theme values** for colors, spacing, typography
+2. **Memoize styles** with `useMemo` depending on `[theme]`
+3. **Use `observer()`** for components that need MobX reactivity
+4. **Default export** for screen components, **named exports** for others
+5. **Repository instances** in DI files, injected into ViewModels
+6. **Type imports**: Use `import type` when only importing types
+7. **Entities** live in `domaine/entities/` - NOT in components or presentation
+   - Import entities as type imports: `import type { Entity } from '../../domaine/entities/Entity'`
+   - Define props interfaces in components, but use entities from domaine
+
+## When Asked to Create a Feature Structure
+
+1. Ask: "How many screens?" (or infer from context)
+2. If 2+ screens → Create subdirectory for each
+3. If 1 screen → Keep flat in presentation/
+4. Create all required files following naming conventions
+5. Follow Clean Architecture layers (domaine → data → presentation)
