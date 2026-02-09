@@ -12,6 +12,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BDTypography } from '../../../common/components/BDTypography';
 import { compareCardsStore } from '../../../common/services/CompareCardsStore';
 import { useTheme } from '../../../common/styles';
+import {
+  ANDROID_PLAY_STORE_URL,
+  IOS_APP_STORE_URL,
+  PRIVACY_POLICY_URL,
+  TERMS_OF_SERVICE_URL,
+} from '../../../common/utils/constants';
 import { useStyles } from './styles/settingsScreen.styles';
 import { useSettingsViewModel } from './useSettingsViewModel';
 
@@ -57,10 +63,12 @@ export function SettingsScreen() {
   };
 
   const handleRateApp = () => {
-    const iosUrl = 'https://apps.apple.com/app/battledex/id1234567890';
-    const androidUrl =
-      'https://play.google.com/store/apps/details?id=com.battledex';
-    const storeUrl = Platform.OS === 'ios' ? iosUrl : androidUrl;
+    const storeUrl =
+      Platform.OS === 'ios'
+        ? IOS_APP_STORE_URL
+        : Platform.OS === 'android'
+        ? ANDROID_PLAY_STORE_URL
+        : undefined;
 
     if (!storeUrl) {
       Alert.alert(
@@ -133,15 +141,13 @@ export function SettingsScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={() => handleOpenURL('https://example.com/privacy-policy')}
+            onPress={() => handleOpenURL(PRIVACY_POLICY_URL)}
           >
             <BDTypography variant="label">📋 Privacy Policy</BDTypography>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.linkButton}
-            onPress={() =>
-              handleOpenURL('https://example.com/terms-of-service')
-            }
+            onPress={() => handleOpenURL(TERMS_OF_SERVICE_URL)}
           >
             <BDTypography variant="label">📄 Terms of Service</BDTypography>
           </TouchableOpacity>
