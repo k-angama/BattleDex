@@ -124,7 +124,7 @@ export function CompareCardsItem({
               />
             )}
             {/* Time Badge */}
-            <View style={styles.timeBadge}>
+            <View style={styles.timeBadge} pointerEvents="none">
               <BDTypography style={styles.timeText}>{timeAgo}</BDTypography>
             </View>
             <TouchableOpacity
