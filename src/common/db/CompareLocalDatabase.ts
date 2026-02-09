@@ -32,7 +32,7 @@ export class CompareLocalDatabase {
     loserJson: string,
     winner: string = 'none',
     comparisonDate: Date = new Date(),
-  ): Promise<void> {
+  ): Promise<CompareRowRaw> {
     const id = `${comparisonDate.getTime()}-${Math.random()
       .toString(36)
       .slice(2)}`;
@@ -46,6 +46,13 @@ export class CompareLocalDatabase {
        VALUES (?, ?, ?, ?, ?);`,
       [id, winner, winner_json, loser_json, comparison_date],
     );
+    return {
+      id: id,
+      winner: winner,
+      winner_json: winnerJson,
+      loser_json: loserJson,
+      comparison_date: comparison_date,
+    };
   }
 
   async getCompareCards(): Promise<CompareRowRaw[]> {
@@ -73,6 +80,10 @@ export class CompareLocalDatabase {
     const placeholders = ids.map(() => '?').join(',');
     const query = `DELETE FROM compare_results WHERE id IN (${placeholders});`;
     await this.db.executeSync(query, ids);
+  }
+
+  async clearAllComparisons(): Promise<void> {
+    await this.db.executeSync('DELETE FROM compare_results;');
   }
 }
 

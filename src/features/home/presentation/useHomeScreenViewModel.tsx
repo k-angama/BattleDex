@@ -48,7 +48,7 @@ export function useHomeScreenViewModel({
   }, [dataBase]);
 
   const deleteComparison = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<{ success: boolean; error: string | null }> => {
       setIsLoading(true);
       setErrorMessage(null);
 
@@ -62,19 +62,19 @@ export function useHomeScreenViewModel({
         },
       );
 
-      if (!error) {
-        // Refresh list after successful delete
-        await getCompareCards();
-      }
-
       setIsLoading(false);
+      return { success: !error, error };
     },
-    [dataBase, getCompareCards],
+    [dataBase],
   );
 
   const deleteComparisons = useCallback(
-    async (ids: string[]) => {
-      if (!ids || ids.length === 0) return;
+    async (
+      ids: string[],
+    ): Promise<{ success: boolean; error: string | null }> => {
+      if (!ids || ids.length === 0) {
+        return { success: false, error: 'No items selected' };
+      }
       setIsLoading(true);
       setErrorMessage(null);
 
@@ -88,13 +88,10 @@ export function useHomeScreenViewModel({
         },
       );
 
-      if (!error) {
-        await getCompareCards();
-      }
-
       setIsLoading(false);
+      return { success: !error, error };
     },
-    [dataBase, getCompareCards],
+    [dataBase],
   );
 
   useEffect(() => {

@@ -123,14 +123,14 @@ export function CompareCardsItem({
                 onToggleSelect={handleToggleSelect}
               />
             )}
+            {/* Time Badge */}
+            <View style={styles.timeBadge} pointerEvents="none">
+              <BDTypography style={styles.timeText}>{timeAgo}</BDTypography>
+            </View>
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={isEditMode ? handleToggleSelect : onPress}
             >
-              {/* Time Badge */}
-              <View style={styles.timeBadge}>
-                <BDTypography style={styles.timeText}>{timeAgo}</BDTypography>
-              </View>
               {/* Cards Row */}
               <View style={styles.row}>
                 {/* Loser Card */}

@@ -1,7 +1,13 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useEffect, useState } from 'react';
-import { Alert, Dimensions, Platform, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Alert,
+  Dimensions,
+  Platform,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Animated, {
   useAnimatedScrollHandler,
   useAnimatedStyle,
@@ -12,7 +18,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import { RootStackParamList } from '../../../../App';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { BDAttacksTypes } from '../../../common/components/BDAttacksTypes';
 import { BDBadge } from '../../../common/components/BDBadge';
 import { BDButton } from '../../../common/components/BDButton';
@@ -24,12 +30,14 @@ import { useTheme } from '../../../common/styles';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
 import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
+import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { ActionButtonsSkeleton } from './components/ActionButtonsSkeleton';
 import { CardScreenSkeleton } from './components/CardScreenSkeleton';
 import { CardSelectorBottomSheet } from './components/CardSelectorBottomSheet';
 import { DuelCard } from './components/DuelCard';
 import { DuelCardsSkeleton } from './components/DuelCardsSkeleton';
 import { HolographicCard } from './components/HolographicCard';
+import { ScrollIndicator } from './components/ScrollIndicator';
 import { useStyles } from './styles/cardScreen.styles';
 import { useCardScreenViewModel } from './useCardScreenViewModel';
 
@@ -63,15 +71,33 @@ export function CardScreen() {
     selectedCard,
   } = viewModel;
 
+  const renderItemHeader = useCallback(
+    (tintColor: string | undefined) => {
+      return (
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon name="close" size={24} color={tintColor} />
+        </TouchableOpacity>
+      );
+    },
+    [navigation],
+  );
+
   useEffect(() => {
     const updateHeaderTitle = () => {
       navigation.setOptions({
         title:
           selectedCard && firstCard ? 'Ready to Battle' : route.params.name,
+        headerLeft: ({ tintColor }) => renderItemHeader(tintColor),
       });
     };
     updateHeaderTitle();
-  }, [firstCard, navigation, route.params.name, selectedCard]);
+  }, [
+    firstCard,
+    navigation,
+    renderItemHeader,
+    route.params.name,
+    selectedCard,
+  ]);
 
   useEffect(() => {
     const getCard = async () => {
@@ -259,6 +285,8 @@ export function CardScreen() {
                       imageUrl={firstCard?.imageUrl ?? ''}
                       width={getSizeCard().cardWith}
                     />
+
+                    <ScrollIndicator />
 
                     <BDCard style={styles.containerInfo} title="Information">
                       <BDTypography variant="label">

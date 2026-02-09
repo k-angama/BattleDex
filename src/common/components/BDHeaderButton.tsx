@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import { useTheme } from '../styles';
 import { BDTypography } from './BDTypography';
 
@@ -25,7 +25,7 @@ export function BDHeaderButton({
       <BDTypography
         variant="label"
         weight="semibold"
-        style={[disabled && styles.textDisabled]}
+        style={[disabled && styles.textDisabled, styles.text]}
       >
         {title}
       </BDTypography>
@@ -43,6 +43,9 @@ export const useStyles = () => {
         },
         textDisabled: {
           color: theme.colors.textMuted,
+        },
+        text: {
+          padding: Platform.OS === 'ios' ? 0 : theme.spacing.md,
         },
       }),
     [theme],

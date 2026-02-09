@@ -109,18 +109,14 @@ const createVariantStyles = (theme: Theme) => {
 const createWeightStyles = (theme: Theme) => ({
   regular: {
     fontFamily: theme.typography.family.regular,
-    fontWeight: '400',
   } as TextStyle,
   medium: {
     fontFamily: theme.typography.family.medium,
-    fontWeight: '500',
   } as TextStyle,
   semibold: {
     fontFamily: theme.typography.family.semibold,
-    fontWeight: '600',
   } as TextStyle,
   bold: {
     fontFamily: theme.typography.family.bold,
-    fontWeight: '700',
   } as TextStyle,
 });
