@@ -48,11 +48,11 @@ export function useHomeScreenViewModel({
   }, [dataBase]);
 
   const deleteComparison = useCallback(
-    async (id: string) => {
+    async (id: string): Promise<{ success: boolean; error: string | null }> => {
       setIsLoading(true);
       setErrorMessage(null);
 
-      await safeCall(
+      const [, error] = await safeCall(
         () => dataBase.deleteComparison(id),
         undefined,
         setErrorMessage,
@@ -63,17 +63,22 @@ export function useHomeScreenViewModel({
       );
 
       setIsLoading(false);
+      return { success: !error, error };
     },
     [dataBase],
   );
 
   const deleteComparisons = useCallback(
-    async (ids: string[]) => {
-      if (!ids || ids.length === 0) return;
+    async (
+      ids: string[],
+    ): Promise<{ success: boolean; error: string | null }> => {
+      if (!ids || ids.length === 0) {
+        return { success: false, error: 'No items selected' };
+      }
       setIsLoading(true);
       setErrorMessage(null);
 
-      await safeCall(
+      const [, error] = await safeCall(
         () => dataBase.deleteComparisons(ids),
         undefined,
         setErrorMessage,
@@ -84,6 +89,7 @@ export function useHomeScreenViewModel({
       );
 
       setIsLoading(false);
+      return { success: !error, error };
     },
     [dataBase],
   );

@@ -94,10 +94,17 @@ const HomeScreen = observer(
             text: 'Delete',
             style: 'destructive',
             onPress: async () => {
-              await deleteComparisons(selectedIds);
-              store.removeCards(selectedIds);
-              clearSelectedIds();
-              setIsEditMode(false);
+              const result = await deleteComparisons(selectedIds);
+              if (result.success) {
+                store.removeCards(selectedIds);
+                clearSelectedIds();
+                setIsEditMode(false);
+              } else {
+                Alert.alert(
+                  'Error',
+                  result.error ?? 'Unable to delete items. Please try again.',
+                );
+              }
             },
           },
         ],
@@ -180,9 +187,17 @@ const HomeScreen = observer(
                 text: 'Delete',
                 style: 'destructive',
                 onPress: async () => {
-                  await deleteComparison(id);
-                  store.removeCard(id);
-                  clearSelectedIds();
+                  const result = await deleteComparison(id);
+                  if (result.success) {
+                    store.removeCard(id);
+                    clearSelectedIds();
+                  } else {
+                    Alert.alert(
+                      'Error',
+                      result.error ??
+                        'Unable to delete item. Please try again.',
+                    );
+                  }
                 },
               },
             ],

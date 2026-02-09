@@ -124,10 +124,16 @@ describe('useHomeScreenViewModel', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    await act(() => result.current.deleteComparison('id-1'));
+    let response: Awaited<ReturnType<typeof result.current.deleteComparison>> =
+      { success: false, error: null };
+
+    await act(async () => {
+      response = await result.current.deleteComparison('id-1');
+    });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(mockDataBase.deleteComparison).toHaveBeenCalledWith('id-1');
+    expect(response).toEqual({ success: true, error: null });
   });
 
   it('deletes multiple comparisons and refreshes list', async () => {
@@ -145,13 +151,19 @@ describe('useHomeScreenViewModel', () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    await act(() => result.current.deleteComparisons(['id-1', 'id-2']));
+    let response: Awaited<ReturnType<typeof result.current.deleteComparisons>> =
+      { success: false, error: null };
+
+    await act(async () => {
+      response = await result.current.deleteComparisons(['id-1', 'id-2']);
+    });
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(mockDataBase.deleteComparisons).toHaveBeenCalledWith([
       'id-1',
       'id-2',
     ]);
+    expect(response).toEqual({ success: true, error: null });
   });
 
   it('toggles the same ID twice to remove it', async () => {
@@ -194,5 +206,71 @@ describe('useHomeScreenViewModel', () => {
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
     expect(mockDataBase.getCompareCards).toHaveBeenCalledTimes(2);
+  });
+
+  it('returns error when deleteComparison fails', async () => {
+    mockDataBase.deleteComparison = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('delete failed')) as any;
+
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    let response: Awaited<ReturnType<typeof result.current.deleteComparison>> =
+      { success: false, error: null };
+
+    await act(async () => {
+      response = await result.current.deleteComparison('id-1');
+    });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(response.success).toBe(false);
+    expect(response.error).toBe(
+      'Unable to delete comparison. Please try again.',
+    );
+  });
+
+  it('returns error when deleteComparisons fails', async () => {
+    mockDataBase.deleteComparisons = jest
+      .fn()
+      .mockRejectedValueOnce(new Error('bulk delete failed')) as any;
+
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    let response: Awaited<ReturnType<typeof result.current.deleteComparison>> =
+      { success: false, error: null };
+
+    await act(async () => {
+      response = await result.current.deleteComparisons(['id-1', 'id-2']);
+    });
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(response.success).toBe(false);
+    expect(response.error).toBe(
+      'Unable to delete comparisons. Please try again.',
+    );
+  });
+
+  it('returns error when deleteComparisons called with empty array', async () => {
+    const { result } = renderHook(() =>
+      useHomeScreenViewModel({ dataBase: mockDataBase, useCase: mockUseCase }),
+    );
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    let response: Awaited<ReturnType<typeof result.current.deleteComparison>> =
+      { success: false, error: null };
+
+    await act(async () => {
+      response = await result.current.deleteComparisons([]);
+    });
+
+    expect(response).toEqual({ success: false, error: 'No items selected' });
   });
 });
