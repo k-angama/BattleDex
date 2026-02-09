@@ -10,7 +10,9 @@ interface NavigationScreenViewModelParams {
 export function useNavigationScreenViewModel({
   settingsRepository = settingsRepositoryImp,
 }: NavigationScreenViewModelParams = {}) {
-  const [themeMode, setThemeMode] = useState<ThemeMode>('system');
+  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+    return settingsRepository?.getThemeMode() ?? 'system';
+  });
 
   useEffect(() => {
     const saved = settingsRepository?.getThemeMode();

@@ -3,6 +3,7 @@ import React from 'react';
 import {
   Alert,
   Linking,
+  Platform,
   ScrollView,
   TouchableOpacity,
   View,
@@ -57,7 +58,19 @@ export function SettingsScreen() {
 
   const handleRateApp = () => {
     const iosUrl = 'https://apps.apple.com/app/battledex/id1234567890';
-    handleOpenURL(iosUrl);
+    const androidUrl =
+      'https://play.google.com/store/apps/details?id=com.battledex';
+    const storeUrl = Platform.OS === 'ios' ? iosUrl : androidUrl;
+
+    if (!storeUrl) {
+      Alert.alert(
+        'Unavailable',
+        'App Store link is not available for this platform.',
+      );
+      return;
+    }
+
+    handleOpenURL(storeUrl);
   };
 
   const themeValues: Array<'light' | 'dark' | 'system'> = [

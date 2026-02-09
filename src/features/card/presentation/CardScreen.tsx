@@ -30,10 +30,7 @@ import { useTheme } from '../../../common/styles';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
 import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
-import {
-  HomeStackParamList,
-  RootStackParamList,
-} from '../../navigation/presentation/NavigationScreen';
+import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { ActionButtonsSkeleton } from './components/ActionButtonsSkeleton';
 import { CardScreenSkeleton } from './components/CardScreenSkeleton';
 import { CardSelectorBottomSheet } from './components/CardSelectorBottomSheet';
@@ -45,7 +42,7 @@ import { useStyles } from './styles/cardScreen.styles';
 import { useCardScreenViewModel } from './useCardScreenViewModel';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-type CardScreenRouteProp = RouteProp<HomeStackParamList, 'Card'>;
+type CardScreenRouteProp = RouteProp<RootStackParamList, 'Card'>;
 
 export function CardScreen() {
   const styles = useStyles();

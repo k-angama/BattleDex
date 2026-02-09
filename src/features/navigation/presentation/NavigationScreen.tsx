@@ -36,7 +36,7 @@ export type HomeStackParamList = {
 
 export type RootStackParamList = {
   Root: undefined;
-  Card: undefined;
+  Card: { cardId: string; name: string };
   Compare: {
     firstCard: CardEntity;
     secondCard: CardEntity;

@@ -11,10 +11,7 @@ import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
 import { BDTypography } from '../../../common/components/BDTypography';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
 import { compareCardsStore } from '../../../common/services/CompareCardsStore';
-import {
-  HomeStackParamList,
-  RootStackParamList,
-} from '../../navigation/presentation/NavigationScreen';
+import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { CompareScreenSkeleton } from './components/CompareScreenSkeleton';
 import { StatsRow } from './components/StatsRow';
 import { StatsTable } from './components/StatsTable';
@@ -22,7 +19,7 @@ import { useStyles } from './styles/compareScreen.style';
 import { useCompareScreenViewModel } from './useCompareScreenViewModel';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-type CompareScreenProp = RouteProp<HomeStackParamList, 'Compare'>;
+type CompareScreenProp = RouteProp<RootStackParamList, 'Compare'>;
 
 export function CompareScreen() {
   const styles = useStyles();
