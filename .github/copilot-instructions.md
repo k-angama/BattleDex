@@ -507,6 +507,10 @@ export default {Feature}Screen;
 7. **Entities** live in `domaine/entities/` - NOT in components or presentation
    - Import entities as type imports: `import type { Entity } from '../../domaine/entities/Entity'`
    - Define props interfaces in components, but use entities from domaine
+8. **Always respect ESLint rules** - Code must pass linting without errors
+   - Follow configured ESLint rules for TypeScript and React Native
+   - Fix all ESLint warnings and errors before completing work
+   - Run linter to validate code quality
 
 ## When Asked to Create a Feature Structure
 

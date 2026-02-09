@@ -16,11 +16,16 @@ export const useStyles = () => {
         },
         listContent: {
           paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.lg,
+          paddingVertical: theme.spacing.md,
         },
         columnWrapper: {
-          justifyContent: 'space-between',
+          justifyContent: 'flex-start',
           marginBottom: theme.spacing.lg,
+          gap: theme.spacing.md,
+        },
+        spacer: {
+          flex: 1,
+          minWidth: '48%',
         },
       }),
     [theme, headerHeight],

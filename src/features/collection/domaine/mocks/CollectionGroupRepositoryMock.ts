@@ -25,6 +25,17 @@ export class CollectionGroupRepositoryMock
     });
   }
 
+  async updateCollection(collection: CollectionGroupEntity): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.collections = this.collections.map(c =>
+          c.id === collection.id ? collection : c,
+        );
+        resolve();
+      }, 300);
+    });
+  }
+
   async removeCollection(id: string): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {

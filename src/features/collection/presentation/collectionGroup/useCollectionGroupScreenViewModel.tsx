@@ -53,6 +53,27 @@ export function useCollectionGroupScreenViewModel({
     [repository],
   );
 
+  const updateCollection = useCallback(
+    async (
+      collection: CollectionGroupEntity,
+    ): Promise<{ success: boolean; error: string | null }> => {
+      setErrorMessage(null);
+
+      const [, error] = await safeCall(
+        () => repository.updateCollection(collection),
+        undefined,
+        setErrorMessage,
+        {
+          operation: 'Update Collection',
+          fallbackMessage: 'Unable to update collection. Please try again.',
+        },
+      );
+
+      return { success: !error, error };
+    },
+    [repository],
+  );
+
   const removeCollection = useCallback(
     async (id: string): Promise<{ success: boolean; error: string | null }> => {
       setErrorMessage(null);
@@ -83,6 +104,7 @@ export function useCollectionGroupScreenViewModel({
     // Actions
     getCollections,
     addCollection,
+    updateCollection,
     removeCollection,
 
     // Loading & error state

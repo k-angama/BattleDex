@@ -9,6 +9,7 @@ export class CollectionGroupStore {
       collections: observable,
       setCollections: action,
       addCollection: action,
+      updateCollection: action,
       removeCollection: action,
       removeAllCollections: action,
     });
@@ -20,6 +21,12 @@ export class CollectionGroupStore {
 
   addCollection(collection: CollectionGroupEntity) {
     this.collections = [collection, ...this.collections];
+  }
+
+  updateCollection(collection: CollectionGroupEntity) {
+    this.collections = this.collections.map(c =>
+      c.id === collection.id ? collection : c,
+    );
   }
 
   removeCollection(id: string) {

@@ -12,6 +12,10 @@ export class CollectionGroupRepositoryImpl
     throw new Error('Method not implemented.');
   }
 
+  async updateCollection(_collection: CollectionGroupEntity): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
   async removeCollection(_id: string): Promise<void> {
     throw new Error('Method not implemented.');
   }

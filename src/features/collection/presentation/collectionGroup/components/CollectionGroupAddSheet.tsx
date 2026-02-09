@@ -7,6 +7,7 @@ import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescrip
 import React, {
   useCallback,
   useEffect,
+  useImperativeHandle,
   useMemo,
   useRef,
   useState,
@@ -22,13 +23,14 @@ export interface CollectionGroupAddSheetProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (payload: { name: string; color: string }) => void;
+  initialData?: { name: string; color: string };
 }
 
 export const CollectionGroupAddSheet = React.forwardRef<
   BottomSheetModalMethods,
   CollectionGroupAddSheetProps
 >(function CollectionGroupAddSheetWithRef(
-  { visible, onClose, onSubmit }: CollectionGroupAddSheetProps,
+  { visible, onClose, onSubmit, initialData }: CollectionGroupAddSheetProps,
   ref,
 ) {
   const { styles, placeholderColor } = useStyles();
@@ -37,18 +39,24 @@ export const CollectionGroupAddSheet = React.forwardRef<
   const defaultColor = COLLECTION_GROUP_COLORS[0];
   const [name, setName] = useState('');
   const [selectedColor, setSelectedColor] = useState(defaultColor);
+  const isEditing = !!initialData;
 
   useEffect(() => {
     if (visible) {
       modalRef.current?.present();
-      setName('');
-      setSelectedColor(defaultColor);
+      if (initialData) {
+        setName(initialData.name);
+        setSelectedColor(initialData.color);
+      } else {
+        setName('');
+        setSelectedColor(defaultColor);
+      }
     } else {
       modalRef.current?.dismiss();
     }
-  }, [visible, defaultColor]);
+  }, [visible, defaultColor, initialData]);
 
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref,
     () => modalRef.current as BottomSheetModalMethods,
     [],
@@ -89,7 +97,7 @@ export const CollectionGroupAddSheet = React.forwardRef<
     >
       <SafeAreaView style={styles.container} edges={['bottom']}>
         <BDTypography variant="title" weight="bold" style={styles.title}>
-          New Collection
+          {isEditing ? 'Edit Collection' : 'New Collection'}
         </BDTypography>
 
         <View style={styles.inputContainer}>
@@ -139,7 +147,7 @@ export const CollectionGroupAddSheet = React.forwardRef<
             style={styles.actionButton}
           />
           <BDButton
-            title="Create"
+            title={isEditing ? 'Save' : 'Create'}
             variant="primary"
             size="md"
             fullWidth={false}

@@ -8,8 +8,10 @@ export const useStyles = () => {
   const styles = useMemo(
     () =>
       StyleSheet.create({
+        menuContainer: {
+          flex: 1 / 2,
+        },
         cardContainer: {
-          flex: 1,
           backgroundColor: theme.colors.surface,
           borderRadius: 12,
           overflow: 'hidden',
@@ -19,6 +21,9 @@ export const useStyles = () => {
           shadowOpacity: 0.1,
           shadowRadius: 4,
           elevation: 3,
+        },
+        cardPressed: {
+          opacity: 0.7,
         },
         cardHeader: {
           height: 100,

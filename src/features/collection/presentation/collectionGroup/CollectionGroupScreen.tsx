@@ -12,6 +12,7 @@ import {
   CollectionGroupStore,
 } from '../../../../common/services/CollectionGroupStore';
 import { useTheme } from '../../../../common/styles';
+import type { CollectionGroupEntity } from '../../domaine/entities/CollectionGroupEntity';
 import { CollectionGroupAddSheet } from './components/CollectionGroupAddSheet';
 import { CollectionGroupCard } from './components/CollectionGroupCard';
 import { CollectionGroupCardSkeleton } from './components/CollectionGroupCardSkeleton';
@@ -33,35 +34,86 @@ const CollectionGroupScreen = observer(
       errorMessage,
       getCollections,
       addCollection,
+      updateCollection,
+      removeCollection,
     } = useCollectionGroupScreenViewModel();
     const storeCollections = store.collections;
     const [isAddSheetVisible, setIsAddSheetVisible] = useState(false);
+    const [editingCollection, setEditingCollection] =
+      useState<CollectionGroupEntity | null>(null);
 
     useEffect(() => {
       store.setCollections(collections);
     }, [collections, store]);
 
-    const handleAddCollection = useCallback(
-      async (payload: { name: string; color: string }) => {
-        const collection = {
-          id: Date.now().toString(),
-          name: payload.name,
-          cardCount: 0,
-          color: payload.color,
-        };
-        const result = await addCollection(collection);
+    const handleEdit = useCallback((item: CollectionGroupEntity) => {
+      setEditingCollection(item);
+      setIsAddSheetVisible(true);
+    }, []);
 
+    const handleSubmit = useCallback(
+      async (payload: { name: string; color: string }) => {
+        if (editingCollection) {
+          // Update existing collection
+          const updatedCollection = {
+            ...editingCollection,
+            name: payload.name,
+            color: payload.color,
+          };
+          const result = await updateCollection(updatedCollection);
+
+          if (result.success) {
+            setIsAddSheetVisible(false);
+            setEditingCollection(null);
+            store.updateCollection(updatedCollection);
+          } else {
+            Alert.alert(
+              'Error',
+              result.error ?? 'Unable to update collection. Please try again.',
+            );
+          }
+        } else {
+          // Create new collection
+          const collection = {
+            id: Date.now().toString(),
+            name: payload.name,
+            cardCount: 0,
+            color: payload.color,
+          };
+          const result = await addCollection(collection);
+
+          if (result.success) {
+            setIsAddSheetVisible(false);
+            store.addCollection(collection);
+          } else {
+            Alert.alert(
+              'Error',
+              result.error ?? 'Unable to add collection. Please try again.',
+            );
+          }
+        }
+      },
+      [editingCollection, addCollection, updateCollection, store],
+    );
+
+    const handleCloseSheet = useCallback(() => {
+      setIsAddSheetVisible(false);
+      setEditingCollection(null);
+    }, []);
+
+    const handleDelete = useCallback(
+      async (item: CollectionGroupEntity) => {
+        const result = await removeCollection(item.id);
         if (result.success) {
-          setIsAddSheetVisible(false);
-          store.addCollection(collection);
+          store.removeCollection(item.id);
         } else {
           Alert.alert(
             'Error',
-            result.error ?? 'Unable to add collection. Please try again.',
+            result.error ?? 'Unable to delete collection. Please try again.',
           );
         }
       },
-      [addCollection, store],
+      [removeCollection, store],
     );
 
     useLayoutEffect(() => {
@@ -93,15 +145,29 @@ const CollectionGroupScreen = observer(
             keyExtractor={item => item.id}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
-            renderItem={({ item }) => <CollectionGroupCard item={item} />}
+            contentContainerStyle={{
+              marginTop: 20,
+            }}
+            renderItem={({ item }) => (
+              <CollectionGroupCard
+                item={item}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            )}
             contentContainerStyle={styles.listContent}
             scrollEnabled={true}
           />
         )}
         <CollectionGroupAddSheet
           visible={isAddSheetVisible}
-          onClose={() => setIsAddSheetVisible(false)}
-          onSubmit={handleAddCollection}
+          onClose={handleCloseSheet}
+          onSubmit={handleSubmit}
+          initialData={
+            editingCollection
+              ? { name: editingCollection.name, color: editingCollection.color }
+              : undefined
+          }
         />
       </SafeAreaView>
     );

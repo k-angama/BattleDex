@@ -143,7 +143,7 @@ const getTabBarIcon = (
 ) => {
   const iconMap: Record<string, string> = {
     Battle: 'sword-cross',
-    Collection: 'star',
+    Collections: 'star',
     Settings: 'cog',
   };
   return <Icon name={iconMap[routeName]} size={size} color={color} />;
@@ -171,7 +171,7 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Battle" component={HomeStackNavigator} />
-      <Tab.Screen name="Collection" component={CollectionStackNavigator} />
+      <Tab.Screen name="Collections" component={CollectionStackNavigator} />
       <Tab.Screen name="Settings" component={SettingsStackNavigator} />
     </Tab.Navigator>
   );
