@@ -24,7 +24,7 @@ import { homeScreenRoute } from '../../home/presentation/homeScreenRoute';
 import { settingsScreenRoute } from '../../settings/presentation/settingsScreenRoute';
 import { useNavigationScreenViewModel } from './useNavigationScreenViewModel';
 
-export type RootStackParamList = {
+export type HomeStackParamList = {
   Home: undefined;
   Compare: {
     firstCard: CardEntity;
@@ -32,6 +32,16 @@ export type RootStackParamList = {
     isDataLocal?: boolean;
   };
   Card: { cardId: string; name: string };
+};
+
+export type RootStackParamList = {
+  Battle: undefined;
+  Card: undefined;
+  Compare: {
+    firstCard: CardEntity;
+    secondCard: CardEntity;
+    isDataLocal?: boolean;
+  };
 };
 
 const stackHomeScreens = {
@@ -74,9 +84,9 @@ function SettingsStackNavigator() {
       {Object.entries(stackSettingsScreens).map(([name, config]) => (
         <Stack.Screen
           key={name}
-          name={name as keyof RootStackParamList}
+          name={name}
           component={config.screen}
-          options={config.options as NativeStackNavigationOptions}
+          options={config.options}
         />
       ))}
     </Stack.Navigator>
@@ -85,7 +95,7 @@ function SettingsStackNavigator() {
 
 function HomeStackNavigator() {
   const { theme } = useTheme();
-  const Stack = createNativeStackNavigator<RootStackParamList>();
+  const Stack = createNativeStackNavigator<HomeStackParamList>();
   return (
     <Stack.Navigator
       initialRouteName="Home"
@@ -94,9 +104,9 @@ function HomeStackNavigator() {
       {Object.entries(stackHomeScreens).map(([name, config]) => (
         <Stack.Screen
           key={name}
-          name={name as keyof RootStackParamList}
+          name={name as keyof HomeStackParamList}
           component={config.screen}
-          options={config.options as NativeStackNavigationOptions}
+          options={config.options}
         />
       ))}
     </Stack.Navigator>
@@ -141,12 +151,12 @@ function TabNavigator() {
   );
 }
 
-function ScreensStackNavigator({ theme }: { theme: Theme }) {
+function RootStackNavigator({ theme }: { theme: Theme }) {
   const Stack = createNativeStackNavigator<RootStackParamList>();
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen
-        name="Home"
+        name="Battle"
         component={TabNavigator}
         options={{ headerShown: false }}
       />
@@ -155,7 +165,7 @@ function ScreensStackNavigator({ theme }: { theme: Theme }) {
           key={name}
           name={name as keyof RootStackParamList}
           component={config.screen}
-          options={config.options as NativeStackNavigationOptions}
+          options={config.options}
         />
       ))}
     </Stack.Navigator>
@@ -179,7 +189,7 @@ export function NavigationScreen() {
           backgroundColor={theme.colors.background}
         />
         <NavigationContainer>
-          <ScreensStackNavigator theme={theme} />
+          <RootStackNavigator theme={theme} />
         </NavigationContainer>
       </BottomSheetModalProvider>
     </SafeAreaProvider>

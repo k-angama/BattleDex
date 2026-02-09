@@ -23,7 +23,7 @@ import {
   CompareCardsStore,
 } from '../../../common/services/CompareCardsStore';
 import { formatTimeAgo } from '../../../common/utils/time';
-import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
+import { HomeStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { CompareCardsPreviewEntity } from '../domaine/entities/CompareCardsPreviewEntity';
 import { SearchCardSuggestionEntity } from '../domaine/entities/SearchCardSuggestionEntity';
 import { CompareCardsItem } from './components/CompareCardsItem';
@@ -31,7 +31,7 @@ import { CompareCardsSkeleton } from './components/CompareCardsSkeleton';
 import { useStyles } from './styles/homeScreen.styles';
 import { useHomeScreenViewModel } from './useHomeScreenViewModel';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type NavigationProp = NativeStackNavigationProp<HomeStackParamList>;
 interface HomeScreenParams {
   store?: CompareCardsStore;
 }
