@@ -11,12 +11,14 @@ export const isThemeMode = (value?: string): value is ThemeMode => {
 type ThemeContextValue = {
   theme: Theme;
   themeMode: ThemeMode;
+  isDarkMode: boolean;
   setThemeMode: (mode: ThemeMode) => void;
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
   theme: lightTheme,
   themeMode: 'system',
+  isDarkMode: false,
   setThemeMode: () => {},
 });
 
@@ -33,9 +35,15 @@ export const ThemeProvider: React.FC<React.PropsWithChildren> = ({
     return themeMode === 'dark' ? darkTheme : lightTheme;
   }, [themeMode, systemScheme]);
 
+  const isDarkMode = useMemo(() => {
+    if (themeMode === 'dark') return true;
+    if (themeMode === 'light') return false;
+    return systemScheme === 'dark';
+  }, [themeMode, systemScheme]);
+
   const value = useMemo(
-    () => ({ theme, themeMode, setThemeMode }),
-    [theme, themeMode],
+    () => ({ theme, themeMode, isDarkMode, setThemeMode }),
+    [theme, themeMode, isDarkMode],
   );
 
   return (

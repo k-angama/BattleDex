@@ -13,7 +13,7 @@ import {
   NativeStackNavigationOptions,
 } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Theme, useTheme } from '../../../common/styles';
@@ -174,8 +174,7 @@ function RootStackNavigator({ theme }: { theme: Theme }) {
 
 export function NavigationScreen() {
   const { themeMode } = useNavigationScreenViewModel();
-  const { theme, setThemeMode } = useTheme();
-  const isDarkMode = useColorScheme() === 'dark';
+  const { theme, isDarkMode, setThemeMode } = useTheme();
 
   useEffect(() => {
     setThemeMode(themeMode);

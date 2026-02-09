@@ -3,7 +3,6 @@ import { ThemeMode } from '../../../common/styles';
 import { safeCall } from '../../../common/utils/safeAsync';
 import { DataBaseCardsRepository } from '../../home/domaine/DataBaseCardsRepository';
 import { SettingsRepository } from '../domaine/SettingsRepository';
-import { ThemeRepository } from '../domaine/ThemeRepository';
 import {
   dataBaseCardsRepository,
   settingsRepositoryImp,
@@ -11,7 +10,6 @@ import {
 
 interface SettingsScreenViewModelParams {
   dataBase?: DataBaseCardsRepository;
-  themeRepository?: ThemeRepository;
   settingsRepository?: SettingsRepository;
 }
 
