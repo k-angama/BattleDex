@@ -1,7 +1,13 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Alert, Animated, Keyboard, Platform } from 'react-native';
 import Reanimated, {
   useAnimatedStyle,
@@ -151,7 +157,7 @@ const HomeScreen = observer(
       );
     }, [isEditMode, compareCardsStoreData.length, handleClearSearch]);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
       navigation.setOptions({
         headerRight: () => renderItemHeader(),
       });

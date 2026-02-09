@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ThemeMode } from '../../../common/styles';
 import { SettingsRepository } from '../../settings/domaine/SettingsRepository';
 import { settingsRepositoryImp } from '../../settings/presentation/settingsScreenDI';
@@ -10,16 +10,9 @@ interface NavigationScreenViewModelParams {
 export function useNavigationScreenViewModel({
   settingsRepository = settingsRepositoryImp,
 }: NavigationScreenViewModelParams = {}) {
-  const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
+  const [themeMode] = useState<ThemeMode>(() => {
     return settingsRepository?.getThemeMode() ?? 'system';
   });
-
-  useEffect(() => {
-    const saved = settingsRepository?.getThemeMode();
-    if (saved) {
-      setThemeMode(saved);
-    }
-  }, [settingsRepository]);
 
   return { themeMode };
 }

@@ -30,6 +30,11 @@ export function useCompareScreenViewModel({
       await safeCall(
         () => dataBaseRepository.saveCardToDB(comparedCard),
         setCompareCards,
+        setErrorMessage,
+        {
+          operation: 'Save Comparison',
+          fallbackMessage: 'Unable to save comparison. Please try again.',
+        },
       );
     },
     [dataBaseRepository],

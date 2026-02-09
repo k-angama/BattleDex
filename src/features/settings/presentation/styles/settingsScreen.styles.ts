@@ -19,13 +19,6 @@ export const useStyles = () => {
           paddingHorizontal: theme.spacing.lg,
           paddingBottom: theme.spacing.xl,
         },
-        title: {
-          fontSize: theme.typography.size.xxl,
-          fontFamily: theme.typography.family.bold,
-          color: theme.colors.text,
-          marginBottom: theme.spacing.lg,
-          marginTop: theme.spacing.md,
-        },
         section: {
           marginTop: theme.spacing.lg,
         },
@@ -45,11 +38,6 @@ export const useStyles = () => {
           marginBottom: theme.spacing.sm,
           borderWidth: 1,
           borderColor: theme.colors.border,
-        },
-        settingLabel: {
-          fontSize: theme.typography.size.md,
-          fontWeight: '500',
-          color: theme.colors.primary,
         },
         themeRow: {
           flexDirection: 'row',
