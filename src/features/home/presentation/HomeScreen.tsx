@@ -285,14 +285,7 @@ const HomeScreen = observer(
         ) : isLoading ? (
           <CompareCardsSkeleton />
         ) : compareCardsStoreData.length === 0 ? (
-          <EmptyState
-            message={
-              searchQuery
-                ? `No cards found for "${searchQuery}"`
-                : 'No card comparisons yet'
-            }
-            emoji="🎴"
-          />
+          <EmptyState message="No card comparisons yet" emoji="🎴" />
         ) : (
           <Animated.View
             style={[

@@ -21,13 +21,27 @@ export function useSettingsViewModel({
 }: SettingsScreenViewModelParams = {}) {
   const [isClearingHistory, setIsClearingHistory] = useState(false);
 
-  const clearHistory = async () => {
-    if (!dataBase) return;
+  const clearHistory = async (): Promise<{
+    success: boolean;
+    error: string | null;
+  }> => {
+    if (!dataBase) {
+      return { success: false, error: 'Database unavailable.' };
+    }
     setIsClearingHistory(true);
-    await safeCall(async () => {
-      await dataBase.clearAllComparisons();
-    });
+    const [, error] = await safeCall(
+      async () => {
+        await dataBase.clearAllComparisons();
+      },
+      undefined,
+      undefined,
+      {
+        operation: 'Clear history',
+        fallbackMessage: 'Unable to clear history. Please try again.',
+      },
+    );
     setIsClearingHistory(false);
+    return { success: !error, error };
   };
 
   const changeTheme = (mode: ThemeMode) => {

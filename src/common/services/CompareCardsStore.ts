@@ -26,6 +26,9 @@ export class CompareCardsStore {
   removeCard(id: string) {
     this.compareCards = this.compareCards.filter(card => card.id !== id);
   }
+  removeAllCards() {
+    this.compareCards = [];
+  }
 }
 
 export const compareCardsStore = new CompareCardsStore();

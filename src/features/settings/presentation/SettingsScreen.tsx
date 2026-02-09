@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BDTypography } from '../../../common/components/BDTypography';
+import { compareCardsStore } from '../../../common/services/CompareCardsStore';
 import { useTheme } from '../../../common/styles';
 import { useStyles } from './styles/settingsScreen.styles';
 import { useSettingsViewModel } from './useSettingsViewModel';
@@ -29,8 +30,19 @@ export function SettingsScreen() {
           text: 'Delete All',
           style: 'destructive',
           onPress: async () => {
-            await clearHistory();
-            Alert.alert('Success', 'All comparison history has been cleared.');
+            const result = await clearHistory();
+            if (result.success) {
+              Alert.alert(
+                'Success',
+                'All comparison history has been cleared.',
+              );
+              compareCardsStore.removeAllCards();
+              return;
+            }
+            Alert.alert(
+              'Error',
+              result.error ?? 'Unable to clear history. Please try again.',
+            );
           },
         },
       ],
