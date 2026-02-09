@@ -35,7 +35,7 @@ export type HomeStackParamList = {
 };
 
 export type RootStackParamList = {
-  Battle: undefined;
+  Root: undefined;
   Card: undefined;
   Compare: {
     firstCard: CardEntity;
@@ -156,7 +156,7 @@ function RootStackNavigator({ theme }: { theme: Theme }) {
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
       <Stack.Screen
-        name="Battle"
+        name="Root"
         component={TabNavigator}
         options={{ headerShown: false }}
       />
