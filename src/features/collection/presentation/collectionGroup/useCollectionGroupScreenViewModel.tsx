@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { safeCall } from '../../../../common/utils/safeAsync';
-import type { CollectionGroup } from '../../domaine/entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../../domaine/entities/CollectionGroupEntity';
 import type { CollectionGroupRepository } from '../../domaine/repositories/CollectionGroupRepository';
 import { collectionGroupRepository } from './collectionGroupScreenDI';
 
@@ -11,7 +11,7 @@ interface CollectionGroupScreenViewModelParams {
 export function useCollectionGroupScreenViewModel({
   repository = collectionGroupRepository,
 }: CollectionGroupScreenViewModelParams = {}) {
-  const [collections, setCollections] = useState<CollectionGroup[]>([]);
+  const [collections, setCollections] = useState<CollectionGroupEntity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -34,7 +34,7 @@ export function useCollectionGroupScreenViewModel({
 
   const addCollection = useCallback(
     async (
-      collection: CollectionGroup,
+      collection: CollectionGroupEntity,
     ): Promise<{ success: boolean; error: string | null }> => {
       setErrorMessage(null);
 

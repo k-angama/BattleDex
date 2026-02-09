@@ -1,13 +1,13 @@
 import { collectionGroupMockData } from '../../../../common/mocks/collectionGroupMock';
-import type { CollectionGroup } from '../entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../entities/CollectionGroupEntity';
 import type { CollectionGroupRepository } from '../repositories/CollectionGroupRepository';
 
 export class CollectionGroupRepositoryMock
   implements CollectionGroupRepository
 {
-  private collections: CollectionGroup[] = [...collectionGroupMockData];
+  private collections: CollectionGroupEntity[] = [...collectionGroupMockData];
 
-  async getCollections(): Promise<CollectionGroup[]> {
+  async getCollections(): Promise<CollectionGroupEntity[]> {
     // Simulate async operation
     return new Promise(resolve => {
       setTimeout(() => {
@@ -16,7 +16,7 @@ export class CollectionGroupRepositoryMock
     });
   }
 
-  async addCollection(collection: CollectionGroup): Promise<void> {
+  async addCollection(collection: CollectionGroupEntity): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {
         this.collections.push(collection);

@@ -1,11 +1,11 @@
 import { View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { BDTypography } from '../../../../../common/components/BDTypography';
-import type { CollectionGroup } from '../../../domaine/entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../../../domaine/entities/CollectionGroupEntity';
 import { useStyles } from './styles/collectionGroupCard.styles';
 
 export interface CollectionGroupCardProps {
-  item: CollectionGroup;
+  item: CollectionGroupEntity;
 }
 
 export function CollectionGroupCard({ item }: CollectionGroupCardProps) {

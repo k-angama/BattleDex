@@ -1,6 +1,6 @@
-import type { CollectionGroup } from '../../features/collection/domaine/entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../../features/collection/domaine/entities/CollectionGroupEntity';
 
-export const collectionGroupMockData: CollectionGroup[] = [
+export const collectionGroupMockData: CollectionGroupEntity[] = [
   { id: '1', name: 'Favorites', cardCount: 24, color: '#FF6B6B' },
   { id: '2', name: 'Rare Cards', cardCount: 12, color: '#4ECDC4' },
   { id: '3', name: 'For Trading', cardCount: 8, color: '#45B7D1' },

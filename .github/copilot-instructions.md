@@ -1,5 +1,26 @@
 # Copilot Instructions for BattleDex
 
+## How to Request Help from Copilot
+
+When you ask Copilot for advice or implementation approach:
+
+1. **For design/architecture questions**: Copilot will provide **multiple options/approaches** before writing code
+2. **Each option will include**:
+
+- Pros and cons
+- When to use it
+- Estimated effort
+
+3. **You can then**:
+
+- Choose your preferred approach
+- Ask for clarifications
+- Request modifications
+
+4. **Only after you confirm**: Copilot will proceed with the code implementation
+
+This ensures better alignment between your vision and the implementation.
+
 ## Critical Architecture Rule: Screen Organization
 
 When creating features in this React Native project, follow this pattern:
@@ -83,8 +104,8 @@ src/features/{featureName}/
 
 - **entities/**: Define TypeScript interfaces for business entities
   ```typescript
-  // domaine/entities/CollectionGroup.ts
-  export interface CollectionGroup {
+  // domaine/entities/CollectionGroupEntity.ts
+  export interface CollectionGroupEntity {
     id: string;
     name: string;
     cardCount: number;
@@ -205,10 +226,10 @@ presentation/collectionGroup/
 
 ```typescript
 // CollectionGroupCard.tsx (named export with entity import)
-import type { CollectionGroup } from '../../../domaine/entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../../../domaine/entities/CollectionGroupEntity';
 
 export interface CollectionGroupCardProps {
-  item: CollectionGroup;
+  item: CollectionGroupEntity;
 }
 
 export function CollectionGroupCard({ item }: CollectionGroupCardProps) {
@@ -388,6 +409,92 @@ export function use{ScreenName}ScreenViewModel({
 - ✅ **Swappable** - Change DI file to swap from mock to real without changing screens
 - ✅ **Incremental development** - Complete UI first, implement persistence later
 - ✅ **Clear separation** - Mock data, interface, and implementation are isolated
+
+## Persistent State Management with MobX Stores
+
+For screens that need to maintain state across navigation, create a MobX store in `src/common/services/`:
+
+### Store Structure
+
+```typescript
+// src/common/services/{Feature}Store.ts
+import { action, makeAutoObservable, observable } from 'mobx';
+import { EntityType } from '../../features/{feature}/domaine/entities/{EntityType}';
+
+export class {Feature}Store {
+  items: EntityType[] = [];
+
+  constructor() {
+    makeAutoObservable(this, {
+      items: observable,
+      setItems: action,
+      addItem: action,
+      removeItem: action,
+      removeAllItems: action,
+    });
+  }
+
+  setItems(items: EntityType[]) {
+    this.items = [...items];
+  }
+
+  addItem(item: EntityType) {
+    this.items = [item, ...this.items];
+  }
+
+  removeItem(id: string) {
+    this.items = this.items.filter(item => item.id !== id);
+  }
+
+  removeAllItems() {
+    this.items = [];
+  }
+}
+
+export const {featureStore} = new {Feature}Store();
+```
+
+### Use Store in Screen
+
+```typescript
+// In your screen component
+import { observer } from 'mobx-react-lite';
+import { {featureStore}, {Feature}Store } from '../../../../common/services/{Feature}Store';
+
+interface {Feature}ScreenParams {
+  store?: {Feature}Store;
+}
+
+const {Feature}Screen = observer(
+  ({ store = {featureStore} }: {Feature}ScreenParams = {}) => {
+    // Get data from ViewModel (repository)
+    const { items, isLoading, errorMessage } = useViewModel();
+
+    // Sync ViewModel data to store for persistence
+    useEffect(() => {
+      store.setItems(items);
+    }, [items, store]);
+
+    // Use store data in FlatList
+    return (
+      <FlatList
+        data={store.items}
+        renderItem={({ item }) => <ItemComponent item={item} />}
+        keyExtractor={item => item.id}
+      />
+    );
+  },
+);
+
+export default {Feature}Screen;
+```
+
+### Benefits of Stores
+
+- ✅ **Persistent state** - Data survives navigation (user sees their list when returning)
+- ✅ **Reactive UI** - MobX reactivity keeps UI in sync with store changes
+- ✅ **Testable** - Easy to mock stores in tests
+- ✅ **Separation** - ViewModel handles data fetching, Store handles UI state
 
 ## Key Rules
 

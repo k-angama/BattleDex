@@ -1,14 +1,14 @@
-import type { CollectionGroup } from '../domaine/entities/CollectionGroup';
-import type { CollectionGroupRepository } from '../domaine/repositories/CollectionGroupRepository';
+import type { CollectionGroupEntity } from '../domaine/entities/CollectionGroupEntity';
+import { CollectionGroupRepository } from '../domaine/repositories/CollectionGroupRepository';
 
 export class CollectionGroupRepositoryImpl
   implements CollectionGroupRepository
 {
-  async getCollections(): Promise<CollectionGroup[]> {
+  async getCollections(): Promise<CollectionGroupEntity[]> {
     throw new Error('Method not implemented.');
   }
 
-  async addCollection(_collection: CollectionGroup): Promise<void> {
+  async addCollection(_collection: CollectionGroupEntity): Promise<void> {
     throw new Error('Method not implemented.');
   }
 

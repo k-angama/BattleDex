@@ -1,7 +1,7 @@
-import type { CollectionGroup } from '../entities/CollectionGroup';
+import type { CollectionGroupEntity } from '../entities/CollectionGroupEntity';
 
 export interface CollectionGroupRepository {
-  getCollections(): Promise<CollectionGroup[]>;
-  addCollection(collection: CollectionGroup): Promise<void>;
+  getCollections(): Promise<CollectionGroupEntity[]>;
+  addCollection(collection: CollectionGroupEntity): Promise<void>;
   removeCollection(id: string): Promise<void>;
 }
