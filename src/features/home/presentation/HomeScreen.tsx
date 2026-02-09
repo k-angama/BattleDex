@@ -272,19 +272,21 @@ const HomeScreen = observer(
             },
           ]}
         >
-          <SearchBar
-            value={searchQuery}
-            onChangeText={handleSearchQuery}
-            onClear={handleClearSearch}
-            suggestions={cardNames}
-            onSuggestionPress={handleSuggestionPress}
-            enableSuggestions={true}
-            isLoading={isLoadingSearch}
-            errorMessage={errorSearchMessage}
-            onFocus={() => {
-              setIsEditMode(false);
-            }}
-          />
+          <SafeAreaView edges={Platform.OS === 'ios' ? ['top'] : []}>
+            <SearchBar
+              value={searchQuery}
+              onChangeText={handleSearchQuery}
+              onClear={handleClearSearch}
+              suggestions={cardNames}
+              onSuggestionPress={handleSuggestionPress}
+              enableSuggestions={true}
+              isLoading={isLoadingSearch}
+              errorMessage={errorSearchMessage}
+              onFocus={() => {
+                setIsEditMode(false);
+              }}
+            />
+          </SafeAreaView>
           {/* Delete Selected Bar */}
           <Reanimated.View style={[styles.deleteBar, deleteBarAnimatedStyle]}>
             <BDTypography variant="label" weight="semibold">

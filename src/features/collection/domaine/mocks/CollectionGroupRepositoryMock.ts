@@ -19,7 +19,7 @@ export class CollectionGroupRepositoryMock
   async addCollection(collection: CollectionGroupEntity): Promise<void> {
     return new Promise(resolve => {
       setTimeout(() => {
-        this.collections.push(collection);
+        this.collections = [collection, ...this.collections];
         resolve();
       }, 300);
     });

@@ -48,13 +48,9 @@ export function useCollectionGroupScreenViewModel({
         },
       );
 
-      if (!error) {
-        await getCollections();
-      }
-
       return { success: !error, error };
     },
-    [repository, getCollections],
+    [repository],
   );
 
   const removeCollection = useCallback(
@@ -71,13 +67,9 @@ export function useCollectionGroupScreenViewModel({
         },
       );
 
-      if (!error) {
-        await getCollections();
-      }
-
       return { success: !error, error };
     },
-    [repository, getCollections],
+    [repository],
   );
 
   useEffect(() => {
