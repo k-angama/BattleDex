@@ -1,10 +1,21 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Alert, FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { BDButton } from '../../../../common/components/BDButton';
+import {
+  BDToast,
+  type BDToastHandle,
+} from '../../../../common/components/BDToast';
 import { EmptyState } from '../../../../common/components/EmptyState';
 import { ErrorMessage } from '../../../../common/components/ErrorMessage';
 import {
@@ -38,6 +49,7 @@ const CollectionGroupScreen = observer(
       removeCollection,
     } = useCollectionGroupScreenViewModel();
     const storeCollections = store.collections;
+    const toastRef = useRef<BDToastHandle>(null);
     const [isAddSheetVisible, setIsAddSheetVisible] = useState(false);
     const [editingCollection, setEditingCollection] =
       useState<CollectionGroupEntity | null>(null);
@@ -45,6 +57,13 @@ const CollectionGroupScreen = observer(
     useEffect(() => {
       store.setCollections(collections);
     }, [collections, store]);
+
+    const handlePressCard = useCallback(
+      (item: CollectionGroupEntity) => {
+        navigation.navigate('Collection', { collectionGroupId: item.id });
+      },
+      [navigation],
+    );
 
     const handleEdit = useCallback((item: CollectionGroupEntity) => {
       setEditingCollection(item);
@@ -66,6 +85,10 @@ const CollectionGroupScreen = observer(
             setIsAddSheetVisible(false);
             setEditingCollection(null);
             store.updateCollection(updatedCollection);
+            toastRef.current?.show({
+              message: 'Collection updated successfully',
+              type: 'success',
+            });
           } else {
             Alert.alert(
               'Error',
@@ -85,6 +108,10 @@ const CollectionGroupScreen = observer(
           if (result.success) {
             setIsAddSheetVisible(false);
             store.addCollection(collection);
+            toastRef.current?.show({
+              message: 'Collection created successfully',
+              type: 'success',
+            });
           } else {
             Alert.alert(
               'Error',
@@ -103,15 +130,37 @@ const CollectionGroupScreen = observer(
 
     const handleDelete = useCallback(
       async (item: CollectionGroupEntity) => {
-        const result = await removeCollection(item.id);
-        if (result.success) {
-          store.removeCollection(item.id);
-        } else {
-          Alert.alert(
-            'Error',
-            result.error ?? 'Unable to delete collection. Please try again.',
-          );
-        }
+        Alert.alert(
+          'Delete Collection',
+          `Are you sure you want to delete "${item.name}"? This action cannot be undone.`,
+          [
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+            {
+              text: 'Delete',
+              style: 'destructive',
+              onPress: async () => {
+                const result = await removeCollection(item.id);
+                if (result.success) {
+                  store.removeCollection(item.id);
+                  toastRef.current?.show({
+                    message: 'Collection deleted successfully',
+                    type: 'success',
+                  });
+                } else {
+                  Alert.alert(
+                    'Error',
+                    result.error ??
+                      'Unable to delete collection. Please try again.',
+                  );
+                }
+              },
+            },
+          ],
+          { cancelable: true },
+        );
       },
       [removeCollection, store],
     );
@@ -138,19 +187,33 @@ const CollectionGroupScreen = observer(
         ) : isLoading ? (
           <CollectionGroupCardSkeleton />
         ) : storeCollections.length === 0 ? (
-          <EmptyState message="No collections yet" emoji="📂" />
+          <View style={styles.emptyStateContainer}>
+            <EmptyState message="No collections yet" emoji="📂" />
+            <BDButton
+              title="Create Collection"
+              variant="text"
+              size="lg"
+              rightIcon={
+                <Icon
+                  name="plus-circle"
+                  size={28}
+                  color={theme.colors.primary}
+                />
+              }
+              onPress={() => setIsAddSheetVisible(true)}
+              style={styles.createButton}
+            />
+          </View>
         ) : (
           <FlatList
             data={storeCollections}
             keyExtractor={item => item.id}
             numColumns={2}
             columnWrapperStyle={styles.columnWrapper}
-            contentContainerStyle={{
-              marginTop: 20,
-            }}
             renderItem={({ item }) => (
               <CollectionGroupCard
                 item={item}
+                onPress={handlePressCard}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
@@ -169,6 +232,7 @@ const CollectionGroupScreen = observer(
               : undefined
           }
         />
+        <BDToast ref={toastRef} />
       </SafeAreaView>
     );
   },

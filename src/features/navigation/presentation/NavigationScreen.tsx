@@ -143,7 +143,7 @@ const getTabBarIcon = (
 ) => {
   const iconMap: Record<string, string> = {
     Battle: 'sword-cross',
-    Collections: 'star',
+    Collections: 'folder',
     Settings: 'cog',
   };
   return <Icon name={iconMap[routeName]} size={size} color={color} />;

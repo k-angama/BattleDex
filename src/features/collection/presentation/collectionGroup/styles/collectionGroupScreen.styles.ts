@@ -16,16 +16,21 @@ export const useStyles = () => {
         },
         listContent: {
           paddingHorizontal: theme.spacing.md,
-          paddingVertical: theme.spacing.md,
+          paddingVertical: theme.spacing.lg,
         },
         columnWrapper: {
-          justifyContent: 'flex-start',
+          justifyContent: 'space-between',
           marginBottom: theme.spacing.lg,
-          gap: theme.spacing.md,
         },
-        spacer: {
+        emptyStateContainer: {
           flex: 1,
-          minWidth: '48%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          paddingHorizontal: theme.spacing.xl,
+        },
+        createButton: {
+          marginTop: theme.spacing.xl,
+          minWidth: 200,
         },
       }),
     [theme, headerHeight],

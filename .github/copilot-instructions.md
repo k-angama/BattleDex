@@ -507,7 +507,12 @@ export default {Feature}Screen;
 7. **Entities** live in `domaine/entities/` - NOT in components or presentation
    - Import entities as type imports: `import type { Entity } from '../../domaine/entities/Entity'`
    - Define props interfaces in components, but use entities from domaine
-8. **Always respect ESLint rules** - Code must pass linting without errors
+8. **Component styles must be in separate files** - Never use inline StyleSheet.create
+   - Create styles in `components/styles/{componentName}.styles.ts`
+   - Use hook pattern: `export const use{ComponentName}Styles = () => { ... }`
+   - Always memoize with `useMemo` depending on `[theme]`
+   - Import and use in component: `const styles = use{ComponentName}Styles()`
+9. **Always respect ESLint rules** - Code must pass linting without errors
    - Follow configured ESLint rules for TypeScript and React Native
    - Fix all ESLint warnings and errors before completing work
    - Run linter to validate code quality
