@@ -46,6 +46,11 @@ export type RootStackParamList = {
   };
 };
 
+export type CollectionGroupStackParamList = {
+  CollectionGroup: undefined;
+  Collection: { collectionGroupId: string; collectionName: string };
+};
+
 const stackHomeScreens = {
   ...homeScreenRoute,
 };
@@ -102,13 +107,13 @@ function SettingsStackNavigator() {
 
 function CollectionStackNavigator() {
   const { theme } = useTheme();
-  const Stack = createNativeStackNavigator();
+  const Stack = createNativeStackNavigator<CollectionGroupStackParamList>();
   return (
     <Stack.Navigator screenOptions={screenOptions(theme)}>
       {Object.entries(stackCollectionGroupScreens).map(([name, config]) => (
         <Stack.Screen
           key={name}
-          name={name}
+          name={name as keyof CollectionGroupStackParamList}
           component={config.screen}
           options={config.options}
         />

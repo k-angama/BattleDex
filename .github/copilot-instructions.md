@@ -142,6 +142,64 @@ Every screen needs:
 | DI Files          | camelCase + `DI.ts`      | `collectionScreenDI.ts`            |
 | Routes            | camelCase + `Route.ts`   | `collectionScreenRoute.ts`         |
 
+## Navigation Route Parameters
+
+When navigating between screens that pass parameters, **always define the route type** in NavigationScreen.tsx:
+
+### Step 1: Define Route Params Type
+
+In `src/features/navigation/presentation/NavigationScreen.tsx`, create a param list type for your stack:
+
+```typescript
+// Example: Collection feature with multiple screens
+export type CollectionGroupStackParamList = {
+  CollectionGroup: undefined; // No params needed
+  Collection: {
+    collectionGroupId: string; // Required param
+    collectionName: string; // Required param
+  };
+};
+```
+
+### Step 2: Pass Params When Navigating
+
+In your screen component, pass the typed parameters:
+
+```typescript
+const handlePressCard = useCallback(
+  (item: CollectionGroupEntity) => {
+    navigation.navigate('Collection', {
+      collectionGroupId: item.id,
+      collectionName: item.name,
+    });
+  },
+  [navigation],
+);
+```
+
+### Step 3: Extract Params in Destination Screen
+
+In the destination screen, use `useRoute()` to access params:
+
+```typescript
+import { useRoute } from '@react-navigation/native';
+
+const CollectionScreen = observer(() => {
+  const route = useRoute();
+  const collectionName = (route.params as any)?.collectionName || 'Default';
+
+  // Use collectionName for screen title, etc.
+  return <View>{/* UI */}</View>;
+});
+```
+
+### Benefits
+
+- ✅ **Type Safety** - TypeScript catches mismatched params at compile time
+- ✅ **Self-Documenting** - Clear what params each route accepts
+- ✅ **Auto-Completion** - VS Code autocompletes available params when navigating
+- ✅ **Easy Refactoring** - Changing a param ripples through all usages
+
 ## Common Patterns
 
 ### Screen Component
@@ -284,6 +342,48 @@ export interface EntityNameRepository {
 }
 ```
 
+### Step 1.5: Create Mock Data File
+
+Create hardcoded mock data in `common/mocks/`:
+
+```typescript
+// common/mocks/{entityName}.mock.ts
+import type { {EntityName}Entity } from '../../features/{featureName}/domaine/entities/{EntityName}Entity';
+
+export const {entityName}MockData: {EntityName}Entity[] = [
+  { id: '1', name: 'Item 1', /* other fields */ },
+  { id: '2', name: 'Item 2', /* other fields */ },
+  // Add more mock items as needed
+];
+```
+
+**Pattern**:
+
+- ✅ Export as `{entityName}MockData` (camelCase with "MockData" suffix)
+- ✅ Type with the entity interface from `domaine/entities/`
+- ✅ Include realistic sample data (minimum 3-6 items)
+- ✅ Use field names exactly as defined in the entity interface
+- ✅ File naming: `{entityName}.mock.ts` (exact match for import in RepositoryMock)
+
+**Example** (Collection Groups):
+
+```typescript
+// common/mocks/collectionGroup.mock.ts
+import type { CollectionGroupEntity } from '../../features/collection/domaine/entities/CollectionGroupEntity';
+
+export const collectionGroupMockData: CollectionGroupEntity[] = [
+  { id: '1', name: 'Favorites', cardCount: 24, color: '#FF6B6B' },
+  { id: '2', name: 'Rare Cards', cardCount: 12, color: '#4ECDC4' },
+  { id: '3', name: 'For Trading', cardCount: 8, color: '#45B7D1' },
+];
+```
+
+**Why separate from RepositoryMock**:
+
+- ✅ Data is reusable if multiple repository mocks need same data
+- ✅ Easy to update mock data without touching repository logic
+- ✅ Clear separation: data in `common/mocks/`, behavior in `domaine/mocks/`
+
 ### Step 2: Create Mock Implementation
 
 Implement the interface with mock data in `domaine/mocks/`:
@@ -291,7 +391,7 @@ Implement the interface with mock data in `domaine/mocks/`:
 ```typescript
 // domaine/mocks/{EntityName}RepositoryMock.ts
 import { EntityNameRepository } from '../repositories/{EntityName}Repository';
-import { mockData } from '../../../common/mocks/{entityName}Mock';
+import { mockData } from '../../../common/mocks/{entityName}.mock';
 
 export class EntityNameRepositoryMock implements EntityNameRepository {
   private entities = [...mockData];
@@ -572,6 +672,146 @@ export class {EntityName}RepositoryImpl implements {EntityName}Repository {
 - ✅ **Flexibility** - Rename fields (e.g., `card_count` → `cardCount`) without changing domain
 - ✅ **Reusability** - One mapper for multiple query results
 - ✅ **Testable** - Easy to unit test mapping logic
+
+## Loading States with Skeleton Placeholders
+
+For screens that fetch data, always handle three states in this order: **error → loading → empty → data**.
+
+### Pattern for Screen Conditional Rendering
+
+```tsx
+return (
+  <SafeAreaView style={styles.container} edges={['top']}>
+    {errorMessage ? (
+      <ErrorMessage message={errorMessage} onRetry={() => getCards(id)} />
+    ) : isLoading ? (
+      <{ItemName}Skeleton />
+    ) : data.length === 0 ? (
+      <View style={styles.emptyStateContainer}>
+        <EmptyState message="No items found" emoji="📂" />
+      </View>
+    ) : (
+      <FlatList
+        data={data}
+        renderItem={({ item }) => <{Item} item={item} />}
+        keyExtractor={item => item.id}
+        contentContainerStyle={styles.listContent}
+        numColumns={numColumns}
+      />
+    )}
+  </SafeAreaView>
+);
+```
+
+### Create Skeleton Component
+
+For each screen with a list, create a `{ItemName}Skeleton.tsx` component:
+
+```
+presentation/{screenName}/
+├── components/
+│   ├── {Item}.tsx
+│   ├── {ItemName}Skeleton.tsx               ← Skeleton component
+│   └── styles/
+│       ├── {item}.styles.ts
+│       └── {itemNameSkeleton}.styles.ts     ← Skeleton styles
+```
+
+**Implementation:**
+
+```typescript
+// components/{ItemName}Skeleton.tsx
+import React from 'react';
+import { View } from 'react-native';
+import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
+import { useTheme } from '../../../../../common/styles';
+import { useStyles } from './styles/{itemNameSkeleton}.styles';
+
+interface {ItemName}SkeletonProps {
+  count?: number;
+}
+
+export function {ItemName}Skeleton({
+  count = 6,
+}: {ItemName}SkeletonProps) {
+  const { theme } = useTheme();
+  const { styles } = useStyles();
+
+  return (
+    <SkeletonPlaceholder borderRadius={theme.radius.md}>
+      <View style={styles.container}>
+        {Array.from({ length: count }).map((_, index) => (
+          <View key={index} style={styles.card}>
+            <View style={styles.imagePlaceholder} />
+            <View style={styles.contentPlaceholder}>
+              <View style={styles.titleLine} />
+              <View style={styles.subtitleLine} />
+            </View>
+          </View>
+        ))}
+      </View>
+    </SkeletonPlaceholder>
+  );
+}
+```
+
+**Skeleton Styles:**
+
+```typescript
+// components/styles/{itemNameSkeleton}.styles.ts
+export const useStyles = () => {
+  const { theme } = useTheme();
+
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: {
+          paddingHorizontal: theme.spacing.md,
+          paddingVertical: theme.spacing.lg,
+          gap: theme.spacing.md,
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+        },
+        card: {
+          width: '48%', // For 2-column grid; adjust as needed
+          borderRadius: theme.radius.md,
+          overflow: 'hidden',
+        },
+        imagePlaceholder: {
+          width: '100%',
+          height: 150, // Adjust based on your design
+          backgroundColor: theme.colors.background,
+        },
+        contentPlaceholder: {
+          padding: theme.spacing.md,
+          gap: theme.spacing.sm,
+        },
+        titleLine: {
+          width: '80%',
+          height: 16,
+          backgroundColor: theme.colors.background,
+          borderRadius: theme.radius.sm,
+        },
+        subtitleLine: {
+          width: '50%',
+          height: 12,
+          backgroundColor: theme.colors.background,
+          borderRadius: theme.radius.sm,
+        },
+      }),
+    [theme],
+  );
+
+  return { styles };
+};
+```
+
+### Benefits
+
+- ✅ **Better UX** - Skeleton shows content structure while loading
+- ✅ **Consistent Pattern** - All screens follow same order: error → loading → empty → data
+- ✅ **Reusable Components** - Skeleton follows same styling patterns as items
+- ✅ **Theme Integration** - Uses theme values for sizing and colors
 
 ## Key Rules
 

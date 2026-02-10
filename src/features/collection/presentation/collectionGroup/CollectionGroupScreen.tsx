@@ -60,7 +60,10 @@ const CollectionGroupScreen = observer(
 
     const handlePressCard = useCallback(
       (item: CollectionGroupEntity) => {
-        navigation.navigate('Collection', { collectionGroupId: item.id });
+        navigation.navigate('Collection', { 
+          collectionGroupId: item.id,
+          collectionName: item.name 
+        });
       },
       [navigation],
     );
