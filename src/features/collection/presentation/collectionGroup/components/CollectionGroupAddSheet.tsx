@@ -1,6 +1,7 @@
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
+  BottomSheetTextInput,
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
@@ -12,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { TextInput, TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BDButton } from '../../../../../common/components/BDButton';
 import { BDTypography } from '../../../../../common/components/BDTypography';
@@ -34,7 +35,7 @@ export const CollectionGroupAddSheet = React.forwardRef<
   ref,
 ) {
   const { styles, placeholderColor } = useStyles();
-  const snapPoints = useMemo(() => ['55%'], []);
+  const snapPoints = useMemo(() => ['48%'], []);
   const modalRef = useRef<BottomSheetModalMethods>(null);
   const defaultColor = COLLECTION_GROUP_COLORS[0];
   const [name, setName] = useState('');
@@ -104,7 +105,7 @@ export const CollectionGroupAddSheet = React.forwardRef<
           <BDTypography variant="label" weight="semibold">
             Name
           </BDTypography>
-          <TextInput
+          <BottomSheetTextInput
             style={styles.input}
             value={name}
             onChangeText={setName}
