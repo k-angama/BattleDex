@@ -48,6 +48,7 @@ export type RootStackParamList = {
 
 export type CollectionGroupStackParamList = {
   CollectionGroup: undefined;
+  Card: { cardId: string; name: string };
   Collection: { collectionGroupId: string; collectionName: string };
 };
 
