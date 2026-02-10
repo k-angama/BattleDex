@@ -13,7 +13,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { BackHandler, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BDButton } from '../../../../../common/components/BDButton';
 import { BDTypography } from '../../../../../common/components/BDTypography';
@@ -83,6 +83,21 @@ export const CollectionGroupAddSheet = React.forwardRef<
     onSubmit({ name: trimmedName, color: selectedColor });
     onClose();
   }, [name, selectedColor, onSubmit, onClose]);
+
+  // Add this to handle Android back button
+  useEffect(() => {
+    if (!visible) return;
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        onClose();
+        return true; // Prevent default behavior
+      },
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
 
   return (
     <BottomSheetModal

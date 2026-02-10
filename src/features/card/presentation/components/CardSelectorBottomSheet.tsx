@@ -5,8 +5,8 @@ import {
   type BottomSheetBackdropProps,
 } from '@gorhom/bottom-sheet';
 import type { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import React, { useCallback } from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useEffect, useImperativeHandle } from 'react';
+import { BackHandler, View } from 'react-native';
 import { ErrorMessage } from '../../../../common/components/ErrorMessage';
 import { SearchBar } from '../../../../common/components/SearchBar';
 import { SearchCard } from '../../../../common/components/SearchCard';
@@ -45,7 +45,7 @@ export const CardSelectorBottomSheet = React.forwardRef<
   const [searchTerm, setSearchTerm] = React.useState('');
   const modalRef = React.useRef<BottomSheetModalMethods>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (visible) {
       modalRef.current?.present();
     } else {
@@ -54,7 +54,7 @@ export const CardSelectorBottomSheet = React.forwardRef<
     }
   }, [visible]);
 
-  React.useImperativeHandle(
+  useImperativeHandle(
     ref,
     () => modalRef.current as BottomSheetModalMethods,
     [],
@@ -84,6 +84,21 @@ export const CardSelectorBottomSheet = React.forwardRef<
     setSearchTerm('');
     onChangeText('');
   }, [setSearchTerm, onChangeText]);
+
+  // Add this to handle Android back button
+  useEffect(() => {
+    if (!visible) return;
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        onClose();
+        return true; // Prevent default behavior
+      },
+    );
+
+    return () => backHandler.remove();
+  }, [visible, onClose]);
 
   return (
     <BottomSheetModal
