@@ -496,6 +496,83 @@ export default {Feature}Screen;
 - ✅ **Testable** - Easy to mock stores in tests
 - ✅ **Separation** - ViewModel handles data fetching, Store handles UI state
 
+## Data Mapper Pattern
+
+When implementing repositories that use the database layer, create mappers to convert database DTOs to domain entities:
+
+### Mapper Structure
+
+Mappers live in `data/mappers/` and follow this pattern:
+
+```typescript
+// data/mappers/{EntityName}Mapper.ts
+import { {EntityName}RowRaw } from '../../../common/db/dto/{EntityName}RowRaw';
+import type { {EntityName}Entity } from '../../domaine/entities/{EntityName}Entity';
+
+export class {EntityName}Mapper {
+  // Convert database DTO → Domain entity
+  static toEntity(row: {EntityName}RowRaw): {EntityName}Entity {
+    return {
+      id: row.id,
+      name: row.name,
+      // Map all fields, rename if needed (e.g., card_count → cardCount)
+      cardCount: row.card_count,
+    };
+  }
+
+  // Extract only persistence fields from entity
+  static toPersistence(entity: {EntityName}Entity): {
+    name: string;
+    color: string;
+  } {
+    return {
+      name: entity.name,
+      color: entity.color,
+      // Only return fields that need to be saved
+    };
+  }
+}
+```
+
+### Usage in Repository Implementation
+
+```typescript
+// data/{EntityName}RepositoryImpl.ts
+import { {databaseClass} } from '../../../common/db/{DatabaseClass}';
+import type { {EntityName}Entity } from '../../domaine/entities/{EntityName}Entity';
+import { {EntityName}Repository } from '../../domaine/repositories/{EntityName}Repository';
+import { {EntityName}Mapper } from './mappers/{EntityName}Mapper';
+
+export class {EntityName}RepositoryImpl implements {EntityName}Repository {
+  async get{EntityNames}(): Promise<{EntityName}Entity[]> {
+    const rows = await {databaseClass}.get{EntityNames}();
+    return rows.map(row => {EntityName}Mapper.toEntity(row));
+  }
+
+  async add{EntityName}(entity: {EntityName}Entity): Promise<void> {
+    const data = {EntityName}Mapper.toPersistence(entity);
+    await {databaseClass}.save{EntityName}(data.name, data.color);
+  }
+
+  async update{EntityName}(entity: {EntityName}Entity): Promise<void> {
+    const data = {EntityName}Mapper.toPersistence(entity);
+    await {databaseClass}.update{EntityName}(entity.id, data.name, data.color);
+  }
+
+  async remove{EntityName}(id: string): Promise<void> {
+    await {databaseClass}.delete{EntityName}(id);
+  }
+}
+```
+
+### Benefits of Mappers
+
+- ✅ **Separation of Concerns** - Database layer (DTOs) separate from business logic (Entities)
+- ✅ **Type Safety** - Explicit conversion prevents accidental data loss
+- ✅ **Flexibility** - Rename fields (e.g., `card_count` → `cardCount`) without changing domain
+- ✅ **Reusability** - One mapper for multiple query results
+- ✅ **Testable** - Easy to unit test mapping logic
+
 ## Key Rules
 
 1. **Always use theme values** for colors, spacing, typography
@@ -507,15 +584,22 @@ export default {Feature}Screen;
 7. **Entities** live in `domaine/entities/` - NOT in components or presentation
    - Import entities as type imports: `import type { Entity } from '../../domaine/entities/Entity'`
    - Define props interfaces in components, but use entities from domaine
-8. **Component styles must be in separate files** - Never use inline StyleSheet.create
+8. **Database DTOs in `common/db/dto/`** - Create separate files for database row types
+   - Create one file per DTO: `{EntityName}RowRaw.ts`
+   - Example: `CollectionRowRaw.ts`, `CollectionCardRowRaw.ts`
+   - Export interface only: `export interface {EntityName}RowRaw { ... }`
+   - Import in database class: `import { CollectionRowRaw } from './dto/CollectionRowRaw'`
+   - Keep DTOs separate from entities - entities are business logic, DTOs are database layer
+9. **Component styles must be in separate files** - Never use inline StyleSheet.create
    - Create styles in `components/styles/{componentName}.styles.ts`
    - Use hook pattern: `export const use{ComponentName}Styles = () => { ... }`
    - Always memoize with `useMemo` depending on `[theme]`
    - Import and use in component: `const styles = use{ComponentName}Styles()`
-9. **Always respect ESLint rules** - Code must pass linting without errors
-   - Follow configured ESLint rules for TypeScript and React Native
-   - Fix all ESLint warnings and errors before completing work
-   - Run linter to validate code quality
+10. **Always respect ESLint rules** - Code must pass linting without errors
+
+- Follow configured ESLint rules for TypeScript and React Native
+- Fix all ESLint warnings and errors before completing work
+- Run linter to validate code quality
 
 ## When Asked to Create a Feature Structure
 

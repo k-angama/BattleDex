@@ -12,7 +12,7 @@ export function useCollectionGroupScreenViewModel({
   repository = collectionGroupRepository,
 }: CollectionGroupScreenViewModelParams = {}) {
   const [collections, setCollections] = useState<CollectionGroupEntity[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const getCollections = useCallback(async () => {

@@ -35,7 +35,7 @@ export const CollectionGroupAddSheet = React.forwardRef<
   ref,
 ) {
   const { styles, placeholderColor } = useStyles();
-  const snapPoints = useMemo(() => ['48%'], []);
+  const snapPoints = useMemo(() => ['50%'], []);
   const modalRef = useRef<BottomSheetModalMethods>(null);
   const defaultColor = COLLECTION_GROUP_COLORS[0];
   const [name, setName] = useState('');

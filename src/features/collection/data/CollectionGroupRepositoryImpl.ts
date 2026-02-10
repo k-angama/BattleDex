@@ -1,22 +1,31 @@
+import { collectionsLocalDatabase } from '../../../common/db/CollectionsLocalDatabase';
 import type { CollectionGroupEntity } from '../domaine/entities/CollectionGroupEntity';
 import { CollectionGroupRepository } from '../domaine/repositories/CollectionGroupRepository';
+import { CollectionGroupMapper } from './mappers/CollectionGroupMapper';
 
 export class CollectionGroupRepositoryImpl
   implements CollectionGroupRepository
 {
   async getCollections(): Promise<CollectionGroupEntity[]> {
-    throw new Error('Method not implemented.');
+    const rows = await collectionsLocalDatabase.getCollections();
+    return rows.map(row => CollectionGroupMapper.toEntity(row));
   }
 
-  async addCollection(_collection: CollectionGroupEntity): Promise<void> {
-    throw new Error('Method not implemented.');
+  async addCollection(collection: CollectionGroupEntity): Promise<void> {
+    const data = CollectionGroupMapper.toPersistence(collection);
+    await collectionsLocalDatabase.saveCollection(data.name, data.color);
   }
 
-  async updateCollection(_collection: CollectionGroupEntity): Promise<void> {
-    throw new Error('Method not implemented.');
+  async updateCollection(collection: CollectionGroupEntity): Promise<void> {
+    const data = CollectionGroupMapper.toPersistence(collection);
+    await collectionsLocalDatabase.updateCollection(
+      collection.id,
+      data.name,
+      data.color,
+    );
   }
 
-  async removeCollection(_id: string): Promise<void> {
-    throw new Error('Method not implemented.');
+  async removeCollection(id: string): Promise<void> {
+    await collectionsLocalDatabase.deleteCollection(id);
   }
 }
