@@ -25,43 +25,42 @@ export function CollectionGroupCard({
 
   return (
     <View style={styles.menuContainer}>
-      <TouchableOpacity
-        style={styles.cardContainer}
-        activeOpacity={0.7}
-        onPress={() => onPress?.(item)}
-        onLongPress={() => {}}
+      <MenuView
+        ref={ref}
+        onPressAction={({ nativeEvent }) => {
+          if (nativeEvent.event === 'edit') {
+            onEdit?.(item);
+          } else if (nativeEvent.event === 'delete') {
+            onDelete?.(item);
+          }
+        }}
+        shouldOpenOnLongPress={true}
+        actions={[
+          {
+            id: 'edit',
+            title: 'Edit',
+            image: Platform.select({
+              ios: 'pencil',
+              android: 'ic_menu_edit',
+            }),
+          },
+          {
+            id: 'delete',
+            title: 'Delete',
+            attributes: {
+              destructive: true,
+            },
+            image: Platform.select({
+              ios: 'trash',
+              android: 'ic_menu_delete',
+            }),
+          },
+        ]}
       >
-        <MenuView
-          ref={ref}
-          onPressAction={({ nativeEvent }) => {
-            if (nativeEvent.event === 'edit') {
-              onEdit?.(item);
-            } else if (nativeEvent.event === 'delete') {
-              onDelete?.(item);
-            }
-          }}
-          shouldOpenOnLongPress={true}
-          actions={[
-            {
-              id: 'edit',
-              title: 'Edit',
-              image: Platform.select({
-                ios: 'pencil',
-                android: 'ic_menu_edit',
-              }),
-            },
-            {
-              id: 'delete',
-              title: 'Delete',
-              attributes: {
-                destructive: true,
-              },
-              image: Platform.select({
-                ios: 'trash',
-                android: 'ic_menu_delete',
-              }),
-            },
-          ]}
+        <TouchableOpacity
+          style={styles.cardContainer}
+          activeOpacity={0.7}
+          onPress={() => onPress?.(item)}
         >
           <Reanimated.View
             entering={FadeInUp.duration(250)}
@@ -85,8 +84,8 @@ export function CollectionGroupCard({
               </BDTypography>
             </View>
           </Reanimated.View>
-        </MenuView>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </MenuView>
     </View>
   );
 }
