@@ -1,0 +1,56 @@
+import { collectionGroupMockData } from '../../../../common/mocks/collectionGroupMock';
+import type { CollectionGroupEntity } from '../entities/CollectionGroupEntity';
+import type { CollectionGroupRepository } from '../repositories/CollectionGroupRepository';
+
+export class CollectionGroupRepositoryMock
+  implements CollectionGroupRepository
+{
+  private collections: CollectionGroupEntity[] = [...collectionGroupMockData];
+
+  async getCollections(): Promise<CollectionGroupEntity[]> {
+    // Simulate async operation
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve([...this.collections]);
+      }, 300);
+    });
+  }
+
+  async addCollection(
+    name: string,
+    color: string,
+  ): Promise<CollectionGroupEntity> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        const collection: CollectionGroupEntity = {
+          id: `${Date.now()}`,
+          name,
+          color,
+          cardCount: 0,
+        };
+        this.collections = [collection, ...this.collections];
+        resolve(collection);
+      }, 300);
+    });
+  }
+
+  async updateCollection(collection: CollectionGroupEntity): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.collections = this.collections.map(c =>
+          c.id === collection.id ? collection : c,
+        );
+        resolve();
+      }, 300);
+    });
+  }
+
+  async removeCollection(id: string): Promise<void> {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.collections = this.collections.filter(c => c.id !== id);
+        resolve();
+      }, 300);
+    });
+  }
+}

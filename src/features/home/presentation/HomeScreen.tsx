@@ -20,6 +20,10 @@ import {
 } from 'react-native-safe-area-context';
 import { BDButton } from '../../../common/components/BDButton';
 import { BDHeaderButton } from '../../../common/components/BDHeaderButton';
+import {
+  BDToast,
+  type BDToastHandle,
+} from '../../../common/components/BDToast';
 import { BDTypography } from '../../../common/components/BDTypography';
 import { EmptyState } from '../../../common/components/EmptyState';
 import { ErrorMessage } from '../../../common/components/ErrorMessage';
@@ -50,6 +54,7 @@ const HomeScreen = observer(
     const [searchQuery, setSearchQuery] = useState('');
     const navigation = useNavigation<NavigationProp>();
     const scrollY = useRef(new Animated.Value(0)).current;
+    const toastRef = useRef<BDToastHandle>(null);
     const compareCardsStoreData = store.compareCards;
     const {
       compareCards,
@@ -105,6 +110,10 @@ const HomeScreen = observer(
                 store.removeCards(selectedIds);
                 clearSelectedIds();
                 setIsEditMode(false);
+                toastRef.current?.show({
+                  message: 'Comparisons deleted successfully',
+                  type: 'success',
+                });
               } else {
                 Alert.alert(
                   'Error',
@@ -197,6 +206,10 @@ const HomeScreen = observer(
                   if (result.success) {
                     store.removeCard(id);
                     clearSelectedIds();
+                    toastRef.current?.show({
+                      message: 'Comparison deleted successfully',
+                      type: 'success',
+                    });
                   } else {
                     Alert.alert(
                       'Error',
@@ -272,19 +285,21 @@ const HomeScreen = observer(
             },
           ]}
         >
-          <SearchBar
-            value={searchQuery}
-            onChangeText={handleSearchQuery}
-            onClear={handleClearSearch}
-            suggestions={cardNames}
-            onSuggestionPress={handleSuggestionPress}
-            enableSuggestions={true}
-            isLoading={isLoadingSearch}
-            errorMessage={errorSearchMessage}
-            onFocus={() => {
-              setIsEditMode(false);
-            }}
-          />
+          <SafeAreaView edges={Platform.OS === 'ios' ? ['top'] : []}>
+            <SearchBar
+              value={searchQuery}
+              onChangeText={handleSearchQuery}
+              onClear={handleClearSearch}
+              suggestions={cardNames}
+              onSuggestionPress={handleSuggestionPress}
+              enableSuggestions={true}
+              isLoading={isLoadingSearch}
+              errorMessage={errorSearchMessage}
+              onFocus={() => {
+                setIsEditMode(false);
+              }}
+            />
+          </SafeAreaView>
           {/* Delete Selected Bar */}
           <Reanimated.View style={[styles.deleteBar, deleteBarAnimatedStyle]}>
             <BDTypography variant="label" weight="semibold">
@@ -332,6 +347,7 @@ const HomeScreen = observer(
             />
           </Animated.View>
         )}
+        <BDToast ref={toastRef} />
       </SafeAreaView>
     );
   },

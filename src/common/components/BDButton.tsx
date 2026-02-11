@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
   GestureResponderEvent,
+  Platform,
   StyleSheet,
   TextStyle,
   TouchableOpacity,
@@ -121,6 +122,7 @@ const createBaseStyles = (theme: Theme) =>
     },
     title: {
       fontFamily: theme.typography.family.semibold,
+      marginTop: Platform.OS === 'ios' ? theme.spacing.xs : 0,
     },
     textDisabled: {
       color: theme.colors.surface,

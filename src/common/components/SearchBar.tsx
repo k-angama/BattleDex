@@ -2,13 +2,11 @@ import React, { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  Platform,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { SearchCardSuggestionEntity } from '../../features/home/domaine/entities/SearchCardSuggestionEntity';
 import { ErrorMessage } from './ErrorMessage';
 import { SearchCard } from './SearchCard';
@@ -72,7 +70,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   }, [autoFocusOnMount]);
 
   return (
-    <SafeAreaView edges={Platform.OS === 'ios' ? ['top'] : []}>
+    <View>
       <View style={styles.container} onLayout={onPageLayout}>
         <View style={styles.searchIcon}>
           {isLoading ? (
@@ -129,6 +127,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           )}
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 };

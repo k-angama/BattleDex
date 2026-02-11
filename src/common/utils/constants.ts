@@ -31,3 +31,17 @@ export const ANDROID_PLAY_STORE_URL =
 // ========== LEGAL & SUPPORT URLS ==========
 export const PRIVACY_POLICY_URL = 'https://example.com/privacy-policy';
 export const TERMS_OF_SERVICE_URL = 'https://example.com/terms-of-service';
+
+// ========== COLLECTION GROUP COLORS ==========
+export const COLLECTION_GROUP_COLORS = [
+  '#FF6B6B',
+  '#4ECDC4',
+  '#45B7D1',
+  '#FFA502',
+  '#9B59B6',
+  '#E74C3C',
+  '#2ED573',
+  '#1E90FF',
+  '#F368E0',
+  '#FFC312',
+];

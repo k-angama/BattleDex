@@ -29,6 +29,7 @@
     "@noble/hashes": "^2.0.1",
     "@op-engineering/op-sqlite": "^15.1.1",
     "@react-native-masked-view/masked-view": "^0.3.0",
+    "@react-native-menu/menu": "^2.0.0",
     "@react-native-segmented-control/segmented-control": "^2.5.7",
     "@react-native/new-app-screen": "0.83.2",
     "@react-navigation/bottom-tabs": "^7.12.0",

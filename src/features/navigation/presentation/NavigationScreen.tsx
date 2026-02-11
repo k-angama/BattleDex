@@ -18,6 +18,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Theme, useTheme } from '../../../common/styles';
 import { cardScreenRoute } from '../../card/presentation/cardScreenRoute';
+import { collectionScreenRoute } from '../../collection/presentation/collection/collectionScreenRoute';
+import { collectionGroupScreenRoute } from '../../collection/presentation/collectionGroup/collectionGroupScreenRoute';
 import { compareScreenRoute } from '../../compare/presensation/compareScreenRoute';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
 import { homeScreenRoute } from '../../home/presentation/homeScreenRoute';
@@ -44,8 +46,18 @@ export type RootStackParamList = {
   };
 };
 
+export type CollectionGroupStackParamList = {
+  CollectionGroup: undefined;
+  Collection: { collectionGroupId: string; collectionName: string };
+};
+
 const stackHomeScreens = {
   ...homeScreenRoute,
+};
+
+const stackCollectionGroupScreens = {
+  ...collectionGroupScreenRoute,
+  ...collectionScreenRoute,
 };
 
 const stackSettingsScreens = {
@@ -93,6 +105,23 @@ function SettingsStackNavigator() {
   );
 }
 
+function CollectionStackNavigator() {
+  const { theme } = useTheme();
+  const Stack = createNativeStackNavigator<CollectionGroupStackParamList>();
+  return (
+    <Stack.Navigator screenOptions={screenOptions(theme)}>
+      {Object.entries(stackCollectionGroupScreens).map(([name, config]) => (
+        <Stack.Screen
+          key={name}
+          name={name as keyof CollectionGroupStackParamList}
+          component={config.screen}
+          options={config.options}
+        />
+      ))}
+    </Stack.Navigator>
+  );
+}
+
 function HomeStackNavigator() {
   const { theme } = useTheme();
   const Stack = createNativeStackNavigator<HomeStackParamList>();
@@ -119,6 +148,7 @@ const getTabBarIcon = (
 ) => {
   const iconMap: Record<string, string> = {
     Battle: 'sword-cross',
+    Collections: 'folder',
     Settings: 'cog',
   };
   return <Icon name={iconMap[routeName]} size={size} color={color} />;
@@ -146,6 +176,7 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Battle" component={HomeStackNavigator} />
+      <Tab.Screen name="Collections" component={CollectionStackNavigator} />
       <Tab.Screen name="Settings" component={SettingsStackNavigator} />
     </Tab.Navigator>
   );
