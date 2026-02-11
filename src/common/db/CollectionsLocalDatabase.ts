@@ -178,6 +178,17 @@ export class CollectionsLocalDatabase {
     await this.db.executeSync(query, cardIds);
   }
 
+  async isCardInCollection(
+    cardId: string,
+    collectionId: string,
+  ): Promise<boolean> {
+    const cards = await this.getCardsForCollection(collectionId);
+    return cards.some(row => {
+      const cardData = JSON.parse(row.card_json);
+      return cardData.id === cardId;
+    });
+  }
+
   async clearAllCollections(): Promise<void> {
     await this.db.executeSync(`DELETE FROM collection_cards;`);
     await this.db.executeSync(`DELETE FROM collections;`);

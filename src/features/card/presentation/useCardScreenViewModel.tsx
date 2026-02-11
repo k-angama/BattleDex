@@ -4,17 +4,24 @@ import { CardEntity } from '../../home/domaine/entities/CardEntity';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { SearchCardNamesUseCase } from '../../home/domaine/usecases/SearchCardNamesUseCase';
 import { searchCardNamesUseCase } from '../../home/presentation/homeScreenDI';
+import type { SavedCardEntity } from '../domain/entities/SavedCardEntity';
 import { GetDetailCardRepository } from '../domain/GetDetailCardRepository';
-import { getDetailCardRepository } from './cardScreenDI';
+import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
+import {
+  addToCollectionRepository,
+  getDetailCardRepository,
+} from './cardScreenDI';
 
 interface CardScreenViewModelParams {
   repository?: GetDetailCardRepository;
   useCase?: SearchCardNamesUseCase;
+  addToCollectionRepository?: AddToCollectionRepository;
 }
 
 export function useCardScreenViewModel({
   repository = getDetailCardRepository,
   useCase = searchCardNamesUseCase,
+  addToCollectionRepository: addToCollectionRepo = addToCollectionRepository,
 }: CardScreenViewModelParams = {}) {
   const [firstCard, setFirstCard] = useState<CardEntity | null>(null);
   const [secondCard, setSecondCard] = useState<CardEntity | null>(null);
@@ -23,10 +30,14 @@ export function useCardScreenViewModel({
   const [cardNames, setCardNames] = useState<SearchCardSuggestionEntity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingSearch, setIsLoadingSearch] = useState(false);
+  const [isLoadingCollection, setIsLoadingCollection] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [errorSearchMessage, setErrorSearchMessage] = useState<string | null>(
     null,
   );
+  const [errorCollectionMessage, setErrorCollectionMessage] = useState<
+    string | null
+  >(null);
 
   const fetchDetailCard = useCallback(
     async (
@@ -92,12 +103,62 @@ export function useCardScreenViewModel({
     [],
   );
 
+  const addCardToCollection = useCallback(
+    async (
+      card: CardEntity,
+      collectionId: string,
+    ): Promise<{ success: boolean; error?: string }> => {
+      setIsLoadingCollection(true);
+      setErrorCollectionMessage(null);
+
+      const savedCardEntity: SavedCardEntity = {
+        id: card.id,
+        title: card.name,
+        staticScore: card.hp || 'N/A',
+        imageUrl: card.imageUrl ?? '',
+      };
+
+      const [, error] = await safeCall(
+        () => addToCollectionRepo.addCard(savedCardEntity, collectionId),
+        () => {},
+        setErrorCollectionMessage,
+        {
+          operation: 'Add Card to Collection',
+          fallbackMessage:
+            'Unable to add card to collection. Please try again.',
+        },
+      );
+
+      setIsLoadingCollection(false);
+      return { success: !error, error: error ?? undefined };
+    },
+    [addToCollectionRepo],
+  );
+
+  const checkIfCardInCollection = useCallback(
+    async (cardId: string, collectionId: string): Promise<boolean> => {
+      const [result] = await safeCall(
+        () => addToCollectionRepo.isCardInCollection(cardId, collectionId),
+        undefined,
+        undefined,
+        {
+          operation: 'Check Card in Collection',
+          fallbackMessage: 'Unable to check card status.',
+        },
+      );
+      return result ?? false;
+    },
+    [addToCollectionRepo],
+  );
+
   return {
     // Actions
     getDetailFirstCard,
     getDetailSecondCard,
     searchCardNames,
     setSelectedCard: setSelectedCardWithLoading,
+    addCardToCollection,
+    checkIfCardInCollection,
 
     // Data
     firstCard,
@@ -108,7 +169,9 @@ export function useCardScreenViewModel({
     // Loading & error state
     isLoading,
     isLoadingSearch,
+    isLoadingCollection,
     errorMessage,
     errorSearchMessage,
+    errorCollectionMessage,
   };
 }

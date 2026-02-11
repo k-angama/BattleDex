@@ -12,7 +12,25 @@ export class CollectionCardRepositoryImpl implements CollectionCardRepository {
     return rows.map(row => JSON.parse(row.card_json) as CollectionCardEntity);
   }
 
+  async addCard(
+    cardEntity: CollectionCardEntity,
+    collectionId: string,
+  ): Promise<void> {
+    const cardJson = JSON.stringify(cardEntity);
+    await collectionsLocalDatabase.addCard(collectionId, cardJson);
+  }
+
   async removeCard(cardId: string): Promise<void> {
     await collectionsLocalDatabase.removeCard(cardId);
+  }
+
+  async isCardInCollection(
+    cardId: string,
+    collectionId: string,
+  ): Promise<boolean> {
+    return await collectionsLocalDatabase.isCardInCollection(
+      cardId,
+      collectionId,
+    );
   }
 }

@@ -673,6 +673,187 @@ export class {EntityName}RepositoryImpl implements {EntityName}Repository {
 - ✅ **Reusability** - One mapper for multiple query results
 - ✅ **Testable** - Easy to unit test mapping logic
 
+## Cross-Feature Communication Pattern
+
+**CRITICAL RULE**: Features should NEVER directly import repositories, entities, or services from other features. This violates feature independence and creates tight coupling.
+
+### ❌ Wrong Pattern (Direct Feature Dependency)
+
+```typescript
+// ❌ BAD: Card feature importing from Collection feature
+import { CollectionCardRepository } from '../../collection/domaine/repositories/CollectionCardRepository';
+import { CollectionCardEntity } from '../../collection/domaine/entities/CollectionCardEntity';
+```
+
+**Problems:**
+- Card feature depends on Collection feature
+- Violates feature independence
+- Hard to test in isolation
+- Changes in Collection feature break Card feature
+
+### ✅ Correct Pattern (Feature-Specific Repository)
+
+When a feature needs to interact with another feature's data, create a **feature-specific repository** that defines only what that feature needs.
+
+**Example**: Card feature needs to add cards to collections
+
+#### Step 1: Create Feature-Specific Entity
+
+```typescript
+// card/domain/entities/SavedCardEntity.ts
+export interface SavedCardEntity {
+  id: string;
+  title: string;
+  staticScore: string;
+  imageUrl: string;
+}
+```
+
+#### Step 2: Create Feature-Specific Repository Interface
+
+```typescript
+// card/domain/repositories/AddToCollectionRepository.ts
+import type { SavedCardEntity } from '../entities/SavedCardEntity';
+
+export interface AddToCollectionRepository {
+  addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void>;
+  isCardInCollection(cardId: string, collectionId: string): Promise<boolean>;
+}
+```
+
+**Key Point**: Only include methods needed by this feature. Don't expose the entire CollectionCardRepository interface.
+
+#### Step 3: Implement Using Shared Infrastructure
+
+Both features communicate through the **shared database layer** (`common/db/`), not through each other.
+
+```typescript
+// card/data/AddToCollectionRepositoryImpl.ts
+import { collectionsLocalDatabase } from '../../../common/db/CollectionsLocalDatabase';
+import type { SavedCardEntity } from '../domain/entities/SavedCardEntity';
+import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
+
+export class AddToCollectionRepositoryImpl implements AddToCollectionRepository {
+  async addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void> {
+    const cardJson = JSON.stringify(cardEntity);
+    await collectionsLocalDatabase.addCard(collectionId, cardJson);
+  }
+
+  async isCardInCollection(cardId: string, collectionId: string): Promise<boolean> {
+    return await collectionsLocalDatabase.isCardInCollection(cardId, collectionId);
+  }
+}
+```
+
+#### Step 4: Create Mock Implementation
+
+```typescript
+// card/domain/mocks/AddToCollectionRepositoryMock.ts
+import type { SavedCardEntity } from '../entities/SavedCardEntity';
+import type { AddToCollectionRepository } from '../repositories/AddToCollectionRepository';
+
+const mockAddedCards: Map<string, Set<string>> = new Map();
+
+export class AddToCollectionRepositoryMock implements AddToCollectionRepository {
+  async addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
+    if (!mockAddedCards.has(collectionId)) {
+      mockAddedCards.set(collectionId, new Set());
+    }
+    
+    mockAddedCards.get(collectionId)?.add(cardEntity.id);
+  }
+
+  async isCardInCollection(cardId: string, collectionId: string): Promise<boolean> {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return mockAddedCards.get(collectionId)?.has(cardId) ?? false;
+  }
+}
+```
+
+#### Step 5: Register in DI
+
+```typescript
+// card/presentation/cardScreenDI.ts
+import { isMockDataSource } from '../../../common/utils/environment';
+import { AddToCollectionRepositoryImpl } from '../data/AddToCollectionRepositoryImpl';
+import { AddToCollectionRepositoryMock } from '../domain/mocks/AddToCollectionRepositoryMock';
+
+const useMocks = isMockDataSource();
+
+const createAddToCollectionRepository = () =>
+  useMocks
+    ? new AddToCollectionRepositoryMock()
+    : new AddToCollectionRepositoryImpl();
+
+export const addToCollectionRepository = createAddToCollectionRepository();
+```
+
+#### Step 6: Use in ViewModel
+
+```typescript
+// card/presentation/useCardScreenViewModel.tsx
+import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
+import { addToCollectionRepository } from './cardScreenDI';
+
+interface CardScreenViewModelParams {
+  addToCollectionRepository?: AddToCollectionRepository;
+}
+
+export function useCardScreenViewModel({
+  addToCollectionRepository: repo = addToCollectionRepository,
+}: CardScreenViewModelParams = {}) {
+  const addCardToCollection = useCallback(async (card: CardEntity, collectionId: string) => {
+    const savedCard: SavedCardEntity = {
+      id: card.id,
+      title: card.name,
+      staticScore: card.hp || 'N/A',
+      imageUrl: card.imageUrl ?? '',
+    };
+    
+    await repo.addCard(savedCard, collectionId);
+  }, [repo]);
+
+  return { addCardToCollection };
+}
+```
+
+### Benefits of This Pattern
+
+- ✅ **Feature Independence** - Features remain self-contained and testable in isolation
+- ✅ **Simplified Interface** - Each feature only exposes methods it needs
+- ✅ **Shared Infrastructure** - Features communicate through database, not each other
+- ✅ **Clear Boundaries** - Repository defines explicit contract between features
+- ✅ **Easy Testing** - Mock feature-specific repository without complex dependencies
+- ✅ **Loose Coupling** - Changes in one feature don't break others
+
+### When to Use This Pattern
+
+Use this pattern when:
+- Feature A needs to write/modify data managed by Feature B
+- Feature A needs specific read operations from Feature B's domain
+- Multiple features need to interact with the same data
+
+### Architecture Diagram
+
+```
+Feature A (Card)           Feature B (Collection)
+     │                            │
+     ├─ AddToCollectionRepo       ├─ CollectionCardRepo
+     │  (minimal interface)       │  (full CRUD)
+     │                            │
+     └────────┬───────────────────┘
+              │
+              ▼
+         Common Infrastructure
+       (CollectionsLocalDatabase)
+```
+
+### Key Takeaway
+
+**Never import across features.** Instead, create a feature-specific repository that delegates to shared infrastructure. This maintains Clean Architecture principles and keeps features decoupled.
+
 ## Loading States with Skeleton Placeholders
 
 For screens that fetch data, always handle three states in this order: **error → loading → empty → data**.
