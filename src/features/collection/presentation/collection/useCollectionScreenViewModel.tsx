@@ -33,36 +33,18 @@ export function useCollectionScreenViewModel({
     [repository],
   );
 
-  const addCard = useCallback(
-    async (collectionId: string, card: CollectionCardEntity) => {
-      setErrorMessage(null);
-      await safeCall(
-        () => repository.addCard(collectionId, card),
-        undefined,
-        setErrorMessage,
-        { operation: 'Add Card', fallbackMessage: 'Failed to add card' },
-      );
-      if (!errorMessage) {
-        await getCards(collectionId);
-      }
-    },
-    [repository, getCards, errorMessage],
-  );
-
   const removeCard = useCallback(
     async (collectionId: string, cardId: string) => {
       setErrorMessage(null);
-      await safeCall(
+      const [, error] = await safeCall(
         () => repository.removeCard(cardId),
         undefined,
         setErrorMessage,
         { operation: 'Remove Card', fallbackMessage: 'Failed to remove card' },
       );
-      if (!errorMessage) {
-        await getCards(collectionId);
-      }
+      return { success: !error, error };
     },
-    [repository, getCards, errorMessage],
+    [repository],
   );
 
   return {
@@ -70,7 +52,6 @@ export function useCollectionScreenViewModel({
     isLoading,
     errorMessage,
     getCards,
-    addCard,
     removeCard,
   };
 }

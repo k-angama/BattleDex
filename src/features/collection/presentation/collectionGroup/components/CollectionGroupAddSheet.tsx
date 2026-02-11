@@ -18,7 +18,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { BDButton } from '../../../../../common/components/BDButton';
 import { BDTypography } from '../../../../../common/components/BDTypography';
 import { COLLECTION_GROUP_COLORS } from '../../../../../common/utils/constants';
-import { useStyles } from './styles/collectionGroupAddSheet.styles.ts';
+import { useStyles } from './styles/collectionGroupAddSheet.styles';
 
 export interface CollectionGroupAddSheetProps {
   visible: boolean;

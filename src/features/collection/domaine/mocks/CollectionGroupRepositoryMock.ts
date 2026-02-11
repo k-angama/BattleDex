@@ -16,11 +16,20 @@ export class CollectionGroupRepositoryMock
     });
   }
 
-  async addCollection(collection: CollectionGroupEntity): Promise<void> {
+  async addCollection(
+    name: string,
+    color: string,
+  ): Promise<CollectionGroupEntity> {
     return new Promise(resolve => {
       setTimeout(() => {
+        const collection: CollectionGroupEntity = {
+          id: `${Date.now()}`,
+          name,
+          color,
+          cardCount: 0,
+        };
         this.collections = [collection, ...this.collections];
-        resolve();
+        resolve(collection);
       }, 300);
     });
   }

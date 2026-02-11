@@ -11,9 +11,12 @@ export class CollectionGroupRepositoryImpl
     return rows.map(row => CollectionGroupMapper.toEntity(row));
   }
 
-  async addCollection(collection: CollectionGroupEntity): Promise<void> {
-    const data = CollectionGroupMapper.toPersistence(collection);
-    await collectionsLocalDatabase.saveCollection(data.name, data.color);
+  async addCollection(
+    name: string,
+    color: string,
+  ): Promise<CollectionGroupEntity> {
+    const savedRow = await collectionsLocalDatabase.saveCollection(name, color);
+    return CollectionGroupMapper.toEntity(savedRow);
   }
 
   async updateCollection(collection: CollectionGroupEntity): Promise<void> {

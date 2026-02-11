@@ -60,9 +60,9 @@ const CollectionGroupScreen = observer(
 
     const handlePressCard = useCallback(
       (item: CollectionGroupEntity) => {
-        navigation.navigate('Collection', { 
+        navigation.navigate('Collection', {
           collectionGroupId: item.id,
-          collectionName: item.name 
+          collectionName: item.name,
         });
       },
       [navigation],
@@ -100,17 +100,11 @@ const CollectionGroupScreen = observer(
           }
         } else {
           // Create new collection
-          const collection = {
-            id: Date.now().toString(),
-            name: payload.name,
-            cardCount: 0,
-            color: payload.color,
-          };
-          const result = await addCollection(collection);
+          const result = await addCollection(payload.name, payload.color);
 
-          if (result.success) {
+          if (result.success && result.createdCollection) {
             setIsAddSheetVisible(false);
-            store.addCollection(collection);
+            store.addCollection(result.createdCollection);
             toastRef.current?.show({
               message: 'Collection created successfully',
               type: 'success',

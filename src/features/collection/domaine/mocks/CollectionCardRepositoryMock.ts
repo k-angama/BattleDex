@@ -13,15 +13,6 @@ export class CollectionCardRepositoryMock implements CollectionCardRepository {
     return [...mockCards];
   }
 
-  async addCard(
-    _collectionId: string,
-    card: CollectionCardEntity,
-  ): Promise<CollectionCardEntity> {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    mockCards.push(card);
-    return card;
-  }
-
   async removeCard(cardId: string): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 300));
     const index = mockCards.findIndex(card => card.id === cardId);

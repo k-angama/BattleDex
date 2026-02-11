@@ -1,4 +1,9 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  CompositeNavigationProp,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useLayoutEffect } from 'react';
@@ -10,14 +15,20 @@ import {
   collectionCardStore,
   CollectionCardStore,
 } from '../../../../common/services/CollectionCardStore';
-import { CollectionGroupStackParamList } from '../../../navigation/presentation/NavigationScreen';
+import {
+  CollectionGroupStackParamList,
+  RootStackParamList,
+} from '../../../navigation/presentation/NavigationScreen';
 import { CollectionCardEntity } from '../../domaine/entities/CollectionCardEntity';
 import { CollectionCard } from './components/CollectionCard';
 import { CollectionCardSkeleton } from './components/CollectionCardSkeleton';
 import { useStyles } from './styles/collectionScreen.styles';
 import { useCollectionScreenViewModel } from './useCollectionScreenViewModel';
 
-type NavigationProp = NativeStackNavigationProp<CollectionGroupStackParamList>;
+type NavigationProp = CompositeNavigationProp<
+  NativeStackNavigationProp<CollectionGroupStackParamList, 'Collection'>,
+  NativeStackNavigationProp<RootStackParamList>
+>;
 type CollectionScreenRouteProp = RouteProp<
   CollectionGroupStackParamList,
   'Collection'

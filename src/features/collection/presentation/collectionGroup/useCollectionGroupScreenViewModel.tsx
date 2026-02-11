@@ -34,12 +34,17 @@ export function useCollectionGroupScreenViewModel({
 
   const addCollection = useCallback(
     async (
-      collection: CollectionGroupEntity,
-    ): Promise<{ success: boolean; error: string | null }> => {
+      name: string,
+      color: string,
+    ): Promise<{
+      success: boolean;
+      error: string | null;
+      createdCollection?: CollectionGroupEntity;
+    }> => {
       setErrorMessage(null);
 
-      const [, error] = await safeCall(
-        () => repository.addCollection(collection),
+      const [createdCollection, error] = await safeCall(
+        () => repository.addCollection(name, color),
         undefined,
         setErrorMessage,
         {
@@ -48,7 +53,11 @@ export function useCollectionGroupScreenViewModel({
         },
       );
 
-      return { success: !error, error };
+      return {
+        success: !error,
+        error,
+        createdCollection: createdCollection ?? undefined,
+      };
     },
     [repository],
   );

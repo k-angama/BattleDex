@@ -21,6 +21,7 @@ export const useStyles = () => {
         columnWrapper: {
           justifyContent: 'space-between',
           marginBottom: theme.spacing.lg,
+          gap: theme.spacing.sm,
         },
         emptyStateContainer: {
           flex: 1,

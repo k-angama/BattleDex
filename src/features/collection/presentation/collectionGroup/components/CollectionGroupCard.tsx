@@ -26,10 +26,9 @@ export function CollectionGroupCard({
   return (
     <View style={styles.menuContainer}>
       <TouchableOpacity
-        style={styles.cardContainer}
+        disabled={Platform.OS === 'android'} // Disable on Android to avoid conflicts with long press
         activeOpacity={0.7}
         onPress={() => onPress?.(item)}
-        onLongPress={() => {}}
       >
         <MenuView
           ref={ref}
@@ -63,28 +62,38 @@ export function CollectionGroupCard({
             },
           ]}
         >
-          <Reanimated.View
-            entering={FadeInUp.duration(250)}
-            exiting={FadeOut.duration(200)}
+          <TouchableOpacity
+            style={styles.cardContainer}
+            activeOpacity={0.7}
+            onPress={() => onPress?.(item)}
+            delayLongPress={100}
+            onLongPress={() => {}} // Required to enable long press on Android
           >
-            <View style={[styles.cardHeader, { backgroundColor: item.color }]}>
-              <View style={styles.cardIconContainer}>
-                <Icon name="pokeball" size={32} color="#FFF" />
-              </View>
-            </View>
-            <View style={styles.cardContent}>
-              <BDTypography
-                variant="label"
-                style={styles.cardName}
-                numberOfLines={2}
+            <Reanimated.View
+              entering={FadeInUp.duration(250)}
+              exiting={FadeOut.duration(200)}
+            >
+              <View
+                style={[styles.cardHeader, { backgroundColor: item.color }]}
               >
-                {item.name}
-              </BDTypography>
-              <BDTypography variant="caption" style={styles.cardCount}>
-                {item.cardCount} cards
-              </BDTypography>
-            </View>
-          </Reanimated.View>
+                <View style={styles.cardIconContainer}>
+                  <Icon name="pokeball" size={32} color="#FFF" />
+                </View>
+              </View>
+              <View style={styles.cardContent}>
+                <BDTypography
+                  variant="label"
+                  style={styles.cardName}
+                  numberOfLines={2}
+                >
+                  {item.name}
+                </BDTypography>
+                <BDTypography variant="caption" style={styles.cardCount}>
+                  {item.cardCount} cards
+                </BDTypography>
+              </View>
+            </Reanimated.View>
+          </TouchableOpacity>
         </MenuView>
       </TouchableOpacity>
     </View>
