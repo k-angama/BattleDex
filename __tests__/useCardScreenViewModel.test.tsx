@@ -16,6 +16,7 @@ describe('useCardScreenViewModel', () => {
     weaknesses: [],
     resistances: [],
     setName: 'set name',
+    staticScore: '5.0',
   };
 
   let repo: jest.Mocked<GetDetailCardRepository>;

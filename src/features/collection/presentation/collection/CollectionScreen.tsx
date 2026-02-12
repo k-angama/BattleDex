@@ -6,15 +6,17 @@ import {
 } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useLayoutEffect } from 'react';
-import { FlatList, View } from 'react-native';
+import { useCallback, useEffect, useLayoutEffect, useRef } from 'react';
+import { Alert, FlatList, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { BDToast, BDToastHandle } from '../../../../common/components/BDToast';
 import { EmptyState } from '../../../../common/components/EmptyState';
 import { ErrorMessage } from '../../../../common/components/ErrorMessage';
 import {
   collectionCardStore,
   CollectionCardStore,
 } from '../../../../common/services/CollectionCardStore';
+import { collectionGroupStore } from '../../../../common/services/CollectionGroupStore';
 import {
   CollectionGroupStackParamList,
   RootStackParamList,
@@ -43,8 +45,9 @@ const CollectionScreen = observer(
     const route = useRoute<CollectionScreenRouteProp>();
     const navigation = useNavigation<NavigationProp>();
     const { styles } = useStyles();
-    const { cards, isLoading, errorMessage, getCards } =
+    const { cards, isLoading, errorMessage, getCards, removeCard } =
       useCollectionScreenViewModel();
+    const toastRef = useRef<BDToastHandle>(null);
     const storeCards = store.cards;
 
     const collectionName = route.params?.collectionName || 'Collection';
@@ -74,6 +77,29 @@ const CollectionScreen = observer(
       [navigation],
     );
 
+    const handleDeleteCard = useCallback(
+      async (card: CollectionCardEntity) => {
+        const result = await removeCard(collectionGroupId, card.id);
+        if (result.success) {
+          store.removeCard(card.id);
+          collectionGroupStore.removeCardCountFromCollection(
+            collectionGroupId,
+            1,
+          );
+          toastRef.current?.show({
+            message: 'Card removed successfully',
+            type: 'success',
+          });
+        } else {
+          Alert.alert(
+            'Error',
+            result.error ?? 'Unable to remove card. Please try again.',
+          );
+        }
+      },
+      [removeCard, collectionGroupId, store],
+    );
+
     return (
       <SafeAreaView style={styles.container} edges={[]}>
         {errorMessage ? (
@@ -95,6 +121,7 @@ const CollectionScreen = observer(
                 card={item}
                 rank={index + 1}
                 onPress={() => handleOpenCard(item)}
+                onDelete={() => handleDeleteCard(item)}
               />
             )}
             keyExtractor={item => item.id}
@@ -103,6 +130,7 @@ const CollectionScreen = observer(
             numColumns={2}
           />
         )}
+        <BDToast ref={toastRef} />
       </SafeAreaView>
     );
   },
