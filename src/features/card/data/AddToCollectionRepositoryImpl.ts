@@ -18,6 +18,7 @@ export class AddToCollectionRepositoryImpl
     const cardJson = JSON.stringify(savedCardEntity);
     const savedRow = await this.collectionsLocalDatabase.addCard(
       collectionId,
+      savedCardEntity.id,
       cardJson,
     );
     return AddedCardMapper.toEntity(savedRow);

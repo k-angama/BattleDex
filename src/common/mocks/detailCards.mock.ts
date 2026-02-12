@@ -113,6 +113,7 @@ export const suggestionToCard = (id: string): CardEntity | null => {
     weaknesses: template.weaknesses,
     resistances: template.resistances,
     rarity: 'Common',
+    staticScore: hpValue.toString(),
   };
 };
 

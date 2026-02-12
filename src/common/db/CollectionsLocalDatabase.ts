@@ -91,12 +91,17 @@ export class CollectionsLocalDatabase {
     name: string,
     color: string,
   ): Promise<void> {
-    await this.db.executeSync(
+    const result = await this.db.executeSync(
       `UPDATE collections 
        SET name = ?, color = ?
        WHERE id = ?;`,
       [name, color, id],
     );
+
+    // Check if collection was actually updated
+    if (result.rowsAffected === 0) {
+      throw new Error(`Collection with ID ${id} not found`);
+    }
   }
 
   async deleteCollection(id: string): Promise<void> {
@@ -106,7 +111,15 @@ export class CollectionsLocalDatabase {
       [id],
     );
     // Then delete the collection
-    await this.db.executeSync(`DELETE FROM collections WHERE id = ?;`, [id]);
+    const result = await this.db.executeSync(
+      `DELETE FROM collections WHERE id = ?;`,
+      [id],
+    );
+
+    // Check if collection was actually deleted
+    if (result.rowsAffected === 0) {
+      throw new Error(`Collection with ID ${id} not found`);
+    }
   }
 
   async deleteCollections(ids: string[]): Promise<void> {
@@ -119,27 +132,31 @@ export class CollectionsLocalDatabase {
 
     // Delete the collections
     const deleteCollectionsQuery = `DELETE FROM collections WHERE id IN (${placeholders});`;
-    await this.db.executeSync(deleteCollectionsQuery, ids);
+    const result = await this.db.executeSync(deleteCollectionsQuery, ids);
+
+    // Check if any collections were actually deleted
+    if (result.rowsAffected === 0) {
+      throw new Error(`No collections found with the provided IDs`);
+    }
   }
 
   // ===== COLLECTION CARDS METHODS =====
 
   async addCard(
     collectionId: string,
+    cardId: string,
     cardJson: string,
     addedDate: Date = new Date(),
   ): Promise<CollectionCardRowRaw> {
-    const id = `${addedDate.getTime()}-${Math.random().toString(36).slice(2)}`;
     const added_date = addedDate.getTime();
-
     await this.db.executeSync(
       `INSERT INTO collection_cards (id, collection_id, card_json, added_date)
        VALUES (?, ?, ?, ?);`,
-      [id, collectionId, cardJson, added_date],
+      [cardId, collectionId, cardJson, added_date],
     );
 
     return {
-      id,
+      id: cardId,
       collection_id: collectionId,
       card_json: cardJson,
       added_date,
@@ -166,16 +183,26 @@ export class CollectionsLocalDatabase {
   }
 
   async removeCard(cardId: string): Promise<void> {
-    await this.db.executeSync(`DELETE FROM collection_cards WHERE id = ?;`, [
-      cardId,
-    ]);
+    const result = await this.db.executeSync(
+      `DELETE FROM collection_cards WHERE id = ?;`,
+      [cardId],
+    );
+    // Check if any rows were actually deleted
+    if (result.rowsAffected === 0) {
+      throw new Error(`Card with ID ${cardId} not found`);
+    }
   }
 
   async removeCards(cardIds: string[]): Promise<void> {
     if (!cardIds || cardIds.length === 0) return;
     const placeholders = cardIds.map(() => '?').join(',');
     const query = `DELETE FROM collection_cards WHERE id IN (${placeholders});`;
-    await this.db.executeSync(query, cardIds);
+    const result = await this.db.executeSync(query, cardIds);
+
+    // Check if any rows were actually deleted
+    if (result.rowsAffected === 0) {
+      throw new Error(`No cards found with the provided IDs`);
+    }
   }
 
   async isCardInCollection(

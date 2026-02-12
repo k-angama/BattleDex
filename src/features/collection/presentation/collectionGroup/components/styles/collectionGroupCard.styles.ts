@@ -13,9 +13,11 @@ export const useStyles = () => {
           ...theme.shadow.card,
         },
         cardContainer: {
+          backgroundColor: theme.colors.surface,
           marginHorizontal: theme.spacing.xs,
           borderRadius: theme.radius.md,
           overflow: 'hidden',
+          ...theme.shadow.card,
         },
         cardPressed: {
           opacity: 0.7,

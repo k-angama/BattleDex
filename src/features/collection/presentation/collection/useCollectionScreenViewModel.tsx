@@ -34,14 +34,18 @@ export function useCollectionScreenViewModel({
   );
 
   const removeCard = useCallback(
-    async (collectionId: string, cardId: string) => {
-      setErrorMessage(null);
+    async (cardId: string) => {
       const [, error] = await safeCall(
         () => repository.removeCard(cardId),
         undefined,
-        setErrorMessage,
+        undefined,
         { operation: 'Remove Card', fallbackMessage: 'Failed to remove card' },
       );
+
+      if (!error) {
+        setCards(prevCards => prevCards.filter(card => card.id !== cardId));
+      }
+
       return { success: !error, error };
     },
     [repository],

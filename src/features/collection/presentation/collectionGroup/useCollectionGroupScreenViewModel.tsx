@@ -46,7 +46,7 @@ export function useCollectionGroupScreenViewModel({
       const [createdCollection, error] = await safeCall(
         () => repository.addCollection(name, color),
         undefined,
-        setErrorMessage,
+        undefined,
         {
           operation: 'Add Collection',
           fallbackMessage: 'Unable to add collection. Please try again.',
@@ -71,7 +71,7 @@ export function useCollectionGroupScreenViewModel({
       const [, error] = await safeCall(
         () => repository.updateCollection(collection),
         undefined,
-        setErrorMessage,
+        undefined,
         {
           operation: 'Update Collection',
           fallbackMessage: 'Unable to update collection. Please try again.',
@@ -90,7 +90,7 @@ export function useCollectionGroupScreenViewModel({
       const [, error] = await safeCall(
         () => repository.removeCollection(id),
         undefined,
-        setErrorMessage,
+        undefined,
         {
           operation: 'Remove Collection',
           fallbackMessage: 'Unable to remove collection. Please try again.',

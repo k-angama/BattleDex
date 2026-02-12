@@ -31,7 +31,6 @@ import {
 } from '../../../common/components/BDToast';
 import { BDTypography } from '../../../common/components/BDTypography';
 import { AddCollectionGroupSheet } from '../../../common/components/CollectionGroupAddSheet';
-import { collectionCardStore } from '../../../common/services/CollectionCardStore';
 import { collectionGroupStore } from '../../../common/services/CollectionGroupStore';
 import { useTheme } from '../../../common/styles';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
@@ -180,7 +179,6 @@ export function CardScreen() {
     const result = await addCardToCollection(firstCard, collectionId);
 
     if (result.success && result.addedCard) {
-      collectionCardStore.addCard(result.addedCard);
       collectionGroupStore.addCardCountToCollection(collectionId, 1);
       const collection = collectionGroupStore.findCollectionById(collectionId);
       const collectionName = collection?.name || 'Collection';
@@ -221,7 +219,7 @@ export function CardScreen() {
 
     if (result.success && result.createdCollection) {
       // Update store with new collection (cast to CollectionGroupEntity for store compatibility)
-      collectionGroupStore.addCollection(result.createdCollection as any);
+      collectionGroupStore.addCollection(result.createdCollection);
 
       // Auto-add current card to new collection
       const addCardResult = await addCardToCollection(
@@ -232,7 +230,6 @@ export function CardScreen() {
       setIsCollectionGroupAddSheetVisible(false);
 
       if (addCardResult.success && addCardResult.addedCard) {
-        collectionCardStore.addCard(addCardResult.addedCard);
         collectionGroupStore.addCardCountToCollection(
           result.createdCollection.id,
           1,
