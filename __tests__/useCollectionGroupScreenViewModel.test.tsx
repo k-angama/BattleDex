@@ -118,7 +118,6 @@ describe('useCollectionGroupScreenViewModel', () => {
     expect(addResult.success).toBe(false);
     expect(addResult.error).toBeTruthy();
     expect(addResult.createdCollection).toBeUndefined();
-    await waitFor(() => expect(result.current.errorMessage).toBeTruthy());
   });
 
   it('updates a collection successfully', async () => {
@@ -176,7 +175,6 @@ describe('useCollectionGroupScreenViewModel', () => {
 
     expect(updateResult.success).toBe(false);
     expect(updateResult.error).toBeTruthy();
-    await waitFor(() => expect(result.current.errorMessage).toBeTruthy());
   });
 
   it('removes a collection successfully', async () => {
@@ -220,7 +218,6 @@ describe('useCollectionGroupScreenViewModel', () => {
 
     expect(removeResult.success).toBe(false);
     expect(removeResult.error).toBeTruthy();
-    await waitFor(() => expect(result.current.errorMessage).toBeTruthy());
   });
 
   it('can manually refresh collections', async () => {

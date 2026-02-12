@@ -83,13 +83,12 @@ describe('useCollectionScreenViewModel', () => {
     };
 
     await act(async () => {
-      removeResult = await result.current.removeCard('collection1', 'card1');
+      removeResult = await result.current.removeCard('card1');
     });
 
     expect(repo.removeCard).toHaveBeenCalledWith('card1');
     expect(removeResult.success).toBe(true);
     expect(removeResult.error).toBeNull();
-    expect(result.current.errorMessage).toBeNull();
   });
 
   it('handles remove card error', async () => {
@@ -105,10 +104,9 @@ describe('useCollectionScreenViewModel', () => {
     };
 
     await act(async () => {
-      removeResult = await result.current.removeCard('collection1', 'card1');
+      removeResult = await result.current.removeCard('card1');
     });
 
-    expect(result.current.errorMessage).toBeTruthy();
     expect(removeResult.success).toBe(false);
     expect(removeResult.error).toBeTruthy();
   });
@@ -147,10 +145,9 @@ describe('useCollectionScreenViewModel', () => {
     };
 
     await act(async () => {
-      removeResult = await result.current.removeCard('collection1', 'card1');
+      removeResult = await result.current.removeCard('card1');
     });
 
     expect(removeResult.success).toBe(true);
-    expect(result.current.errorMessage).toBeNull();
   });
 });

@@ -66,8 +66,6 @@ export function useCollectionGroupScreenViewModel({
     async (
       collection: CollectionGroupEntity,
     ): Promise<{ success: boolean; error: string | null }> => {
-      setErrorMessage(null);
-
       const [, error] = await safeCall(
         () => repository.updateCollection(collection),
         undefined,
@@ -85,8 +83,6 @@ export function useCollectionGroupScreenViewModel({
 
   const removeCollection = useCallback(
     async (id: string): Promise<{ success: boolean; error: string | null }> => {
-      setErrorMessage(null);
-
       const [, error] = await safeCall(
         () => repository.removeCollection(id),
         undefined,
