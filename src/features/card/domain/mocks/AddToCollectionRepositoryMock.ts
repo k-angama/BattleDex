@@ -1,4 +1,6 @@
-import type { SavedCardEntity } from '../entities/SavedCardEntity';
+import { CollectionCardEntity } from '../../../collection/domaine/entities/CollectionCardEntity';
+import { CardEntity } from '../../../home/domaine/entities/CardEntity';
+import { SavedCardMapper } from '../../data/mappers/SavedCardMapper';
 import type { AddToCollectionRepository } from '../repositories/AddToCollectionRepository';
 
 const mockAddedCards: Map<string, Set<string>> = new Map();
@@ -7,16 +9,24 @@ export class AddToCollectionRepositoryMock
   implements AddToCollectionRepository
 {
   async addCard(
-    cardEntity: SavedCardEntity,
+    cardEntity: CardEntity,
     collectionId: string,
-  ): Promise<void> {
+  ): Promise<CollectionCardEntity> {
     await new Promise(resolve => setTimeout(resolve, 300));
 
     if (!mockAddedCards.has(collectionId)) {
       mockAddedCards.set(collectionId, new Set());
     }
 
-    mockAddedCards.get(collectionId)?.add(cardEntity.id);
+    const card = SavedCardMapper.toSavedCard(cardEntity);
+
+    mockAddedCards.get(collectionId)?.add(card.id);
+    return {
+      id: cardEntity.id,
+      title: card.title,
+      staticScore: cardEntity.staticScore,
+      imageUrl: card.imageUrl,
+    };
   }
 
   async isCardInCollection(

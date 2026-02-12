@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { collectionGroupStore } from '../../../common/services/CollectionGroupStore';
 import { Theme, useTheme } from '../../../common/styles';
 import { cardScreenRoute } from '../../card/presentation/cardScreenRoute';
 import { collectionScreenRoute } from '../../collection/presentation/collection/collectionScreenRoute';
@@ -204,12 +205,18 @@ function RootStackNavigator({ theme }: { theme: Theme }) {
 }
 
 export function NavigationScreen() {
-  const { themeMode } = useNavigationScreenViewModel();
+  const { themeMode, collections } = useNavigationScreenViewModel();
   const { theme, isDarkMode, setThemeMode } = useTheme();
 
+  // Sync theme mode from ViewModel to MobX store
   useEffect(() => {
     setThemeMode(themeMode);
   }, [setThemeMode, themeMode]);
+
+  // Sync collections from ViewModel to MobX store
+  useEffect(() => {
+    collectionGroupStore.setCollections(collections);
+  }, [collections]);
 
   return (
     <SafeAreaProvider>

@@ -13,4 +13,5 @@ export interface CardRaw {
   weaknesses?: { type?: string; value?: string; name?: string }[];
   resistances?: { type?: string; value?: string; name?: string }[];
   rarity?: string;
+  staticScore?: string;
 }

@@ -10,6 +10,7 @@ export interface CardEntity {
   metaUsageRate?: number;
   rarity?: string;
   setName: string;
+  staticScore: string;
 }
 
 export interface CardAttackEntity {

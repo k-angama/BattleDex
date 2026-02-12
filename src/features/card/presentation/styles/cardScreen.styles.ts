@@ -77,6 +77,9 @@ export const useStyles = () => {
           marginBottom: theme.spacing.lg,
         },
         nameTag: { flex: 1 },
+        headerRightButton: {
+          padding: theme.spacing.sm,
+        },
       }),
     [theme, headerHeight],
   );

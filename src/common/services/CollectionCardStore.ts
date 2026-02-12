@@ -19,7 +19,26 @@ export class CollectionCardStore {
   }
 
   addCard(card: CollectionCardEntity) {
-    this.cards = [card, ...this.cards];
+    // Parse staticScore to number for comparison
+    const newScore = parseInt(card.staticScore, 10) || 0;
+
+    // Find the correct position (descending order - highest score first)
+    const insertIndex = this.cards.findIndex(existingCard => {
+      const existingScore = parseInt(existingCard.staticScore, 10) || 0;
+      return newScore > existingScore;
+    });
+
+    // If no position found (card is weakest or list is empty), add at end
+    if (insertIndex === -1) {
+      this.cards = [...this.cards, card];
+    } else {
+      // Insert at the correct position to maintain sort order
+      this.cards = [
+        ...this.cards.slice(0, insertIndex),
+        card,
+        ...this.cards.slice(insertIndex),
+      ];
+    }
   }
 
   removeCard(id: string) {

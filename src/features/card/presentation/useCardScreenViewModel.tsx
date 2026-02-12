@@ -1,14 +1,16 @@
 import { useCallback, useState } from 'react';
 import { safeCall } from '../../../common/utils/safeAsync';
+import { CollectionCardEntity } from '../../collection/domaine/entities/CollectionCardEntity';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { SearchCardNamesUseCase } from '../../home/domaine/usecases/SearchCardNamesUseCase';
 import { searchCardNamesUseCase } from '../../home/presentation/homeScreenDI';
-import type { SavedCardEntity } from '../domain/entities/SavedCardEntity';
 import { GetDetailCardRepository } from '../domain/GetDetailCardRepository';
 import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
+import type { CreateCollectionRepository } from '../domain/repositories/CreateCollectionRepository';
 import {
   addToCollectionRepository,
+  createCollectionRepository,
   getDetailCardRepository,
 } from './cardScreenDI';
 
@@ -16,12 +18,14 @@ interface CardScreenViewModelParams {
   repository?: GetDetailCardRepository;
   useCase?: SearchCardNamesUseCase;
   addToCollectionRepository?: AddToCollectionRepository;
+  createCollectionRepository?: CreateCollectionRepository;
 }
 
 export function useCardScreenViewModel({
   repository = getDetailCardRepository,
   useCase = searchCardNamesUseCase,
   addToCollectionRepository: addToCollectionRepo = addToCollectionRepository,
+  createCollectionRepository: createCollectionRepo = createCollectionRepository,
 }: CardScreenViewModelParams = {}) {
   const [firstCard, setFirstCard] = useState<CardEntity | null>(null);
   const [secondCard, setSecondCard] = useState<CardEntity | null>(null);
@@ -107,19 +111,16 @@ export function useCardScreenViewModel({
     async (
       card: CardEntity,
       collectionId: string,
-    ): Promise<{ success: boolean; error?: string }> => {
+    ): Promise<{
+      success: boolean;
+      error?: string;
+      addedCard?: CollectionCardEntity | null;
+    }> => {
       setIsLoadingCollection(true);
       setErrorCollectionMessage(null);
 
-      const savedCardEntity: SavedCardEntity = {
-        id: card.id,
-        title: card.name,
-        staticScore: card.hp || 'N/A',
-        imageUrl: card.imageUrl ?? '',
-      };
-
-      const [, error] = await safeCall(
-        () => addToCollectionRepo.addCard(savedCardEntity, collectionId),
+      const [result, error] = await safeCall(
+        () => addToCollectionRepo.addCard(card, collectionId),
         () => {},
         setErrorCollectionMessage,
         {
@@ -130,7 +131,7 @@ export function useCardScreenViewModel({
       );
 
       setIsLoadingCollection(false);
-      return { success: !error, error: error ?? undefined };
+      return { success: !error, error: error ?? undefined, addedCard: result };
     },
     [addToCollectionRepo],
   );
@@ -151,6 +152,38 @@ export function useCardScreenViewModel({
     [addToCollectionRepo],
   );
 
+  const createCollection = useCallback(
+    async (
+      name: string,
+      color: string,
+    ): Promise<{
+      success: boolean;
+      createdCollection?: any;
+      error?: string;
+    }> => {
+      setIsLoadingCollection(true);
+      setErrorCollectionMessage(null);
+
+      const [result, error] = await safeCall(
+        () => createCollectionRepo.createCollection(name, color),
+        undefined,
+        setErrorCollectionMessage,
+        {
+          operation: 'Create Collection',
+          fallbackMessage: 'Unable to create collection. Please try again.',
+        },
+      );
+
+      setIsLoadingCollection(false);
+      return {
+        success: !error,
+        createdCollection: result,
+        error: error ?? undefined,
+      };
+    },
+    [createCollectionRepo],
+  );
+
   return {
     // Actions
     getDetailFirstCard,
@@ -159,6 +192,7 @@ export function useCardScreenViewModel({
     setSelectedCard: setSelectedCardWithLoading,
     addCardToCollection,
     checkIfCardInCollection,
+    createCollection,
 
     // Data
     firstCard,

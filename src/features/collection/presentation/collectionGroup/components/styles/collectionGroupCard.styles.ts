@@ -10,17 +10,12 @@ export const useStyles = () => {
       StyleSheet.create({
         menuContainer: {
           flex: 1 / 2,
+          ...theme.shadow.card,
         },
         cardContainer: {
-          backgroundColor: theme.colors.surface,
-          borderRadius: 12,
-          overflow: 'hidden',
           marginHorizontal: theme.spacing.xs,
-          shadowColor: theme.colors.textDark,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.1,
-          shadowRadius: 4,
-          elevation: 3,
+          borderRadius: theme.radius.md,
+          overflow: 'hidden',
         },
         cardPressed: {
           opacity: 0.7,

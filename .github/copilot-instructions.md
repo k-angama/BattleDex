@@ -514,6 +514,8 @@ export function use{ScreenName}ScreenViewModel({
 
 For screens that need to maintain state across navigation, create a MobX store in `src/common/services/`:
 
+**CRITICAL RULE**: ViewModels should NEVER import or use MobX stores directly. ViewModels return data, Screens sync that data to stores.
+
 ### Store Structure
 
 ```typescript
@@ -556,6 +558,33 @@ export const {featureStore} = new {Feature}Store();
 
 ### Use Store in Screen
 
+**Pattern**: ViewModel fetches data → Screen syncs to store → Screen uses store for UI
+
+```typescript
+// ❌ WRONG: ViewModel uses store directly
+export function useScreenViewModel() {
+  useEffect(() => {
+    const data = await repository.getData();
+    featureStore.setData(data); // ❌ NO! Don't use store in ViewModel
+  }, []);
+}
+
+// ✅ CORRECT: ViewModel returns data, Screen syncs to store
+export function useScreenViewModel() {
+  const [items, setItems] = useState([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const data = await repository.getData();
+      setItems(data); // ✅ Return data via state
+    };
+    loadData();
+  }, []);
+
+  return { items }; // ✅ Screen will sync to store
+}
+```
+
 ```typescript
 // In your screen component
 import { observer } from 'mobx-react-lite';
@@ -588,6 +617,13 @@ const {Feature}Screen = observer(
 
 export default {Feature}Screen;
 ```
+
+### Why This Pattern?
+
+- ✅ **Testability** - ViewModels are pure, easy to test without mocking stores
+- ✅ **Clear separation** - ViewModel = business logic, Screen = UI state management
+- ✅ **Reusability** - Same ViewModel can be used without stores if needed
+- ✅ **Dependency inversion** - ViewModel doesn't depend on global state
 
 ### Benefits of Stores
 
@@ -675,7 +711,7 @@ export class {EntityName}RepositoryImpl implements {EntityName}Repository {
 
 ## Cross-Feature Communication Pattern
 
-**CRITICAL RULE**: Features should NEVER directly import repositories, entities, or services from other features. This violates feature independence and creates tight coupling.
+**CRITICAL RULE**: Features should NEVER directly import repositories, entities, services, ViewModels, or UI components from other features. This violates feature independence and creates tight coupling.
 
 ### ❌ Wrong Pattern (Direct Feature Dependency)
 
@@ -683,13 +719,18 @@ export class {EntityName}RepositoryImpl implements {EntityName}Repository {
 // ❌ BAD: Card feature importing from Collection feature
 import { CollectionCardRepository } from '../../collection/domaine/repositories/CollectionCardRepository';
 import { CollectionCardEntity } from '../../collection/domaine/entities/CollectionCardEntity';
+import { useCollectionGroupScreenViewModel } from '../../collection/presentation/collectionGroup/useCollectionGroupScreenViewModel';
+import { CollectionGroupAddSheet } from '../../collection/presentation/collectionGroup/components/CollectionGroupAddSheet';
 ```
 
 **Problems:**
+
 - Card feature depends on Collection feature
 - Violates feature independence
 - Hard to test in isolation
 - Changes in Collection feature break Card feature
+- **Never import ViewModels from other features** - ViewModels are feature-specific business logic
+- **Never import UI components from other features** - leads to tight coupling and breaks encapsulation
 
 ### ✅ Correct Pattern (Feature-Specific Repository)
 
@@ -733,14 +774,25 @@ import { collectionsLocalDatabase } from '../../../common/db/CollectionsLocalDat
 import type { SavedCardEntity } from '../domain/entities/SavedCardEntity';
 import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
 
-export class AddToCollectionRepositoryImpl implements AddToCollectionRepository {
-  async addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void> {
+export class AddToCollectionRepositoryImpl
+  implements AddToCollectionRepository
+{
+  async addCard(
+    cardEntity: SavedCardEntity,
+    collectionId: string,
+  ): Promise<void> {
     const cardJson = JSON.stringify(cardEntity);
     await collectionsLocalDatabase.addCard(collectionId, cardJson);
   }
 
-  async isCardInCollection(cardId: string, collectionId: string): Promise<boolean> {
-    return await collectionsLocalDatabase.isCardInCollection(cardId, collectionId);
+  async isCardInCollection(
+    cardId: string,
+    collectionId: string,
+  ): Promise<boolean> {
+    return await collectionsLocalDatabase.isCardInCollection(
+      cardId,
+      collectionId,
+    );
   }
 }
 ```
@@ -754,18 +806,26 @@ import type { AddToCollectionRepository } from '../repositories/AddToCollectionR
 
 const mockAddedCards: Map<string, Set<string>> = new Map();
 
-export class AddToCollectionRepositoryMock implements AddToCollectionRepository {
-  async addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void> {
+export class AddToCollectionRepositoryMock
+  implements AddToCollectionRepository
+{
+  async addCard(
+    cardEntity: SavedCardEntity,
+    collectionId: string,
+  ): Promise<void> {
     await new Promise(resolve => setTimeout(resolve, 300));
-    
+
     if (!mockAddedCards.has(collectionId)) {
       mockAddedCards.set(collectionId, new Set());
     }
-    
+
     mockAddedCards.get(collectionId)?.add(cardEntity.id);
   }
 
-  async isCardInCollection(cardId: string, collectionId: string): Promise<boolean> {
+  async isCardInCollection(
+    cardId: string,
+    collectionId: string,
+  ): Promise<boolean> {
     await new Promise(resolve => setTimeout(resolve, 300));
     return mockAddedCards.get(collectionId)?.has(cardId) ?? false;
   }
@@ -804,16 +864,19 @@ interface CardScreenViewModelParams {
 export function useCardScreenViewModel({
   addToCollectionRepository: repo = addToCollectionRepository,
 }: CardScreenViewModelParams = {}) {
-  const addCardToCollection = useCallback(async (card: CardEntity, collectionId: string) => {
-    const savedCard: SavedCardEntity = {
-      id: card.id,
-      title: card.name,
-      staticScore: card.hp || 'N/A',
-      imageUrl: card.imageUrl ?? '',
-    };
-    
-    await repo.addCard(savedCard, collectionId);
-  }, [repo]);
+  const addCardToCollection = useCallback(
+    async (card: CardEntity, collectionId: string) => {
+      const savedCard: SavedCardEntity = {
+        id: card.id,
+        title: card.name,
+        staticScore: card.hp || 'N/A',
+        imageUrl: card.imageUrl ?? '',
+      };
+
+      await repo.addCard(savedCard, collectionId);
+    },
+    [repo],
+  );
 
   return { addCardToCollection };
 }
@@ -831,6 +894,7 @@ export function useCardScreenViewModel({
 ### When to Use This Pattern
 
 Use this pattern when:
+
 - Feature A needs to write/modify data managed by Feature B
 - Feature A needs specific read operations from Feature B's domain
 - Multiple features need to interact with the same data
@@ -853,6 +917,80 @@ Feature A (Card)           Feature B (Collection)
 ### Key Takeaway
 
 **Never import across features.** Instead, create a feature-specific repository that delegates to shared infrastructure. This maintains Clean Architecture principles and keeps features decoupled.
+
+### Complete Example: Card Feature Creating Collections
+
+**Scenario**: Card feature needs to create a collection and add a card to it.
+
+**❌ WRONG - Importing ViewModel from Collection Feature**:
+
+```typescript
+// CardScreen.tsx
+import { useCollectionGroupScreenViewModel } from '../../collection/presentation/collectionGroup/useCollectionGroupScreenViewModel';
+
+const collectionViewModel = useCollectionGroupScreenViewModel();
+const result = await collectionViewModel.addCollection(name, color); // ❌ NO!
+```
+
+**✅ CORRECT - Feature-Specific Repository**:
+
+1. **Create Repository Interface** in Card feature:
+
+```typescript
+// card/domain/repositories/CreateCollectionRepository.ts
+export interface CreateCollectionRepository {
+  createCollection(
+    name: string,
+    color: string,
+  ): Promise<{
+    success: boolean;
+    createdCollection?: CollectionGroupEntity;
+    error?: string;
+  }>;
+}
+```
+
+2. **Implement Repository** delegating to database:
+
+```typescript
+// card/data/CreateCollectionRepositoryImpl.ts
+export class CreateCollectionRepositoryImpl
+  implements CreateCollectionRepository
+{
+  async createCollection(name: string, color: string) {
+    const collectionRow = await collectionsLocalDatabase.saveCollection(
+      name,
+      color,
+    );
+    return {
+      success: true,
+      createdCollection: {
+        id: collectionRow.id,
+        name,
+        color,
+        cardCount: 0,
+      },
+    };
+  }
+}
+```
+
+3. **Use in Screen**:
+
+```typescript
+// CardScreen.tsx
+import { createCollectionRepository } from './cardScreenDI';
+
+const result = await createCollectionRepository.createCollection(name, color); // ✅ YES!
+```
+
+**Why This Works**:
+
+- Card feature has its own repository for creating collections
+- Repository delegates to shared database layer
+- No dependency on Collection feature's ViewModel
+- Easy to test by mocking the repository
+- Features remain independent
 
 ## Loading States with Skeleton Placeholders
 

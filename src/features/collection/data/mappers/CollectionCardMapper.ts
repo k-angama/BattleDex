@@ -1,28 +1,14 @@
+import { CollectionCardRowRaw } from '../../../../common/db/dto/CollectionCardRowRaw';
 import type { CollectionCardEntity } from '../../domaine/entities/CollectionCardEntity';
 
-export interface CollectionCardDTO {
-  id: string;
-  title: string;
-  staticScore: string;
-  imageUrl: string;
-}
-
 export class CollectionCardMapper {
-  static toEntity(dto: CollectionCardDTO): CollectionCardEntity {
+  static toEntity(dto: CollectionCardRowRaw): CollectionCardEntity {
+    const cardData = JSON.parse(dto.card_json);
     return {
-      id: dto.id,
-      title: dto.title,
-      staticScore: dto.staticScore,
-      imageUrl: dto.imageUrl,
-    };
-  }
-
-  static toPersistence(entity: CollectionCardEntity): CollectionCardDTO {
-    return {
-      id: entity.id,
-      title: entity.title,
-      staticScore: entity.staticScore,
-      imageUrl: entity.imageUrl,
+      id: cardData.id,
+      title: cardData.title,
+      staticScore: cardData.staticScore,
+      imageUrl: cardData.imageUrl,
     };
   }
 }

@@ -90,9 +90,10 @@ const CollectionScreen = observer(
         ) : (
           <FlatList
             data={storeCards}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <CollectionCard
                 card={item}
+                rank={index + 1}
                 onPress={() => handleOpenCard(item)}
               />
             )}

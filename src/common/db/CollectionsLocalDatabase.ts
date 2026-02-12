@@ -153,7 +153,7 @@ export class CollectionsLocalDatabase {
       `SELECT id, collection_id, card_json, added_date
        FROM collection_cards
        WHERE collection_id = ?
-       ORDER BY added_date DESC;`,
+       ORDER BY CAST(json_extract(card_json, '$.staticScore') AS INTEGER) DESC;`,
       [collectionId],
     );
 

@@ -1,6 +1,10 @@
-import type { SavedCardEntity } from '../entities/SavedCardEntity';
+import { CollectionCardEntity } from '../../../collection/domaine/entities/CollectionCardEntity';
+import { CardEntity } from '../../../home/domaine/entities/CardEntity';
 
 export interface AddToCollectionRepository {
-  addCard(cardEntity: SavedCardEntity, collectionId: string): Promise<void>;
+  addCard(
+    cardEntity: CardEntity,
+    collectionId: string,
+  ): Promise<CollectionCardEntity>;
   isCardInCollection(cardId: string, collectionId: string): Promise<boolean>;
 }
