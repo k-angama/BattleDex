@@ -1,4 +1,4 @@
-import type { CollectionGroupEntity } from '../../../collection/domaine/entities/CollectionGroupEntity';
+import { CreatedCollectionEntity } from '../entities/CreatedCollectionEntity';
 import type { CreateCollectionRepository } from '../repositories/CreateCollectionRepository';
 
 let mockCollectionIdCounter = 100;
@@ -9,10 +9,10 @@ export class CreateCollectionRepositoryMock
   async createCollection(
     name: string,
     color: string,
-  ): Promise<CollectionGroupEntity> {
+  ): Promise<CreatedCollectionEntity> {
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    const newCollection: CollectionGroupEntity = {
+    const newCollection: CreatedCollectionEntity = {
       id: `mock-collection-${mockCollectionIdCounter++}`,
       name,
       color,

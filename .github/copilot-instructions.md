@@ -709,6 +709,61 @@ export class {EntityName}RepositoryImpl implements {EntityName}Repository {
 - ✅ **Reusability** - One mapper for multiple query results
 - ✅ **Testable** - Easy to unit test mapping logic
 
+### Mappers for Feature-Specific Cross-Boundary Entities
+
+When a feature creates its own entity for cross-boundary communication, create a dedicated mapper:
+
+```typescript
+// card/data/mappers/CreateCollectionMapper.ts
+import { CollectionRowRaw } from '../../../../common/db/dto/CollectionRowRaw';
+import { CreatedCollectionEntity } from '../../domain/entities/CreatedCollectionEntity';
+
+export class CreateCollectionMapper {
+  static toEntity(row: CollectionRowRaw): CreatedCollectionEntity {
+    return {
+      id: row.id,
+      name: row.name,
+      color: row.color,
+      cardCount: row.card_count,
+    };
+  }
+}
+```
+
+**Usage in Feature-Specific Repository:**
+
+```typescript
+// card/data/CreateCollectionRepositoryImpl.ts
+import { CollectionsLocalDatabase } from '../../../common/db/CollectionsLocalDatabase';
+import { CreatedCollectionEntity } from '../domain/entities/CreatedCollectionEntity';
+import type { CreateCollectionRepository } from '../domain/repositories/CreateCollectionRepository';
+import { CreateCollectionMapper } from './mappers/CreateCollectionMapper';
+
+export class CreateCollectionRepositoryImpl
+  implements CreateCollectionRepository
+{
+  constructor(private collectionsLocalDatabase: CollectionsLocalDatabase) {}
+
+  async createCollection(
+    name: string,
+    color: string,
+  ): Promise<CreatedCollectionEntity> {
+    const savedRow = await this.collectionsLocalDatabase.saveCollection(
+      name,
+      color,
+    );
+    return CreateCollectionMapper.toEntity(savedRow);
+  }
+}
+```
+
+**Key Points:**
+
+- Mapper in feature's own `data/mappers/` directory
+- Converts shared database rows to feature-specific entity
+- Entity lives in feature's `domain/entities/`
+- No imports from other features
+
 ## Cross-Feature Communication Pattern
 
 **CRITICAL RULE**: Features should NEVER directly import repositories, entities, services, ViewModels, or UI components from other features. This violates feature independence and creates tight coupling.
@@ -740,15 +795,54 @@ When a feature needs to interact with another feature's data, create a **feature
 
 #### Step 1: Create Feature-Specific Entity
 
+**CRITICAL RULE**: Each feature that crosses boundaries must define its own entity types in `domain/entities/`.
+
+✅ **CORRECT - Feature owns its entity:**
+
 ```typescript
-// card/domain/entities/SavedCardEntity.ts
-export interface SavedCardEntity {
+// card/domain/entities/CreatedCollectionEntity.ts
+export interface CreatedCollectionEntity {
   id: string;
-  title: string;
-  staticScore: string;
-  imageUrl: string;
+  name: string;
+  color: string;
+  cardCount: number;
+}
+
+// card/domain/repositories/CreateCollectionRepository.ts
+import { CreatedCollectionEntity } from '../entities/CreatedCollectionEntity';
+
+export interface CreateCollectionRepository {
+  createCollection(
+    name: string,
+    color: string,
+  ): Promise<CreatedCollectionEntity>;
 }
 ```
+
+❌ **WRONG - Importing another feature's entity:**
+
+```typescript
+// ❌ NO - This violates feature boundaries
+import type { CollectionGroupEntity } from '../../collection/domaine/entities/CollectionGroupEntity';
+
+export interface CreateCollectionRepository {
+  createCollection(name: string, color: string): Promise<CollectionGroupEntity>; // NO!
+}
+```
+
+**Why entities in domain/entities/ are safe to share:**
+
+- Entity types define data structure (business models)
+- They're not business logic or UI code
+- Each feature can own identical entity structures without coupling
+- Use `type` imports: `import type { Entity }` prevents accidental runtime dependencies
+
+**Benefits:**
+
+- ✅ Feature completely independent
+- ✅ Clear entity ownership
+- ✅ Can import mappers without violating boundaries
+- ✅ No cross-feature type dependencies
 
 #### Step 2: Create Feature-Specific Repository Interface
 

@@ -220,8 +220,8 @@ export function CardScreen() {
     const result = await createCollection(payload.name, payload.color);
 
     if (result.success && result.createdCollection) {
-      // Update store with new collection
-      collectionGroupStore.addCollection(result.createdCollection);
+      // Update store with new collection (cast to CollectionGroupEntity for store compatibility)
+      collectionGroupStore.addCollection(result.createdCollection as any);
 
       // Auto-add current card to new collection
       const addCardResult = await addCardToCollection(

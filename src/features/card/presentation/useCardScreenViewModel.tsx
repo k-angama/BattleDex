@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 import { safeCall } from '../../../common/utils/safeAsync';
-import { CollectionCardEntity } from '../../collection/domaine/entities/CollectionCardEntity';
-import { CollectionGroupEntity } from '../../collection/domaine/entities/CollectionGroupEntity';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
-import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
+import type { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { SearchCardNamesUseCase } from '../../home/domaine/usecases/SearchCardNamesUseCase';
 import { searchCardNamesUseCase } from '../../home/presentation/homeScreenDI';
+import type { AddedCardEntity } from '../domain/entities/AddedCardEntity';
+import { CreatedCollectionEntity } from '../domain/entities/CreatedCollectionEntity';
 import { GetDetailCardRepository } from '../domain/GetDetailCardRepository';
 import type { AddToCollectionRepository } from '../domain/repositories/AddToCollectionRepository';
 import type { CreateCollectionRepository } from '../domain/repositories/CreateCollectionRepository';
@@ -115,7 +115,7 @@ export function useCardScreenViewModel({
     ): Promise<{
       success: boolean;
       error?: string;
-      addedCard?: CollectionCardEntity | null;
+      addedCard?: AddedCardEntity | null;
     }> => {
       setIsLoadingCollection(true);
       setErrorCollectionMessage(null);
@@ -159,7 +159,7 @@ export function useCardScreenViewModel({
       color: string,
     ): Promise<{
       success: boolean;
-      createdCollection?: CollectionGroupEntity | null;
+      createdCollection?: CreatedCollectionEntity | null;
       error?: string;
     }> => {
       setIsLoadingCollection(true);

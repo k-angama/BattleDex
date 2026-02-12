@@ -1,5 +1,8 @@
-import type { CollectionGroupEntity } from '../../../collection/domaine/entities/CollectionGroupEntity';
+import { CreatedCollectionEntity } from '../entities/CreatedCollectionEntity';
 
 export interface CreateCollectionRepository {
-  createCollection(name: string, color: string): Promise<CollectionGroupEntity>;
+  createCollection(
+    name: string,
+    color: string,
+  ): Promise<CreatedCollectionEntity>;
 }
