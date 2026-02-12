@@ -30,10 +30,10 @@ import {
   type BDToastHandle,
 } from '../../../common/components/BDToast';
 import { BDTypography } from '../../../common/components/BDTypography';
+import { AddCollectionGroupSheet } from '../../../common/components/CollectionGroupAddSheet';
 import { collectionCardStore } from '../../../common/services/CollectionCardStore';
 import { collectionGroupStore } from '../../../common/services/CollectionGroupStore';
 import { useTheme } from '../../../common/styles';
-import { CollectionGroupAddSheet } from '../../collection/presentation/collectionGroup/components/CollectionGroupAddSheet';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
 import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
@@ -175,25 +175,6 @@ export function CardScreen() {
     if (!firstCard) {
       return;
     }
-
-    // Check if card already exists in collection
-    /*const isCardAlreadyInCollection = await checkIfCardInCollection(
-      firstCard.id,
-      collectionId,
-    );
-
-    if (isCardAlreadyInCollection) {
-      const collection = collectionGroupStore.collections.find(
-        c => c.id === collectionId,
-      );
-      const collectionName = collection?.name || 'Collection';
-
-      toastRef.current?.show({
-        message: `Card already in ${collectionName}`,
-        type: 'info',
-      });
-      return;
-    }*/
 
     // Add card to collection
     const result = await addCardToCollection(firstCard, collectionId);
@@ -541,7 +522,7 @@ export function CardScreen() {
         onCreateCollection={handleCreateCollection}
         checkIfCardInCollection={checkIfCardInCollection}
       />
-      <CollectionGroupAddSheet
+      <AddCollectionGroupSheet
         visible={isCollectionGroupAddSheetVisible}
         onClose={handleCloseCollectionGroupAddSheet}
         onSubmit={handleCollectionCreated}

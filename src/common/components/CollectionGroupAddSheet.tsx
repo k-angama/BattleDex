@@ -15,23 +15,23 @@ import React, {
 } from 'react';
 import { BackHandler, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BDButton } from '../../../../../common/components/BDButton';
-import { BDTypography } from '../../../../../common/components/BDTypography';
-import { COLLECTION_GROUP_COLORS } from '../../../../../common/utils/constants';
-import { useStyles } from './styles/collectionGroupAddSheet.styles';
+import { useStyles } from '../../features/collection/presentation/collectionGroup/components/styles/collectionGroupAddSheet.styles';
+import { COLLECTION_GROUP_COLORS } from '../utils/constants';
+import { BDButton } from './BDButton';
+import { BDTypography } from './BDTypography';
 
-export interface CollectionGroupAddSheetProps {
+export interface AddCollectionGroupSheetProps {
   visible: boolean;
   onClose: () => void;
   onSubmit: (payload: { name: string; color: string }) => void;
   initialData?: { name: string; color: string };
 }
 
-export const CollectionGroupAddSheet = React.forwardRef<
+export const AddCollectionGroupSheet = React.forwardRef<
   BottomSheetModalMethods,
-  CollectionGroupAddSheetProps
->(function CollectionGroupAddSheetWithRef(
-  { visible, onClose, onSubmit, initialData }: CollectionGroupAddSheetProps,
+  AddCollectionGroupSheetProps
+>(function AddCollectionGroupSheetWithRef(
+  { visible, onClose, onSubmit, initialData }: AddCollectionGroupSheetProps,
   ref,
 ) {
   const { styles, placeholderColor } = useStyles();

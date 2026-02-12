@@ -19,12 +19,12 @@ export class CollectionCardStore {
   }
 
   addCard(card: CollectionCardEntity) {
-    // Parse staticScore to number for comparison
-    const newScore = parseInt(card.staticScore, 10) || 0;
+    // Parse staticScore to number for comparison (supporting decimal values)
+    const newScore = parseFloat(card.staticScore) || 0;
 
     // Find the correct position (descending order - highest score first)
     const insertIndex = this.cards.findIndex(existingCard => {
-      const existingScore = parseInt(existingCard.staticScore, 10) || 0;
+      const existingScore = parseFloat(existingCard.staticScore) || 0;
       return newScore > existingScore;
     });
 

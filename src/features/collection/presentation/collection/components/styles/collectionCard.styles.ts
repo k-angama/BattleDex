@@ -30,6 +30,7 @@ export const useStyles = () => {
         image: {
           width: '100%',
           height: '100%',
+          resizeMode: 'contain',
           borderRadius: theme.radius.sm,
         },
         contentContainer: {

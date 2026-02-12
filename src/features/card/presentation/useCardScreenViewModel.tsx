@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { safeCall } from '../../../common/utils/safeAsync';
 import { CollectionCardEntity } from '../../collection/domaine/entities/CollectionCardEntity';
+import { CollectionGroupEntity } from '../../collection/domaine/entities/CollectionGroupEntity';
 import { CardEntity } from '../../home/domaine/entities/CardEntity';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { SearchCardNamesUseCase } from '../../home/domaine/usecases/SearchCardNamesUseCase';
@@ -158,7 +159,7 @@ export function useCardScreenViewModel({
       color: string,
     ): Promise<{
       success: boolean;
-      createdCollection?: any;
+      createdCollection?: CollectionGroupEntity | null;
       error?: string;
     }> => {
       setIsLoadingCollection(true);

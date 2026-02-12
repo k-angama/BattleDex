@@ -30,6 +30,7 @@ const aquaGuardian: CardEntity = {
   weaknesses: [{ name: 'Electric', type: 'electric', value: '×2' }],
   resistances: [{ name: 'Fire', type: 'fire', value: '-30' }],
   metaUsageRate: 0.18,
+  staticScore: '85',
 };
 
 const pyroblazeDragon: CardEntity = {
@@ -58,6 +59,7 @@ const pyroblazeDragon: CardEntity = {
   resistances: [{ name: 'Grass', type: 'grass', value: '-20' }],
   metaUsageRate: 0.25,
   setName: 'Base Set',
+  staticScore: '90',
 };
 
 const stormcallerFalcon: CardEntity = {
@@ -90,6 +92,7 @@ const stormcallerFalcon: CardEntity = {
   resistances: [{ name: 'Metal', type: 'metal', value: '-20' }],
   metaUsageRate: 0.12,
   setName: 'Base Set',
+  staticScore: '82',
 };
 
 const obsidianGolem: CardEntity = {
@@ -124,6 +127,7 @@ const obsidianGolem: CardEntity = {
   resistances: [{ name: 'Electric', type: 'electric', value: '-30' }],
   metaUsageRate: 0.2,
   setName: 'Base Set',
+  staticScore: '87',
 };
 
 const auroraSerpent: CardEntity = {
@@ -148,6 +152,7 @@ const auroraSerpent: CardEntity = {
   resistances: [{ name: 'Fire', type: 'fire', value: '-20' }],
   metaUsageRate: 0.3,
   setName: 'Base Set',
+  staticScore: '88',
 };
 
 export const compareCardsPreviewMock: CompareCardsPreviewEntity[] = [

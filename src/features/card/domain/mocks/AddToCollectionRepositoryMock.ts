@@ -37,6 +37,3 @@ export class AddToCollectionRepositoryMock
     return mockAddedCards.get(collectionId)?.has(cardId) ?? false;
   }
 }
-
-export const addToCollectionRepositoryMock =
-  new AddToCollectionRepositoryMock();

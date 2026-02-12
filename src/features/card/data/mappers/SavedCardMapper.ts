@@ -6,7 +6,7 @@ export class SavedCardMapper {
     return {
       id: card.id,
       title: card.name,
-      staticScore: card.hp || 'N/A',
+      staticScore: card.staticScore ?? 'N/A',
       imageUrl: card.imageUrl ?? '',
     };
   }

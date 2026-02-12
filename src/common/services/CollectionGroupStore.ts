@@ -51,7 +51,10 @@ export class CollectionGroupStore {
   removeCardCountFromCollection(id: string, count: number) {
     this.collections = this.collections.map(collection => {
       if (collection.id === id) {
-        return { ...collection, cardCount: collection.cardCount - count };
+        return {
+          ...collection,
+          cardCount: Math.max(0, collection.cardCount - count),
+        };
       }
       return collection;
     });

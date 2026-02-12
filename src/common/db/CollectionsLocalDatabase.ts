@@ -153,7 +153,7 @@ export class CollectionsLocalDatabase {
       `SELECT id, collection_id, card_json, added_date
        FROM collection_cards
        WHERE collection_id = ?
-       ORDER BY CAST(json_extract(card_json, '$.staticScore') AS INTEGER) DESC;`,
+       ORDER BY CAST(json_extract(card_json, '$.staticScore') AS REAL) DESC;`,
       [collectionId],
     );
 
@@ -182,11 +182,15 @@ export class CollectionsLocalDatabase {
     cardId: string,
     collectionId: string,
   ): Promise<boolean> {
-    const cards = await this.getCardsForCollection(collectionId);
-    return cards.some(row => {
-      const cardData = JSON.parse(row.card_json);
-      return cardData.id === cardId;
-    });
+    const result = await this.db.executeSync(
+      `SELECT 1 AS exists_flag
+       FROM collection_cards
+       WHERE collection_id = ?
+         AND json_extract(card_json, '$.id') = ?
+       LIMIT 1;`,
+      [collectionId, cardId],
+    );
+    return (result.rows ?? []).length > 0;
   }
 
   async clearAllCollections(): Promise<void> {
