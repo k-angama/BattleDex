@@ -1,9 +1,9 @@
 import { CollectionCardRowRaw } from '../../../../common/db/dto/CollectionCardRowRaw';
-import type { CollectionCardEntity } from '../../domaine/entities/CollectionCardEntity';
+import { AddedCardEntity } from '../../domain/entities/AddedCardEntity';
 
-export class CollectionCardMapper {
-  static toEntity(dto: CollectionCardRowRaw): CollectionCardEntity {
-    const cardData = JSON.parse(dto.card_json);
+export class AddedCardMapper {
+  static toEntity(row: CollectionCardRowRaw): AddedCardEntity {
+    const cardData = JSON.parse(row.card_json);
     return {
       id: cardData.id,
       title: cardData.title,

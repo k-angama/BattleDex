@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   Dimensions,
@@ -25,13 +25,20 @@ import { BDButton } from '../../../common/components/BDButton';
 import { BDCard } from '../../../common/components/BDCard';
 import { BDCircularBadge } from '../../../common/components/BDCircularBadge';
 import { BDEnergieType } from '../../../common/components/BDEnergieTypes';
+import {
+  BDToast,
+  type BDToastHandle,
+} from '../../../common/components/BDToast';
 import { BDTypography } from '../../../common/components/BDTypography';
+import { AddCollectionGroupSheet } from '../../../common/components/CollectionGroupAddSheet';
+import { collectionGroupStore } from '../../../common/services/CollectionGroupStore';
 import { useTheme } from '../../../common/styles';
 import { StatsRow } from '../../compare/presensation/components/StatsRow';
 import { StatsTable } from '../../compare/presensation/components/StatsTable';
 import { SearchCardSuggestionEntity } from '../../home/domaine/entities/SearchCardSuggestionEntity';
 import { RootStackParamList } from '../../navigation/presentation/NavigationScreen';
 import { ActionButtonsSkeleton } from './components/ActionButtonsSkeleton';
+import { AddToCollectionBottomSheet } from './components/AddToCollectionBottomSheet';
 import { CardScreenSkeleton } from './components/CardScreenSkeleton';
 import { CardSelectorBottomSheet } from './components/CardSelectorBottomSheet';
 import { DuelCard } from './components/DuelCard';
@@ -54,7 +61,14 @@ export function CardScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<CardScreenRouteProp>();
   const [isSelectorVisible, setIsSelectorVisible] = useState(false);
+  const [isAddToCollectionVisible, setIsAddToCollectionVisible] =
+    useState(false);
+  const [
+    isCollectionGroupAddSheetVisible,
+    setIsCollectionGroupAddSheetVisible,
+  ] = useState(false);
   const [actionBarHeight, setActionBarHeight] = useState(0);
+  const toastRef = useRef<BDToastHandle>(null);
 
   const {
     firstCard,
@@ -69,6 +83,10 @@ export function CardScreen() {
     searchCardNames,
     setSelectedCard,
     selectedCard,
+    checkIfCardInCollection,
+    addCardToCollection,
+    createCollection,
+    isLoadingCollection,
   } = viewModel;
 
   const renderItemHeader = useCallback(
@@ -82,12 +100,30 @@ export function CardScreen() {
     [navigation],
   );
 
+  const renderHeaderRight = useCallback(
+    (tintColor: string | undefined) => {
+      // Only show + button in single card view (not in duel mode)
+      if (selectedCard) return null;
+
+      return (
+        <TouchableOpacity
+          style={styles.headerRightButton}
+          onPress={() => setIsAddToCollectionVisible(true)}
+        >
+          <Icon name="folder-plus-outline" size={24} color={tintColor} />
+        </TouchableOpacity>
+      );
+    },
+    [selectedCard, styles],
+  );
+
   useEffect(() => {
     const updateHeaderTitle = () => {
       navigation.setOptions({
         title:
           selectedCard && firstCard ? 'Ready to Battle' : route.params.name,
         headerLeft: ({ tintColor }) => renderItemHeader(tintColor),
+        headerRight: ({ tintColor }) => renderHeaderRight(tintColor),
       });
     };
     updateHeaderTitle();
@@ -95,6 +131,7 @@ export function CardScreen() {
     firstCard,
     navigation,
     renderItemHeader,
+    renderHeaderRight,
     route.params.name,
     selectedCard,
   ]);
@@ -127,6 +164,94 @@ export function CardScreen() {
   const handleCloseSelector = () => {
     setIsSelectorVisible(false);
     searchCardNames('');
+  };
+
+  const handleCloseAddToCollection = () => {
+    setIsAddToCollectionVisible(false);
+  };
+
+  const handleSelectCollection = async (collectionId: string) => {
+    if (!firstCard) {
+      return;
+    }
+
+    // Add card to collection
+    const result = await addCardToCollection(firstCard, collectionId);
+
+    if (result.success && result.addedCard) {
+      collectionGroupStore.addCardCountToCollection(collectionId, 1);
+      const collection = collectionGroupStore.findCollectionById(collectionId);
+      const collectionName = collection?.name || 'Collection';
+
+      toastRef.current?.show({
+        message: `Added to ${collectionName}`,
+        type: 'success',
+      });
+
+      setIsAddToCollectionVisible(false);
+    } else {
+      toastRef.current?.show({
+        message: result.error || 'Failed to add card to collection',
+        type: 'error',
+      });
+    }
+  };
+
+  const handleCreateCollection = () => {
+    setIsAddToCollectionVisible(false);
+    setIsCollectionGroupAddSheetVisible(true);
+  };
+
+  const handleCloseCollectionGroupAddSheet = () => {
+    setIsCollectionGroupAddSheetVisible(false);
+  };
+
+  const handleCollectionCreated = async (payload: {
+    name: string;
+    color: string;
+  }) => {
+    if (!firstCard) {
+      return;
+    }
+
+    // Create the collection using ViewModel
+    const result = await createCollection(payload.name, payload.color);
+
+    if (result.success && result.createdCollection) {
+      // Update store with new collection (cast to CollectionGroupEntity for store compatibility)
+      collectionGroupStore.addCollection(result.createdCollection);
+
+      // Auto-add current card to new collection
+      const addCardResult = await addCardToCollection(
+        firstCard,
+        result.createdCollection.id,
+      );
+
+      setIsCollectionGroupAddSheetVisible(false);
+
+      if (addCardResult.success && addCardResult.addedCard) {
+        collectionGroupStore.addCardCountToCollection(
+          result.createdCollection.id,
+          1,
+        );
+
+        toastRef.current?.show({
+          message: `Collection created and card added to ${payload.name}`,
+          type: 'success',
+        });
+      } else {
+        // Collection created but card add failed
+        toastRef.current?.show({
+          message: `Collection created but failed to add card`,
+          type: 'error',
+        });
+      }
+    } else {
+      toastRef.current?.show({
+        message: result.error || 'Failed to create collection',
+        type: 'error',
+      });
+    }
   };
 
   const handleCompareNow = () => {
@@ -385,6 +510,21 @@ export function CardScreen() {
         isLoading={isLoadingSearch}
         errorMessage={errorSearchMessage}
       />
+      <AddToCollectionBottomSheet
+        visible={isAddToCollectionVisible}
+        cardId={route.params.cardId}
+        isLoading={isLoadingCollection}
+        onClose={handleCloseAddToCollection}
+        onSelectCollection={handleSelectCollection}
+        onCreateCollection={handleCreateCollection}
+        checkIfCardInCollection={checkIfCardInCollection}
+      />
+      <AddCollectionGroupSheet
+        visible={isCollectionGroupAddSheetVisible}
+        onClose={handleCloseCollectionGroupAddSheet}
+        onSubmit={handleCollectionCreated}
+      />
+      <BDToast ref={toastRef} />
     </View>
   );
 }

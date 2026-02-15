@@ -6,6 +6,7 @@ import { ComparePreviewMapper } from './mappers/ComparePreviewMapper';
 
 export class DataBaseCardsRepositoryImpl implements DataBaseCardsRepository {
   constructor(private compareLocalDatabase: CompareLocalDatabase) {}
+
   getCompareCards(): Promise<CompareCardsPreviewEntity[]> {
     return this.compareLocalDatabase
       .getCompareCards()

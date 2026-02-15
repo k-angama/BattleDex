@@ -1,9 +1,8 @@
 import { CardRaw } from '../../../../common/api/dto/CardRaw';
-import { StoredCardRaw } from '../../../../common/db/dto/StoredCardRaw';
 import { CardEntity } from '../../domaine/entities/CardEntity';
 
 export class CardMapper {
-  static toEntity(raw: CardRaw | StoredCardRaw): CardEntity {
+  static toEntity(raw: CardRaw): CardEntity {
     return {
       id: raw.id ?? '',
       name: raw.name ?? '-',
@@ -11,6 +10,7 @@ export class CardMapper {
       hp: (raw.hp ?? 0) > 0 ? raw.hp?.toString() ?? '-' : '-',
       setName: raw.setName ?? '',
       imageUrl: raw.imageUrl,
+      staticScore: raw.staticScore ?? 'N/A',
       attacks: (raw.attacks ?? []).map(attack => ({
         name: attack.name ?? '-',
         damage: attack.damage ?? 0,
@@ -31,7 +31,7 @@ export class CardMapper {
       })),
     };
   }
-  static fromEntity(entity: CardEntity): CardRaw | StoredCardRaw {
+  static fromEntity(entity: CardEntity): CardRaw {
     return {
       id: entity.id,
       name: entity.name,

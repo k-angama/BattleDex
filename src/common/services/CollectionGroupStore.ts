@@ -29,10 +29,35 @@ export class CollectionGroupStore {
     );
   }
 
+  findCollectionById(id: string): CollectionGroupEntity | undefined {
+    return this.collections.find(collection => collection.id === id);
+  }
+
   removeCollection(id: string) {
     this.collections = this.collections.filter(
       collection => collection.id !== id,
     );
+  }
+
+  addCardCountToCollection(id: string, count: number) {
+    this.collections = this.collections.map(collection => {
+      if (collection.id === id) {
+        return { ...collection, cardCount: collection.cardCount + count };
+      }
+      return collection;
+    });
+  }
+
+  removeCardCountFromCollection(id: string, count: number) {
+    this.collections = this.collections.map(collection => {
+      if (collection.id === id) {
+        return {
+          ...collection,
+          cardCount: Math.max(0, collection.cardCount - count),
+        };
+      }
+      return collection;
+    });
   }
 
   removeAllCollections() {

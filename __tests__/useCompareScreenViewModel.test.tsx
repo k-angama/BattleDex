@@ -16,6 +16,7 @@ describe('useCompareScreenViewModel', () => {
     weaknesses: [],
     resistances: [],
     setName: 'Mock Set',
+    staticScore: '5.0',
   };
   const cardB: CardEntity = { ...cardA, id: 'b', name: 'Beta' };
 

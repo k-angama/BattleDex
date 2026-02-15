@@ -16,6 +16,7 @@ import {
   BDToast,
   type BDToastHandle,
 } from '../../../../common/components/BDToast';
+import { AddCollectionGroupSheet } from '../../../../common/components/CollectionGroupAddSheet';
 import { EmptyState } from '../../../../common/components/EmptyState';
 import { ErrorMessage } from '../../../../common/components/ErrorMessage';
 import {
@@ -24,7 +25,6 @@ import {
 } from '../../../../common/services/CollectionGroupStore';
 import { useTheme } from '../../../../common/styles';
 import type { CollectionGroupEntity } from '../../domaine/entities/CollectionGroupEntity';
-import { CollectionGroupAddSheet } from './components/CollectionGroupAddSheet';
 import { CollectionGroupCard } from './components/CollectionGroupCard';
 import { CollectionGroupCardSkeleton } from './components/CollectionGroupCardSkeleton';
 import { useStyles } from './styles/collectionGroupScreen.styles';
@@ -219,7 +219,7 @@ const CollectionGroupScreen = observer(
             scrollEnabled={true}
           />
         )}
-        <CollectionGroupAddSheet
+        <AddCollectionGroupSheet
           visible={isAddSheetVisible}
           onClose={handleCloseSheet}
           onSubmit={handleSubmit}
